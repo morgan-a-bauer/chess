@@ -1,6 +1,6 @@
 class BasePiece:
-    def __init__(self, space: tuple, color: str) -> None:
-        self._chr = 'p'
+    def __init__(self, space: tuple, color: str, chr: str) -> None:
+        self._chr = chr
         self._color = color
         self._space = space
         self._is_captured = False
