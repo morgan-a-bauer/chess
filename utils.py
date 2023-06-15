@@ -9,6 +9,7 @@ def algebraic_to_grid(space: str) -> tuple:
     y_coord -= 1
     return (x_coord, y_coord)
 
+
 if __name__ == "__main__":
     user_input = 'l'
     while user_input != 'x':
