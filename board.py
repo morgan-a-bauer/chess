@@ -1,5 +1,5 @@
 class Board:
-    def __init__(self):
+    def __init__(self) -> None:
         self._state = [[0 for i in range(8)] for j in range(8)]
 
     def __str__(self):

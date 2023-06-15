@@ -1,4 +1,4 @@
-def algebraic_to_grid(space):
+def algebraic_to_grid(space: str) -> tuple:
     x_coord = ord(space[0])
     y_coord = int(space[1])
     if (x_coord < 96) or (x_coord > 104):
