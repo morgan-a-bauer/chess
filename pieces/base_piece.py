@@ -6,21 +6,25 @@ class BasePiece:
         self._is_captured = False
 
 
-    def __str__(self) -> str:
-        return self._chr
-
-
-    def get_color(self) -> str:
+    @property
+    def color(self) -> str:
         return self._color
     
 
-    def set_color(self, color: str) -> None:
+    @color.setter
+    def color(self, color: str) -> None:
         self._color = color
     
 
-    def get_space(self) -> tuple:
+    @property
+    def space(self) -> tuple:
         return self._space
     
 
-    def set_space(self, new_space: tuple) -> None:
+    @space.setter
+    def space(self, new_space: tuple) -> None:
         self._space = new_space
+
+    
+    def __str__(self):
+        return self._chr

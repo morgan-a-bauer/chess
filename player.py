@@ -8,15 +8,18 @@ class Player:
         self._color = color
     
 
-    def get_color(self) -> str:
+    @property
+    def color(self) -> str:
         return self._color
     
 
-    def get_score(self) -> int:
+    @property
+    def score(self) -> int:
         return self._score
     
 
-    def update_score(self, val: int) -> None:
+    @score.setter
+    def score(self, val: int) -> None:
         self._score += val
 
 
