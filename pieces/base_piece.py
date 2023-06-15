@@ -3,6 +3,7 @@ class BasePiece:
         self._chr = 'p'
         self._color = ''
         self._space = space
+        self._is_captured = False
 
 
     def __str__(self) -> str:
