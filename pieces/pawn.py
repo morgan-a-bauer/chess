@@ -1,5 +1,5 @@
 from base_piece import BasePiece
 
 class Pawn(BasePiece):
-    def __init__(self, space: tuple) -> None:
+    def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(space)

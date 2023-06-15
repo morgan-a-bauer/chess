@@ -1,7 +1,7 @@
 class BasePiece:
-    def __init__(self, space: tuple) -> None:
+    def __init__(self, space: tuple, color: str) -> None:
         self._chr = 'p'
-        self._color = ''
+        self._color = color
         self._space = space
         self._is_captured = False
 

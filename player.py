@@ -2,10 +2,10 @@ from pieces.base_piece import BasePiece
 from pieces.pawn import Pawn
 
 class Player:
-    def __init__(self) -> None:
+    def __init__(self, color: str) -> None:
         self._uncaptured_pieces = []
         self._score = 0
-        self._color = ""
+        self._color = color
     
 
     def get_color(self) -> str:
