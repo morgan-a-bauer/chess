@@ -294,7 +294,6 @@ def move(board: Board, player: Player) -> None:
     print(f"{player.name}'s turn")
 
     start_coords = start_space(board, player)
-    print(start_coords)
     start_row = start_coords[0]
     start_col = start_coords[1]
     piece_to_move = board.state[start_row][start_col]
@@ -302,7 +301,7 @@ def move(board: Board, player: Player) -> None:
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
     print("Your possible moves are:", end = " ")
 
-    for an_move in possible_moves:
+    for an_move in an_moves:
         print(an_move, end = " ")
     print()
 

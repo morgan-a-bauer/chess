@@ -26,9 +26,6 @@ class Pawn(BasePiece):
         row = self.space[0]
         col = self.space[1]
 
-        print(self.space)
-        print(self.direction)
-
         moves = []
         new_row = row + (1 * self.direction)
         moves.append((new_row, col))
