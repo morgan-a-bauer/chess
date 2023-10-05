@@ -23,18 +23,18 @@ class Pawn(BasePiece):
 
     def valid_moves(self) -> list:
         """Returns a list of all valid moves a selected pawn can make"""
-        row = self.space[1]
-        col = self.space[0]
+        row = self.space[0]
+        col = self.space[1]
 
         print(self.space)
         print(self.direction)
 
         moves = []
         new_row = row + (1 * self.direction)
-        moves.append((col, new_row))
+        moves.append((new_row, col))
 
         if not self.has_moved:
             new_row = row + (2 * self.direction)
-            moves.append((col, new_row))
+            moves.append((new_row, col))
 
         return moves

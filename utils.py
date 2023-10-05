@@ -23,15 +23,15 @@ def algebraic_to_grid(space: str) -> tuple:
     Inputs:
         space -- a string representing a space on the chess board
     """
-    x_coord = ord(space[0].lower())
-    y_coord = int(space[1])
-    if (x_coord < 97) or (x_coord > 104):
+    col = ord(space[0].lower())
+    row = int(space[1])
+    if (col < 97) or (col > 104):
         return False
-    if (y_coord < 1) or (y_coord > 8):
+    if (row < 1) or (row > 8):
         return False
-    x_coord -= 97
-    y_coord -= 1
-    return (x_coord, y_coord)
+    col -= 97
+    row -= 1
+    return (row, col)
 
 
 def grid_to_algebraic(coords: tuple) -> str:
@@ -41,11 +41,11 @@ def grid_to_algebraic(coords: tuple) -> str:
     Input:
         coords -- a tuple containing the coordinates of a Piece on a Board
     """
-    row = coords[1]
-    col = coords[0]
-    row_an = chr(row + 97)
-    col_an = str(col)
-    return row_an + col_an
+    row = coords[0]
+    col = coords[1]
+    row_an = str(row + 1)
+    col_an = chr(col + 97)
+    return col_an + row_an
 
 
 def is_valid_an(space: str) -> bool:
@@ -60,11 +60,11 @@ def is_valid_an(space: str) -> bool:
         return False
     if len(space) != 2:
         return False
-    row = space[1]
-    col = space[0]
-    if row not in '12345678':
+    row = space[0]
+    col = space[1]
+    if (row not in 'abcdefgh') and (row not in 'ABCDEFGH'):
         return False
-    if (col not in 'abcdefgh') and (col not in 'ABCDEFGH'):
+    if col not in '12345678':
         return False
     return True
 
@@ -111,7 +111,7 @@ def generate_pawns(board: Board, player: Player, row: int) -> None:
     """
     for col in range(8):
         new_pawn = Pawn((row, col), player.color)
-        board.update_state(new_pawn)
+        board.place_piece(new_pawn, row, col)
         player.gain_piece(new_pawn)
 
 
@@ -126,7 +126,7 @@ def generate_rooks(board: Board, player: Player, row: int) -> None:
     """
     for col in (0, 7):
         rook = Rook((row, col), player.color)
-        board.update_state(rook)
+        board.place_piece(rook, row, col)
         player.gain_piece(rook)
 
 
@@ -141,7 +141,7 @@ def generate_knights(board: Board, player: Player, row: int) -> None:
     """
     for col in (1, 6):
         new_knight = Knight((row, col), player.color)
-        board.update_state(new_knight)
+        board.place_piece(new_knight, row, col)
         player.gain_piece(new_knight)
 
 
@@ -156,7 +156,7 @@ def generate_bishops(board: Board, player: Player, row: int) -> None:
     """
     for col in (2, 5):
         new_bishop = Bishop((row, col), player.color)
-        board.update_state(new_bishop)
+        board.place_piece(new_bishop, row, col)
         player.gain_piece(new_bishop)
 
 
@@ -171,7 +171,7 @@ def generate_queen(board: Board, player: Player, row: int) -> None:
     """
     col = 3
     new_queen = Queen((row, col), player.color)
-    board.update_state(new_queen)
+    board.place_piece(new_queen, row, col)
     player.gain_piece(new_queen)
 
 
@@ -186,7 +186,7 @@ def generate_king(board: Board, player: Player, row: int) -> None:
     """
     col = 4
     new_king = King((row, col), player.color)
-    board.update_state(new_king)
+    board.place_piece(new_king, row, col)
     player.gain_piece(new_king)
 
 
@@ -219,7 +219,7 @@ def game_over() -> bool:
     return False
 
 
-def start_space(board: Board, player: Player) -> BasePiece:
+def start_space(board: Board, player: Player) -> tuple:
     """
     Asks the user for the space containing the piece they would like to move
     """
@@ -234,8 +234,8 @@ def start_space(board: Board, player: Player) -> BasePiece:
             if not is_valid_an(start_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
             grid_coords = algebraic_to_grid(start_an)
-            row = grid_coords[1]
-            col = grid_coords[0]
+            row = grid_coords[0]
+            col = grid_coords[1]
             if board.state[row][col] == 0:
                 raise chess_errors.NoPieceError("There is no piece on this space,")
             if not is_players_piece(player.color, row, col, board):
@@ -245,7 +245,7 @@ def start_space(board: Board, player: Player) -> BasePiece:
                 confirm = player_input.confirm_start_an()
             if confirm == 'N':
                 continue
-            return board.state[row][col]
+            return (row, col)
         except chess_errors.ANError as err:
             print(str(err) + " please try again.")
         except chess_errors.NoPieceError as err:
@@ -254,7 +254,7 @@ def start_space(board: Board, player: Player) -> BasePiece:
             print(str(err) + " please try again.")
 
 
-def new_space(board: Board, player: Player) -> BasePiece:
+def new_space(board: Board, player: Player) -> tuple:
     """
     Asks the user for the space the would like to move a piece to
     """
@@ -265,18 +265,18 @@ def new_space(board: Board, player: Player) -> BasePiece:
     valid_an = False
     while not valid_an:
         try:
-            new_an = player_input.start_space_an()
+            new_an = player_input.new_space_an()
             if not is_valid_an(new_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
             grid_coords = algebraic_to_grid(new_an)
-            row = grid_coords[1]
-            col = grid_coords[0]
+            row = grid_coords[0]
+            col = grid_coords[1]
             confirm = ''
             while confirm not in ('Y', 'N'):
                 confirm = player_input.confirm_new_an()
             if confirm == 'N':
                 continue
-            return board.state[row][col]
+            return (row, col)
         except chess_errors.ANError as err:
             print(str(err) + " please try again.")
 
@@ -293,7 +293,11 @@ def move(board: Board, player: Player) -> None:
     """
     print(f"{player.name}'s turn")
 
-    piece_to_move = start_space(board, player)
+    start_coords = start_space(board, player)
+    print(start_coords)
+    start_row = start_coords[0]
+    start_col = start_coords[1]
+    piece_to_move = board.state[start_row][start_col]
     possible_moves = piece_to_move.valid_moves()
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
     print("Your possible moves are:", end = " ")
@@ -302,7 +306,9 @@ def move(board: Board, player: Player) -> None:
         print(an_move, end = " ")
     print()
 
-    move_to_space = new_space(board, player)
+    new_row, new_col = new_space(board, player)
+    board.state[new_row][new_col] = piece_to_move
+    board.state[start_row][start_col] = 0
 
 
 if __name__ == "__main__":
@@ -311,3 +317,6 @@ if __name__ == "__main__":
         user_input = input("Please enter the name of a space on a chess board: ")
         grid_coords = algebraic_to_grid(user_input)
         print("Your coordinates are: ", grid_coords)
+        algeb_coords = grid_to_algebraic(grid_coords)
+        print("Your algebraic coordinates are: ", algeb_coords)
+    print('=' * 100)

@@ -16,17 +16,28 @@ class Board:
         return self._state
 
 
-    def update_state(self, piece: BasePiece) -> None:
+    def remove_piece(self, piece: BasePiece) -> None:
         """
-        Updates the state of the game board whenever a piece is added,
-        removed, or moves position
+        Sets the space on the board where a piece used to be equal to 0 when
+        the piece is moved or captured
+        Input:
+            piece -- the piece object that is being removed
+        """
+        row = piece.space[0]
+        col = piece.space[1]
+        self._state[row][col] = 0
+
+
+    def place_piece(self, piece: BasePiece, new_row: int, new_col: int) -> None:
+        """
+        Updates the state of the game board whenever a piece is added or moved
         Inputs:
             piece -- the piece object whose state is modified
+            new_row -- the row the piece is being moved to
+            new_col -- the column the piece is being moved to
         """
-        coord_pair = piece.space
-        row = coord_pair[0]
-        col = coord_pair[1]
-        self._state[row][col] = piece
+        self._state[new_row][new_col] = piece
+        piece.space = (new_row, new_col)
 
 
     def __str__(self):
