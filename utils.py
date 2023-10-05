@@ -241,7 +241,7 @@ def start_space(board: Board, player: Player) -> tuple:
             if not is_players_piece(player.color, row, col, board):
                 raise chess_errors.OppPieceError("This is not your piece,")
             confirm = ''
-            while confirm not in ('Y', 'N'):
+            while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
                 confirm = player_input.confirm_start_an()
             if confirm == 'N':
                 continue
@@ -272,7 +272,7 @@ def new_space(board: Board, player: Player) -> tuple:
             row = grid_coords[0]
             col = grid_coords[1]
             confirm = ''
-            while confirm not in ('Y', 'N'):
+            while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
                 confirm = player_input.confirm_new_an()
             if confirm == 'N':
                 continue

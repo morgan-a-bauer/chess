@@ -25,6 +25,7 @@ def main():
         print(board)
         curr_player = players[player_index]
         utils.move(board, curr_player)
+        player_index = int(not player_index)
 
 
 if __name__ == "__main__":
