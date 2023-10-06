@@ -77,7 +77,8 @@ def is_players_piece(player_color: str, row: int, col: int, board: Board) -> boo
         player_color -- well...
         row -- the row of the current Board state containing the piece
         col -- the column of the current Board state containing the piece
-        board -- the active Board object"""
+        board -- the active Board object
+    """
     space = board.state[row][col]
     if space == 0:
         return False
@@ -268,6 +269,8 @@ def new_space(board: Board, player: Player) -> tuple:
             new_an = player_input.new_space_an()
             if not is_valid_an(new_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
+            if is_players_piece(player.color, row, col, board):
+                raise chess_errors.OppPieceError("This is not your piece,")
             grid_coords = algebraic_to_grid(new_an)
             row = grid_coords[0]
             col = grid_coords[1]
@@ -298,7 +301,7 @@ def move(board: Board, player: Player) -> None:
     start_col = start_coords[1]
     piece_to_move = board.state[start_row][start_col]
     possible_moves = piece_to_move.valid_moves()
-    an_moves = [grid_to_algebraic(move) for move in possible_moves]
+    an_moves = [grid_to_algebraic(move) for move in possible_moves if not is_players_piece(player.color, move[0], move[1], board)]
     print("Your possible moves are:", end = " ")
 
     for an_move in an_moves:
