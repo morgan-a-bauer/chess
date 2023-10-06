@@ -18,7 +18,7 @@ class Pawn(BasePiece):
 
     @has_moved.setter
     def has_moved(self, new_state: bool) -> None:
-        self._has_moved
+        self._has_moved = new_state
 
 
     def valid_moves(self) -> list:

@@ -306,8 +306,11 @@ def move(board: Board, player: Player) -> None:
     print()
 
     new_row, new_col = new_space(board, player)
-    board.state[new_row][new_col] = piece_to_move
-    board.state[start_row][start_col] = 0
+    piece = board.state[start_row][start_col]
+    board.remove_piece(piece)
+    board.place_piece(piece, new_row, new_col)
+    if type(piece) == Pawn:
+            piece.has_moved = True
 
 
 if __name__ == "__main__":
