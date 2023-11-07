@@ -21,8 +21,8 @@ class Knight(BasePiece):
         new_cols = [(col + 1, col - 1), (col + 2, col - 2)]
         for i in range(2):
             for new_col in new_cols[i]:
-                if new_col in range(9):
+                if new_col in range(8): # was 9, should be 8, right?
                     for new_row in new_rows[i]:
-                        if new_row in range(9):
+                        if new_row in range(8):
                             moves.append((new_row, new_col))
         return moves
