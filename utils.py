@@ -267,13 +267,14 @@ def new_space(board: Board, player: Player) -> tuple:
     while not valid_an:
         try:
             new_an = player_input.new_space_an()
+            
             if not is_valid_an(new_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
-            if is_players_piece(player.color, row, col, board):
-                raise chess_errors.OppPieceError("This is not your piece,")
             grid_coords = algebraic_to_grid(new_an)
             row = grid_coords[0]
             col = grid_coords[1]
+            if is_players_piece(player.color, row, col, board):
+                raise chess_errors.OppPieceError("This is not your piece,")
             confirm = ''
             while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
                 confirm = player_input.confirm_new_an()
@@ -309,10 +310,10 @@ def move(board: Board, player: Player) -> None:
     print()
 
     new_row, new_col = new_space(board, player)
-    board.remove_piece(piece)
-    board.place_piece(piece, new_row, new_col)
-    if type(piece) == Pawn:
-            piece.has_moved = True
+    board.remove_piece(piece_to_move)
+    board.place_piece(piece_to_move, new_row, new_col)
+    if type(piece_to_move) == Pawn:
+            piece_to_move.has_moved = True
 
 
 if __name__ == "__main__":

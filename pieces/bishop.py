@@ -12,7 +12,7 @@ class Bishop(BasePiece):
 
 
     def valid_moves(self) -> list:
-        """Returns a list of all valid moves a selected pawn can make"""
+        """Returns a list of all valid moves a selected bishop can make"""
         row = self.space[0]
         col = self.space[1]
 
