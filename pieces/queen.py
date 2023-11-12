@@ -12,7 +12,7 @@ class Queen(BasePiece):
 
 
     def valid_moves(self):
-        """Returns a list of all valid moves a selected bishop can make"""
+        """Returns a list of all valid moves a selected queen can make"""
         row = self.space[0]
         col = self.space[1]
 
