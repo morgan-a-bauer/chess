@@ -11,7 +11,7 @@ class Queen(BasePiece):
         BasePiece.__init__(self, space, color, 'q')
 
 
-    def valid_moves(self):
+    def valid_moves(self, board):
         """Returns a list of all valid moves a selected queen can make"""
         row = self.space[0]
         col = self.space[1]
