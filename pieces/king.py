@@ -11,7 +11,7 @@ class King(BasePiece):
         BasePiece.__init__(self, space, color, 'k')
 
 
-    def valid_moves(self):
+    def valid_moves(self, board):
         """Returns a list of all valid moves a selected king can make"""
         row = self.space[0]
         col = self.space[1]

@@ -11,7 +11,7 @@ class Knight(BasePiece):
         BasePiece.__init__(self, space, color, 'n')
 
 
-    def valid_moves(self) -> list:
+    def valid_moves(self, board) -> list:
         """Returns a list of all valid moves a selected knight can make"""
         row = self.space[0]
         col = self.space[1]

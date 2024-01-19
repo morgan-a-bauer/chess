@@ -301,8 +301,8 @@ def move(board: Board, player: Player) -> None:
     start_row = start_coords[0]
     start_col = start_coords[1]
     piece_to_move = board.state[start_row][start_col]
-    possible_moves = piece_to_move.valid_moves()
-    an_moves = [grid_to_algebraic(move) for move in possible_moves if not is_players_piece(player.color, move[0], move[1], board)]
+    possible_moves = piece_to_move.valid_moves(board.state)
+    an_moves = [grid_to_algebraic(move) for move in possible_moves]
     print("Your possible moves are:", end = " ")
 
     for an_move in an_moves:

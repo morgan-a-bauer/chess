@@ -21,19 +21,19 @@ class Pawn(BasePiece):
         self._has_moved = new_state
 
 
-    def valid_moves(self) -> list:
+    def valid_moves(self, board) -> list:
         """Returns a list of all valid moves a selected pawn can make"""
         row = self.space[0]
         col = self.space[1]
 
         moves = []
         new_row = row + (1 * self.direction)
-        if new_row in range(8):
+        if new_row in range(8) and board[new_row][col] == 0:
             moves.append((new_row, col))
 
         if not self.has_moved:
             new_row = row + (2 * self.direction)
-            if new_row in range(8):
+            if new_row in range(8) and board[new_row][col] == 0:
                 moves.append((new_row, col))
 
         return moves

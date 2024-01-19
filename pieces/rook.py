@@ -10,7 +10,7 @@ class Rook(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(self, space, color, 'r')
 
-    def valid_moves(self):
+    def valid_moves(self, board):
         """Returns a list of all valid moves a selected bishop can make"""
         row = self.space[0]
         col = self.space[1]
