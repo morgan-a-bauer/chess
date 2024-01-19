@@ -17,11 +17,16 @@ class Bishop(BasePiece):
         col = self.space[1]
 
         moves = []
-        for new_col in range(8):
-            if new_col != col:
-                diff = abs(new_col - col)
-                for gap in (diff, -diff):
-                    new_row = row + gap
-                    if new_row in range(8):
-                        moves.append((new_row , new_col))
+        directions = ((1, 1), (-1, 1), (-1, -1), (1, -1))
+        for dir in directions:
+            row_dir = dir[0]
+            col_dir = dir[1]
+            new_row = row + row_dir
+            new_col = col + col_dir
+            while new_row in range(8) and new_col in range(8):
+                if board[new_row][new_col] != 0:
+                    break
+                moves.append((new_row, new_col))
+                new_row += row_dir
+                new_col += col_dir
         return moves
