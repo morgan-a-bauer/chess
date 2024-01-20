@@ -15,6 +15,19 @@ class Rook(BasePiece):
         row = self.space[0]
         col = self.space[1]
 
-        horizontal_moves = [(row, new_col) for new_col in range(8) if new_col != col]
-        vertical_moves =[(new_row, col) for new_row in range(8) if new_row != row]
+        horizontal_moves = []
+        for dir in (-1, 1):
+            new_col = col + dir
+            while new_col in range(8) and board[row][new_col] == 0:
+                horizontal_moves.append((row, new_col))
+                new_col += dir
+
+        vertical_moves = []
+        for dir in (-1, 1):
+            new_row = row + dir
+            while new_row in range(8) and board[new_row][col] == 0:
+                vertical_moves.append((new_row, col))
+                new_row += dir
+        """horizontal_moves = [(row, new_col) for new_col in range(8) if new_col != col]
+        vertical_moves =[(new_row, col) for new_row in range(8) if new_row != row]"""
         return horizontal_moves + vertical_moves
