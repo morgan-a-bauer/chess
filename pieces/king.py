@@ -19,12 +19,14 @@ class King(BasePiece):
         moves = []
         for i in (-1, 1):
             new_row = row + i
-            if new_row in range(8): moves.append((new_row, col))
+            if new_row in range(8) and board[new_row][col] == 0:
+                moves.append((new_row, col))
             new_col = col + i
-            if new_col in range(8): moves.append((row, new_col))
-            if new_row in range(8) and new_col in range(8):
+            if new_col in range(8) and board[row][new_col] == 0:
+                moves.append((row, new_col))
+            if new_row in range(8) and new_col in range(8) and board[new_row][new_col] == 0:
                 moves.append((new_row, new_col))
             new_col = col - i
-            if new_row in range(8) and new_col in range(8):
+            if new_row in range(8) and new_col in range(8) and board[new_row][new_col] == 0:
                 moves.append((new_row, new_col))
         return moves
