@@ -23,6 +23,6 @@ class Knight(BasePiece):
             for new_col in new_cols[i]:
                 if new_col in range(8): # was 9, should be 8, right?
                     for new_row in new_rows[i]:
-                        if new_row in range(8):
+                        if new_row in range(8) and board[new_row][new_col] == 0:
                             moves.append((new_row, new_col))
         return moves
