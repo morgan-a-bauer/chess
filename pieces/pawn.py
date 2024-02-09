@@ -28,11 +28,13 @@ class Pawn(BasePiece):
 
         moves = []
         new_row = row + (1 * self.direction)
+
         if new_row in range(8) and board[new_row][col] == 0:
             moves.append((new_row, col))
 
         if not self.has_moved:
             new_row = row + (2 * self.direction)
+
             if new_row in range(8) and board[new_row][col] == 0:
                 moves.append((new_row, col))
 

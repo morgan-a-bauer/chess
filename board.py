@@ -53,6 +53,7 @@ class Board:
             printed_board.append(''.join(new_row))
 
         printed_board.append('  abcdefgh  ')
+
         return '\n'.join(printed_board)
 
 

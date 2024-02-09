@@ -25,12 +25,16 @@ def algebraic_to_grid(space: str) -> tuple:
     """
     col = ord(space[0].lower())
     row = int(space[1])
+
     if (col < 97) or (col > 104):
         return False
+
     if (row < 1) or (row > 8):
         return False
+
     col -= 97
     row -= 1
+
     return (row, col)
 
 
@@ -43,8 +47,10 @@ def grid_to_algebraic(coords: tuple) -> str:
     """
     row = coords[0]
     col = coords[1]
+
     row_an = str(row + 1)
     col_an = chr(col + 97)
+
     return col_an + row_an
 
 
@@ -58,14 +64,19 @@ def is_valid_an(space: str) -> bool:
     """
     if space == None:
         return False
+
     if len(space) != 2:
         return False
+
     row = space[0]
     col = space[1]
+
     if (row not in 'abcdefgh') and (row not in 'ABCDEFGH'):
         return False
+
     if col not in '12345678':
         return False
+
     return True
 
 
@@ -80,11 +91,15 @@ def is_players_piece(player_color: str, row: int, col: int, board: Board) -> boo
         board -- the active Board object
     """
     space = board.state[row][col]
+
     if space == 0:
         return False
-    piece_color = space.color # The color of the piece at space
+
+    piece_color = space.color  # The color of the piece at space
+
     if player_color == piece_color:
         return True
+
     return False
 
 
@@ -94,11 +109,14 @@ def get_players() -> list:
     white and black and returns the resulting list
     """
     players = []
+
     for player_num in range(1, 3):
         new_name = player_input.name(player_num)
         new_player = Player(new_name)
         players.append(new_player)
+
     random.shuffle(players)
+
     return players
 
 def generate_pawns(board: Board, player: Player, row: int) -> None:
@@ -212,11 +230,11 @@ def setup_board(new_board: Board, player_lyst: list) -> None:
 
 
 def game_over() -> bool:
-    #TODO
     """
     Evaluates the state of the board and returns a boolean value reflecting
     if the game is over or not
     """
+    #TODO: Implement end condition
     return False
 
 
@@ -229,16 +247,21 @@ def start_space(board: Board, player: Player) -> tuple:
     row = -1
     col = -1
     valid_an = False
+
     while not valid_an:
         try:
             start_an = player_input.start_space_an()
+
             if not is_valid_an(start_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
+
             grid_coords = algebraic_to_grid(start_an)
             row = grid_coords[0]
             col = grid_coords[1]
+
             if board.state[row][col] == 0:
                 raise chess_errors.NoPieceError("There is no piece on this space,")
+
             if not is_players_piece(player.color, row, col, board):
                 raise chess_errors.OppPieceError("This is not your piece,")
             confirm = ''
@@ -267,7 +290,7 @@ def new_space(board: Board, player: Player) -> tuple:
     while not valid_an:
         try:
             new_an = player_input.new_space_an()
-            
+
             if not is_valid_an(new_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
             grid_coords = algebraic_to_grid(new_an)

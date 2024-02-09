@@ -23,10 +23,13 @@ class Bishop(BasePiece):
             col_dir = dir[1]
             new_row = row + row_dir
             new_col = col + col_dir
+
             while new_row in range(8) and new_col in range(8):
                 if board[new_row][new_col] != 0:
                     break
+
                 moves.append((new_row, new_col))
                 new_row += row_dir
                 new_col += col_dir
+
         return moves

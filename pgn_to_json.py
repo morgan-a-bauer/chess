@@ -19,6 +19,7 @@ for file in pgnList:
     with open(os.path.join(pgnLocation, file), 'r') as pgn:
         pgnContent = pgn.readlines()
         print(pgnContent[:50])
+
         for pgnLine in pgnContent[:20]:
             result = re.sub("[\[\]]", '', pgnLine).strip()
             print(result)
@@ -26,7 +27,7 @@ for file in pgnList:
             result[1] = result[1].strip('"')
             print(result)
             
-            # Create clause for empty lines and then actual game moves
+            # TODO: Create clause for empty lines and then actual game moves
         
         
         
