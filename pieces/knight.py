@@ -17,12 +17,16 @@ class Knight(BasePiece):
         col = self.space[1]
 
         moves = []
+
         new_rows = [(row + 2, row - 2), (row + 1, row - 1)]
         new_cols = [(col + 1, col - 1), (col + 2, col - 2)]
+
         for i in range(2):
             for new_col in new_cols[i]:
-                if new_col in range(8): # was 9, should be 8, right?
+                if new_col in range(8):
+
                     for new_row in new_rows[i]:
                         if new_row in range(8) and board[new_row][new_col] == 0:
                             moves.append((new_row, new_col))
+
         return moves
