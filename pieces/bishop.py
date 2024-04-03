@@ -8,11 +8,16 @@ from pieces.base_piece import BasePiece
 
 class Bishop(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'b')
+        BasePiece.__init__(self, space, color, 'b', 3)
 
 
     def valid_moves(self, board) -> list:
-        """Returns a list of all valid moves a selected bishop can make"""
+        """Returns a list of all valid moves a selected bishop can make
+
+        Input:
+        board -- a Board object representing the active game board
+
+        """
         row = self.space[0]
         col = self.space[1]
 
@@ -25,7 +30,7 @@ class Bishop(BasePiece):
             new_col = col + col_dir
 
             while new_row in range(8) and new_col in range(8):
-                if board[new_row][new_col] != 0:
+                if board.state[new_row][new_col] != 0:
                     break
 
                 moves.append((new_row, new_col))
