@@ -7,8 +7,8 @@ queen movement
 from pieces.base_piece import BasePiece
 
 class Queen(BasePiece):
-    def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'q', 9)
+    def __init__(self, space: tuple, color: str, player) -> None:
+        BasePiece.__init__(self, space, color, 'q', 9, player)
         self.__valid_moves = []
 
     @property
@@ -16,7 +16,11 @@ class Queen(BasePiece):
         return self.__valid_moves
 
 
-    def set_valid_moves(self, board):
+    def toss_move(self, move: tuple) -> None:
+        self.__valid_moves.remove(move)
+
+
+    def set_valid_moves(self, board) -> None:
         """Returns a list of all valid moves a selected queen can make
 
         Input:
@@ -73,4 +77,6 @@ class Queen(BasePiece):
                board.state[new_row][col].color != self.color:
                 vertical_moves.append((new_row, col))
 
-        self.__valid_moves = horizontal_moves + vertical_moves + diag_moves
+        moves = horizontal_moves + vertical_moves + diag_moves
+
+        self.__valid_moves = moves

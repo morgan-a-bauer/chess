@@ -141,7 +141,7 @@ def generate_pawns(board: Board, player: Player, row: int) -> None:
 
     """
     for col in range(8):
-        new_pawn = Pawn((row, col), player.color)
+        new_pawn = Pawn((row, col), player.color, player)
         board.place_piece(new_pawn, row, col)
         player.gain_piece(new_pawn)
 
@@ -158,7 +158,7 @@ def generate_rooks(board: Board, player: Player, row: int) -> None:
 
     """
     for col in (0, 7):
-        rook = Rook((row, col), player.color)
+        rook = Rook((row, col), player.color, player)
         board.place_piece(rook, row, col)
         player.gain_piece(rook)
 
@@ -175,7 +175,7 @@ def generate_knights(board: Board, player: Player, row: int) -> None:
 
     """
     for col in (1, 6):
-        new_knight = Knight((row, col), player.color)
+        new_knight = Knight((row, col), player.color, player)
         board.place_piece(new_knight, row, col)
         player.gain_piece(new_knight)
 
@@ -192,7 +192,7 @@ def generate_bishops(board: Board, player: Player, row: int) -> None:
 
     """
     for col in (2, 5):
-        new_bishop = Bishop((row, col), player.color)
+        new_bishop = Bishop((row, col), player.color, player)
         board.place_piece(new_bishop, row, col)
         player.gain_piece(new_bishop)
 
@@ -209,7 +209,7 @@ def generate_queen(board: Board, player: Player, row: int) -> None:
 
     """
     col = 3
-    new_queen = Queen((row, col), player.color)
+    new_queen = Queen((row, col), player.color, player)
     board.place_piece(new_queen, row, col)
     player.gain_piece(new_queen)
 
@@ -226,7 +226,7 @@ def generate_king(board: Board, player: Player, row: int) -> None:
 
     """
     col = 4
-    new_king = King((row, col), player.color)
+    new_king = King((row, col), player.color, player)
     board.place_piece(new_king, row, col)
     player.gain_piece(new_king)
     player.king = new_king
@@ -332,7 +332,7 @@ def start_space(board: Board, player: Player) -> tuple:
             print(str(err) + " please try again.")
 
 
-def new_space(board: Board, player: Player) -> tuple:
+def new_space(board: Board, player: Player, piece: BasePiece) -> tuple:
     """
     Asks the user for the space the would like to move a piece to
 
@@ -366,7 +366,7 @@ def new_space(board: Board, player: Player) -> tuple:
                 raise chess_errors.OppPieceError("This is your piece,")
 
             # If the player tries to move a piece to an invalid space
-            if (row, col) not in board.state[row][col].valid_moves:
+            if (row, col) not in piece.valid_moves:
                 raise chess_errors.NotValidMoveError("The selected piece can" +\
                                                      " not move to this space,")
 
@@ -426,10 +426,11 @@ def move(board: Board, player: Player, opponent: Player) -> None:
 
     player.get_valid_moves(board)
 
+    for piece in player.uncaptured_pieces:
+        piece.remove_in_check_moves(board, opponent)
+
     # Gather important info and get valid moves
-    start_coords = start_space(board, player)
-    start_row = start_coords[0]
-    start_col = start_coords[1]
+    start_row, start_col = start_space(board, player)
     piece_to_move = board.state[start_row][start_col]
     possible_moves = piece_to_move.valid_moves
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
@@ -441,7 +442,7 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     print()
 
     # Move the piece
-    new_row, new_col = new_space(board, player)
+    new_row, new_col = new_space(board, player, piece_to_move)
     board.remove_piece(piece_to_move)
     board.place_piece(piece_to_move, new_row, new_col)
 
@@ -452,14 +453,6 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     # Handles castling if applicable
     if type(piece_to_move) == King and abs(start_col - new_col) == 2:
         castle(board, start_col, new_col, new_row)
-
-    # Check to see if the piece puts the opponent's king in check:
-    for space in piece_to_move.valid_moves:
-        attacking_row = space[0]
-        attacking_col = space[1]
-        if type(board.state[attacking_row][attacking_col]) == King:
-            piece_to_move.checking_king = True
-            break
 
 
 if __name__ == "__main__":

@@ -7,8 +7,8 @@ rook movement
 from pieces.base_piece import BasePiece
 
 class Rook(BasePiece):
-    def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'r', 5)
+    def __init__(self, space: tuple, color: str, player) -> None:
+        BasePiece.__init__(self, space, color, 'r', 5, player)
         self.__has_moved = False
         self.__valid_moves = []
 
@@ -22,12 +22,17 @@ class Rook(BasePiece):
     def has_moved(self, new_state: bool) -> None:
         self.__has_moved = new_state
 
+
     @property
     def valid_moves(self) -> list:
         return self.__valid_moves
 
 
-    def set_valid_moves(self, board):
+    def toss_move(self, move: tuple) -> None:
+        self.__valid_moves.remove(move)
+
+
+    def set_valid_moves(self, board) -> None:
         """Returns a list of all valid moves a selected bishop can make
 
         Input:
@@ -63,4 +68,6 @@ class Rook(BasePiece):
                board.state[new_row][col].color != self.color:
                 vertical_moves.append((new_row, col))
 
-        self.__valid_moves =horizontal_moves + vertical_moves
+        moves = horizontal_moves + vertical_moves
+
+        self.__valid_moves = moves

@@ -7,8 +7,8 @@ knight movement
 from pieces.base_piece import BasePiece
 
 class Knight(BasePiece):
-    def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'n', 3)
+    def __init__(self, space: tuple, color: str, player) -> None:
+        BasePiece.__init__(self, space, color, 'n', 3, player)
         self.__valid_moves = []
 
     @property
@@ -16,7 +16,11 @@ class Knight(BasePiece):
         return self.__valid_moves
 
 
-    def set_valid_moves(self, board) -> list:
+    def toss_move(self, move: tuple) -> None:
+        self.__valid_moves.remove(move)
+
+
+    def set_valid_moves(self, board) -> None:
         """Returns a list of all valid moves a selected knight can make
 
         Input:
