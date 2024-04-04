@@ -33,6 +33,9 @@ class Queen(BasePiece):
             while new_row in range(8) and new_col in range(8):
 
                 if board.state[new_row][new_col] != 0:
+
+                    if board.state[new_row][new_col].color != self.color:
+                        diag_moves.append((new_row, new_col))
                     break
 
                 diag_moves.append((new_row, new_col))
@@ -48,6 +51,10 @@ class Queen(BasePiece):
                 horizontal_moves.append((row, new_col))
                 new_col += dir
 
+            if new_col in range(8) and board.state[row][new_col] != 0 and\
+               board.state[row][new_col].color != self.color:
+                horizontal_moves.append((row, new_col))
+
         vertical_moves = []
 
         for dir in (-1, 1):
@@ -56,5 +63,9 @@ class Queen(BasePiece):
             while new_row in range(8) and board.state[new_row][col] == 0:
                 vertical_moves.append((new_row, col))
                 new_row += dir
+
+            if new_row in range(8) and board.state[new_row][col] != 0 and\
+               board.state[new_row][col].color != self.color:
+                vertical_moves.append((new_row, col))
 
         return horizontal_moves + vertical_moves + diag_moves

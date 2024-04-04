@@ -32,7 +32,8 @@ class Knight(BasePiece):
 
                     for new_row in new_rows[i]:
                         if new_row in range(8) and\
-                           board.state[new_row][new_col] == 0:
+                           (board.state[new_row][new_col] == 0 or\
+                            board.state[new_row][new_col].color != self.color):
                             moves.append((new_row, new_col))
 
         return moves
