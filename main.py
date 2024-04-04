@@ -26,7 +26,8 @@ def main():
     while not utils.game_over():
         print(board)
         curr_player = players[player_index]
-        utils.move(board, curr_player)
+        opp_player = players[int(not player_index)]
+        utils.move(board, curr_player, opp_player)
         player_index = int(not player_index)  # switch active player
 
 

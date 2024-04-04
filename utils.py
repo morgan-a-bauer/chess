@@ -20,8 +20,10 @@ def algebraic_to_grid(space: str) -> tuple:
     """
     Converts a space in algebraic notation (e.g. B5) to grid notation for
     indexing the board
-    Inputs:
-        space -- a string representing a space on the chess board
+
+    Input:
+    space -- a string representing a space on the chess board
+
     """
     col = ord(space[0].lower())
     row = int(space[1])
@@ -42,8 +44,10 @@ def grid_to_algebraic(coords: tuple) -> str:
     """
     Converts an ordered pair of grid coordinates (e.g. (4, 5)) to algebraic
     notation to look pretty
+
     Input:
-        coords -- a tuple containing the coordinates of a Piece on a Board
+    coords -- a tuple containing the coordinates of a Piece on a Board
+
     """
     row = coords[0]
     col = coords[1]
@@ -59,8 +63,10 @@ def is_valid_an(space: str) -> bool:
     Determines if a space entered by the user is a valid space on the board
     represented in algebraic notation. Returns True if the space given is valid,
     otherwise returns False
-    Inputs:
-        space -- A string representing a space on the chess board
+
+    Input:
+    space -- A string representing a space on the chess board
+
     """
     if space == None:
         return False
@@ -84,11 +90,13 @@ def is_players_piece(player_color: str, row: int, col: int, board: Board) -> boo
     """
     Determines if a piece is a player's piece by comparing the player's
     color with the piece's color
-    Inputs:
-        player_color -- well...
-        row -- the row of the current Board state containing the piece
-        col -- the column of the current Board state containing the piece
-        board -- the active Board object
+
+    Input:
+    player_color -- well...most likely white or black
+    row -- the row of the current Board state containing the piece
+    col -- the column of the current Board state containing the piece
+    board -- the active Board object
+
     """
     space = board.state[row][col]
 
@@ -107,6 +115,7 @@ def get_players() -> list:
     """
     Gets the names of both players, then shuffles them to randomly assign
     white and black and returns the resulting list
+
     """
     players = []
 
@@ -119,14 +128,17 @@ def get_players() -> list:
 
     return players
 
+
 def generate_pawns(board: Board, player: Player, row: int) -> None:
     """
     Creates 8 Pawn instances for a given player and places them on the board in
     the opening state
-    Inputs:
-        board -- a Board object
-        player -- a Player object
-        row -- the row number of the new pawn
+
+    Input:
+    board -- a Board object
+    player -- a Player object
+    row -- the row number of the new pawn
+
     """
     for col in range(8):
         new_pawn = Pawn((row, col), player.color)
@@ -138,10 +150,12 @@ def generate_rooks(board: Board, player: Player, row: int) -> None:
     """
     Creates 2 Rook instances for a given player and places them on the board in
     the opening state
-    Inputs:
-        board -- a Board object
-        player -- a Player object
-        row -- the row number of the new rook
+
+    Input:
+    board -- a Board object
+    player -- a Player object
+    row -- the row number of the new rook
+
     """
     for col in (0, 7):
         rook = Rook((row, col), player.color)
@@ -153,10 +167,12 @@ def generate_knights(board: Board, player: Player, row: int) -> None:
     """
     Creates 2 Knight instances for a given player and places them on the board
     in the opening state
-    Inputs:
-        board -- a Board object
-        player -- a Player object
-        row -- the row number of the new knight
+
+    Input:
+    board -- a Board object
+    player -- a Player object
+    row -- the row number of the new knight
+
     """
     for col in (1, 6):
         new_knight = Knight((row, col), player.color)
@@ -168,10 +184,12 @@ def generate_bishops(board: Board, player: Player, row: int) -> None:
     """
     Creates 2 Bishop instances for a given player and places them on the board
     in the opening state
-    Inputs:
-        board -- a Board object
-        player -- a Player object
-        row -- the row number of the new bishop
+
+    Input:
+    board -- a Board object
+    player -- a Player object
+    row -- the row number of the new bishop
+
     """
     for col in (2, 5):
         new_bishop = Bishop((row, col), player.color)
@@ -183,10 +201,12 @@ def generate_queen(board: Board, player: Player, row: int) -> None:
     """
     Creates a Queen instances for a given player and places it on the board in
     the opening state
-    Inputs:
-        board -- a Board object
-        player -- a Player object
-        row -- the row number of the new queen
+
+    Input:
+    board -- a Board object
+    player -- a Player object
+    row -- the row number of the new queen
+
     """
     col = 3
     new_queen = Queen((row, col), player.color)
@@ -198,24 +218,29 @@ def generate_king(board: Board, player: Player, row: int) -> None:
     """
     Creates a King instances for a given player and places it on the board in
     the opening state
-    Inputs:
-        board -- a Board object
-        player -- a Player object
-        row -- the row number of the new king
+
+    Input:
+    board -- a Board object
+    player -- a Player object
+    row -- the row number of the new king
+
     """
     col = 4
     new_king = King((row, col), player.color)
     board.place_piece(new_king, row, col)
     player.gain_piece(new_king)
+    player.king = new_king
 
 
 def setup_board(new_board: Board, player_lyst: list) -> None:
     """
     Calls functions to create new players and generate pieces for each player
-    playing.
-    Inputs:
-        new_board -- a Board object
-        player_lyst -- a list of player names
+    playing
+
+    Input:
+    new_board -- a Board object
+    player_lyst -- a list of player names
+
     """
     for new_color, row, new_player in zip(("white", "black"), (1, 6), (player_lyst)): #Should this be (6, 1)?
         new_player.color = new_color
@@ -233,6 +258,7 @@ def game_over() -> bool:
     """
     Evaluates the state of the board and returns a boolean value reflecting
     if the game is over or not
+
     """
     #TODO: Implement end condition
     return False
@@ -241,6 +267,11 @@ def game_over() -> bool:
 def start_space(board: Board, player: Player) -> tuple:
     """
     Asks the user for the space containing the piece they would like to move
+
+    Input:
+    board -- a Board object representing the active board
+    player -- the Player object corresponding to the active player
+
     """
     start_an = ''
     piece_color = ''
@@ -250,93 +281,185 @@ def start_space(board: Board, player: Player) -> tuple:
 
     while not valid_an:
         try:
+            # Get space from user
             start_an = player_input.start_space_an()
 
+            # If space is not recognized as valid algebraic notation
             if not is_valid_an(start_an):
                 raise chess_errors.ANError("This is not a valid space in algebraic notation,")
 
+            # Convert algebraic coordinates to grid coordinates
             grid_coords = algebraic_to_grid(start_an)
             row = grid_coords[0]
             col = grid_coords[1]
 
+            # If the selected space is empty
             if board.state[row][col] == 0:
                 raise chess_errors.NoPieceError("There is no piece on this space,")
 
+            # If the piece on the selected space belongs to the opponent
             if not is_players_piece(player.color, row, col, board):
                 raise chess_errors.OppPieceError("This is not your piece,")
+
+            # If the piece has no valid moves
+            if len(board.state[row][col].valid_moves) == 0:
+                raise chess_errors.NoMovesError("This piece is unable to move,")
+
+            # Ask the user to confirm piece selection
             confirm = ''
             while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
                 confirm = player_input.confirm_start_an()
+
+            # If the player wants to select a different piece
             if confirm == 'N':
                 continue
+
             return (row, col)
+
         except chess_errors.ANError as err:
             print(str(err) + " please try again.")
+
         except chess_errors.NoPieceError as err:
             print(str(err) + " please try again.")
+
         except chess_errors.OppPieceError as err:
+            print(str(err) + " please try again.")
+
+        except chess_errors.NoMovesError as err:
+            print(str(err) + " please try again.")
+
+        except chess_errors.InCheckError as err:
             print(str(err) + " please try again.")
 
 
 def new_space(board: Board, player: Player) -> tuple:
     """
     Asks the user for the space the would like to move a piece to
+
+    Input:
+    board -- a Board object representing the active board
+    player -- the Player object corresponding to the active player
+
     """
     new_an = ''
     piece_color = ''
     row = -1
     col = -1
     valid_an = False
+
     while not valid_an:
         try:
             new_an = player_input.new_space_an()
 
+            # If space is not recognized as valid algebraic notation
             if not is_valid_an(new_an):
-                raise chess_errors.ANError("This is not a valid space in algebraic notation,")
+                raise chess_errors.ANError("This is not a valid space in" +\
+                                           " algebraic notation,")
+
+            # Convert algebraic coordinates to grid coordinates
             grid_coords = algebraic_to_grid(new_an)
             row = grid_coords[0]
             col = grid_coords[1]
+
+            # If the space is occupied by the player's own piece
             if is_players_piece(player.color, row, col, board):
                 raise chess_errors.OppPieceError("This is your piece,")
+
+            # If the player tries to move a piece to an invalid space
+            if (row, col) not in board.state[row][col].valid_moves:
+                raise chess_errors.NotValidMoveError("The selected piece can" +\
+                                                     " not move to this space,")
+
+            # Ask the user to confirm piece selection
             confirm = ''
             while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
                 confirm = player_input.confirm_new_an()
+
+            # If the player wants to select a different piece
             if confirm == 'N':
                 continue
+
             return (row, col)
+
         except chess_errors.ANError as err:
             print(str(err) + " please try again.")
 
+        except chess_errors.OppPieceError as err:
+            print(str(err) + " please try again.")
+
+        except chess_errors.NotValidMoveError as err:
+            print(str(err) + " please try again.")
 
 
-def move(board: Board, player: Player) -> None:
+def castle(board: Board, start: int, end: int, row: int) -> None:
+    """
+    Identifies and moves the applicable rook when the king castles
+
+    Input:
+    board -- a Board object representing the active board
+    start -- the column number of the king before moving
+    end -- the column number of the king after moving
+
+    """
+    if end < 4:
+        rook = board.state[row][0]
+    else:
+        rook = board.state[row][-1]
+
+    board.remove_piece(rook)
+    board.place_piece(rook, row, (start + end) // 2)
+    rook.has_moved = True
+
+
+def move(board: Board, player: Player, opponent: Player) -> None:
     """
     Gets the space containing the active player's piece and the space the player
     would like to move that piece to and carries out that action if it is a
     valid move
+
     Input:
     board -- a Board object
     player -- the Player object corresponding to the active player
+
     """
     print(f"{player.name}'s turn")
 
+    player.get_valid_moves(board)
+
+    # Gather important info and get valid moves
     start_coords = start_space(board, player)
     start_row = start_coords[0]
     start_col = start_coords[1]
     piece_to_move = board.state[start_row][start_col]
-    possible_moves = piece_to_move.valid_moves(board.state)
+    possible_moves = piece_to_move.valid_moves
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
     print("Your possible moves are:", end = " ")
 
+    # Print valid moves
     for an_move in an_moves:
         print(an_move, end = " ")
     print()
 
+    # Move the piece
     new_row, new_col = new_space(board, player)
     board.remove_piece(piece_to_move)
     board.place_piece(piece_to_move, new_row, new_col)
-    if type(piece_to_move) == Pawn:
-            piece_to_move.has_moved = True
+
+    # Set has_move marker when appropriate
+    if type(piece_to_move) in [Pawn, Rook, King]:
+        piece_to_move.has_moved = True
+
+    # Handles castling if applicable
+    if type(piece_to_move) == King and abs(start_col - new_col) == 2:
+        castle(board, start_col, new_col, new_row)
+
+    # Check to see if the piece puts the opponent's king in check:
+    for space in piece_to_move.valid_moves:
+        attacking_row = space[0]
+        attacking_col = space[1]
+        if type(board.state[attacking_row][attacking_col]) == King:
+            piece_to_move.checking_king = True
+            break
 
 
 if __name__ == "__main__":

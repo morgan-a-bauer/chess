@@ -7,35 +7,52 @@ from pieces.base_piece import BasePiece
 
 class Pawn(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'p')
-        self._has_moved = False
+        BasePiece.__init__(self, space, color, 'p', 1)
+        self.__has_moved = False
+        self.__valid_moves = []
 
 
     @property
     def has_moved(self) -> bool:
-        return self._has_moved
+        return self.__has_moved
 
 
     @has_moved.setter
     def has_moved(self, new_state: bool) -> None:
-        self._has_moved = new_state
+        self.__has_moved = new_state
+
+    @property
+    def valid_moves(self) -> list:
+        return self.__valid_moves
 
 
-    def valid_moves(self, board) -> list:
-        """Returns a list of all valid moves a selected pawn can make"""
+    def set_valid_moves(self, board) -> list:
+        """Returns a list of all valid moves a selected pawn can make
+
+        Input:
+        board -- a Board object representing the active game board
+
+        """
         row = self.space[0]
         col = self.space[1]
 
         moves = []
         new_row = row + (1 * self.direction)
 
-        if new_row in range(8) and board[new_row][col] == 0:
+        if new_row in range(8) and board.state[new_row][col] == 0:
             moves.append((new_row, col))
+
+        for i in [-1, 1]:
+            new_col = col + i
+            if new_col in range(8) and\
+               board.state[new_row][new_col] != 0 and\
+               board.state[new_row][new_col].color != self.color:
+               moves.append((new_row, new_col))
 
         if not self.has_moved:
             new_row = row + (2 * self.direction)
 
-            if new_row in range(8) and board[new_row][col] == 0:
+            if new_row in range(8) and board.state[new_row][col] == 0:
                 moves.append((new_row, col))
 
-        return moves
+        self.__valid_moves = moves
