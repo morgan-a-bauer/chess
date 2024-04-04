@@ -1,4 +1,8 @@
 .venv
+
 __pycache__
 pieces/__pycache__
-lichess_database
+GuiFiles/__pycache__
+
+data/LichessData/*
+data/jsonObjects/*
