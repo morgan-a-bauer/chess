@@ -10,6 +10,7 @@ class King(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(self, space, color, 'k', 0)
         self.__has_moved = False
+        self.__valid_moves = []
         self.__checking_pieces = []
 
 
@@ -21,6 +22,11 @@ class King(BasePiece):
     @has_moved.setter
     def has_moved(self, new_state: bool) -> None:
         self.__has_moved = new_state
+
+
+    @property
+    def valid_moves(self) -> list:
+        return self.__valid_moves
 
 
     def castle_spaces(self, board) -> list:
@@ -63,7 +69,7 @@ class King(BasePiece):
         return castle_spaces
 
 
-    def valid_moves(self, board) -> list:
+    def set_valid_moves(self, board) -> list:
         """Returns a list of all valid moves a selected king can make
 
         Input:
@@ -85,24 +91,24 @@ class King(BasePiece):
 
             new_col = col + i
 
-            if new_col in range(8) and (board.state[new_row][col] == 0 or\
-                                        board.state[new_row][col].color !=\
+            if new_col in range(8) and (board.state[row][new_col] == 0 or\
+                                        board.state[row][new_col].color !=\
                                         self.color):
                 moves.append((row, new_col))
 
             if new_row in range(8) and new_col in range(8) and\
-               (board.state[new_row][col] == 0 or\
-                board.state[new_row][col].color != self.color):
+               (board.state[new_row][new_col] == 0 or\
+                board.state[new_row][new_col].color != self.color):
                 moves.append((new_row, new_col))
 
             new_col = col - i
 
             if new_row in range(8) and new_col in range(8) and\
-               (board.state[new_row][col] == 0 or\
-                board.state[new_row][col].color != self.color):
+               (board.state[new_row][new_col] == 0 or\
+                board.state[new_row][new_col].color != self.color):
                 moves.append((new_row, new_col))
 
-        return moves + self.castle_spaces(board)
+        self.__valid_moves = moves + self.castle_spaces(board)
 
 
     def in_check(self, opponent) -> bool:

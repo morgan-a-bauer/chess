@@ -23,6 +23,22 @@ class NoPieceError(Exception):
     pass
 
 
+class NoMovesError(Exception):
+    """Raised when a player selects one of their pieces to move that is not
+    capable of moving to any space on the board
+
+    """
+    pass
+
+
+class NotValidMoveError(Exception):
+    """Raised when a player tries to move a piece to a space it is not permitted
+    to move to
+
+    """
+    pass
+
+
 class OppPieceError(Exception):
     """Raised when a player selects an opponent's piece"""
     pass

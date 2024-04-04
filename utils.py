@@ -301,6 +301,10 @@ def start_space(board: Board, player: Player) -> tuple:
             if not is_players_piece(player.color, row, col, board):
                 raise chess_errors.OppPieceError("This is not your piece,")
 
+            # If the piece has no valid moves
+            if len(board.state[row][col].valid_moves) == 0:
+                raise chess_errors.NoMovesError("This piece is unable to move,")
+
             # Ask the user to confirm piece selection
             confirm = ''
             while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
@@ -321,6 +325,9 @@ def start_space(board: Board, player: Player) -> tuple:
         except chess_errors.OppPieceError as err:
             print(str(err) + " please try again.")
 
+        except chess_errors.NoMovesError as err:
+            print(str(err) + " please try again.")
+
         except chess_errors.InCheckError as err:
             print(str(err) + " please try again.")
 
@@ -339,24 +346,48 @@ def new_space(board: Board, player: Player) -> tuple:
     row = -1
     col = -1
     valid_an = False
+
     while not valid_an:
         try:
             new_an = player_input.new_space_an()
 
+            # If space is not recognized as valid algebraic notation
             if not is_valid_an(new_an):
-                raise chess_errors.ANError("This is not a valid space in algebraic notation,")
+                raise chess_errors.ANError("This is not a valid space in" +\
+                                           " algebraic notation,")
+
+            # Convert algebraic coordinates to grid coordinates
             grid_coords = algebraic_to_grid(new_an)
             row = grid_coords[0]
             col = grid_coords[1]
+
+            # If the space is occupied by the player's own piece
             if is_players_piece(player.color, row, col, board):
                 raise chess_errors.OppPieceError("This is your piece,")
+
+            # If the player tries to move a piece to an invalid space
+            if (row, col) not in board.state[row][col].valid_moves:
+                raise chess_errors.NotValidMoveError("The selected piece can" +\
+                                                     " not move to this space,")
+
+            # Ask the user to confirm piece selection
             confirm = ''
             while confirm not in ('Y', 'y', 'Yes', 'yes', 'N', 'n', 'No', 'no'):
                 confirm = player_input.confirm_new_an()
+
+            # If the player wants to select a different piece
             if confirm == 'N':
                 continue
+
             return (row, col)
+
         except chess_errors.ANError as err:
+            print(str(err) + " please try again.")
+
+        except chess_errors.OppPieceError as err:
+            print(str(err) + " please try again.")
+
+        except chess_errors.NotValidMoveError as err:
             print(str(err) + " please try again.")
 
 
@@ -393,12 +424,14 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     """
     print(f"{player.name}'s turn")
 
+    player.get_valid_moves(board)
+
     # Gather important info and get valid moves
     start_coords = start_space(board, player)
     start_row = start_coords[0]
     start_col = start_coords[1]
     piece_to_move = board.state[start_row][start_col]
-    possible_moves = piece_to_move.valid_moves(board)
+    possible_moves = piece_to_move.valid_moves
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
     print("Your possible moves are:", end = " ")
 
@@ -421,7 +454,7 @@ def move(board: Board, player: Player, opponent: Player) -> None:
         castle(board, start_col, new_col, new_row)
 
     # Check to see if the piece puts the opponent's king in check:
-    for space in piece_to_move.valid_moves(board):
+    for space in piece_to_move.valid_moves:
         attacking_row = space[0]
         attacking_col = space[1]
         if type(board.state[attacking_row][attacking_col]) == King:

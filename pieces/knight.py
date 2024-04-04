@@ -9,9 +9,14 @@ from pieces.base_piece import BasePiece
 class Knight(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(self, space, color, 'n', 3)
+        self.__valid_moves = []
+
+    @property
+    def valid_moves(self) -> list:
+        return self.__valid_moves
 
 
-    def valid_moves(self, board) -> list:
+    def set_valid_moves(self, board) -> list:
         """Returns a list of all valid moves a selected knight can make
 
         Input:
@@ -36,4 +41,4 @@ class Knight(BasePiece):
                             board.state[new_row][new_col].color != self.color):
                             moves.append((new_row, new_col))
 
-        return moves
+        self.__valid_moves = moves
