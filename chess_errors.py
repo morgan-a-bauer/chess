@@ -10,6 +10,14 @@ class ANError(Exception):
     pass
 
 
+class InCheckError(Exception):
+    """Raised when a player is in check and tries to move a piece that does now
+    get the player out of check
+
+    """
+    pass
+
+
 class NoPieceError(Exception):
     """Raised when a player selects a space with no piece"""
     pass

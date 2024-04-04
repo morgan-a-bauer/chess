@@ -38,6 +38,10 @@ class Rook(BasePiece):
                 horizontal_moves.append((row, new_col))
                 new_col += dir
 
+            if new_col in range(8) and board.state[row][new_col] != 0 and\
+               board.state[row][new_col].color != self.color:
+                horizontal_moves.append((row, new_col))
+
         vertical_moves = []
 
         for dir in (-1, 1):
@@ -46,5 +50,9 @@ class Rook(BasePiece):
             while new_row in range(8) and board.state[new_row][col] == 0:
                 vertical_moves.append((new_row, col))
                 new_row += dir
+
+            if new_row in range(8) and board.state[new_row][col] != 0 and\
+               board.state[new_row][col].color != self.color:
+                vertical_moves.append((new_row, col))
 
         return horizontal_moves + vertical_moves

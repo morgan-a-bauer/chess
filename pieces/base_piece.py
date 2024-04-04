@@ -13,21 +13,27 @@ class BasePiece:
         self.__is_captured = False
         self.__val = val
 
+
     @property
     def color(self) -> str:
         return self.__color
+
 
     @color.setter
     def color(self, color: str) -> None:
         self.__color = color
 
+
     @property
     def space(self) -> tuple:
         return self.__space
 
+
     @space.setter
     def space(self, new_space: tuple) -> None:
         self.__space = new_space
+        self.__checking_king = False
+
 
     @property
     def direction(self) -> int:
@@ -42,8 +48,20 @@ class BasePiece:
         elif self.__color == 'black':
             return -1
 
+
+    @property
+    def checking_king(self) -> bool:
+        return self.__checking_king
+
+
+    @checking_king.setter
+    def checking_king(self, checking: bool) -> None:
+        self.__checking_king = checking
+
+
     def __str__(self):
         return self.__chr
+
 
     def __int__(self):
         return self.__val

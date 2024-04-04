@@ -11,16 +11,17 @@ class Player:
         self.__uncaptured_pieces = []
         self.__score = 0
         self.__color = ''
+        self.__king = None
 
 
     @property
-    def color(self) -> str:
-        return self.__color
+    def name(self) -> str:
+        return self.__name
 
 
-    @color.setter
-    def color(self, clr: str) -> None:
-        self.__color = clr
+    @property
+    def uncaptured_pieces(self) -> list:
+        return self.__uncaptured_pieces
 
 
     @property
@@ -34,8 +35,23 @@ class Player:
 
 
     @property
-    def name(self) -> str:
-        return self.__name
+    def color(self) -> str:
+        return self.__color
+
+
+    @color.setter
+    def color(self, clr: str) -> None:
+        self.__color = clr
+
+
+    @property
+    def king(self):
+        return self.__king
+
+
+    @king.setter
+    def king(self, new_king) -> None:
+        self.__king = new_king
 
 
     def lose_piece(self, piece) -> None:

@@ -10,14 +10,18 @@ class King(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(self, space, color, 'k', 0)
         self.__has_moved = False
+        self.__checking_pieces = []
+
 
     @property
     def has_moved(self) -> bool:
         return self.__has_moved
 
+
     @has_moved.setter
     def has_moved(self, new_state: bool) -> None:
         self.__has_moved = new_state
+
 
     def castle_spaces(self, board) -> list:
         """Returns a list of all spaces a king is able to move to by castling.
@@ -58,6 +62,7 @@ class King(BasePiece):
 
         return castle_spaces
 
+
     def valid_moves(self, board) -> list:
         """Returns a list of all valid moves a selected king can make
 
@@ -73,22 +78,48 @@ class King(BasePiece):
         for i in (-1, 1):
             new_row = row + i
 
-            if new_row in range(8) and board.state[new_row][col] == 0:
+            if new_row in range(8) and (board.state[new_row][col] == 0 or\
+                                        board.state[new_row][col].color !=\
+                                        self.color):
                 moves.append((new_row, col))
 
             new_col = col + i
 
-            if new_col in range(8) and board.state[row][new_col] == 0:
+            if new_col in range(8) and (board.state[new_row][col] == 0 or\
+                                        board.state[new_row][col].color !=\
+                                        self.color):
                 moves.append((row, new_col))
 
             if new_row in range(8) and new_col in range(8) and\
-               board.state[new_row][new_col] == 0:
+               (board.state[new_row][col] == 0 or\
+                board.state[new_row][col].color != self.color):
                 moves.append((new_row, new_col))
 
             new_col = col - i
 
             if new_row in range(8) and new_col in range(8) and\
-               board.state[new_row][new_col] == 0:
+               (board.state[new_row][col] == 0 or\
+                board.state[new_row][col].color != self.color):
                 moves.append((new_row, new_col))
 
         return moves + self.castle_spaces(board)
+
+
+    def in_check(self, opponent) -> bool:
+        """Çhecks all of the uncaptured pieces controlled by a player's opponent
+        to determine if the player's king is in check
+
+        Input:
+        opponent -- a Player object representing the opposing player
+
+        """
+        self.__checking_pieces.clear()
+
+        for piece in opponent.uncaptured_pieces:
+            if piece.checking_king:
+                self.__checking_pieces.append(piece)
+
+        if len(self.__checking_pieces) > 0:
+            return True
+
+        return False
