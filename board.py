@@ -8,35 +8,39 @@ from pieces.pawn import Pawn
 
 class Board:
     def __init__(self) -> None:
-        self._state = [[0 for i in range(8)] for j in range(8)]
+        self.__state = [[0 for i in range(8)] for j in range(8)]
 
 
     @property
     def state(self) -> list:
-        return self._state
+        return self.__state
 
 
     def remove_piece(self, piece: BasePiece) -> None:
         """
         Sets the space on the board where a piece used to be equal to 0 when
         the piece is moved or captured
+
         Input:
-            piece -- the piece object that is being removed
+        piece -- the piece object that is being removed
+
         """
         row = piece.space[0]
         col = piece.space[1]
-        self._state[row][col] = 0
+        self.__state[row][col] = 0
 
 
     def place_piece(self, piece: BasePiece, new_row: int, new_col: int) -> None:
         """
         Updates the state of the game board whenever a piece is added or moved
-        Inputs:
-            piece -- the piece object whose state is modified
-            new_row -- the row the piece is being moved to
-            new_col -- the column the piece is being moved to
+
+        Input:
+        piece -- the piece object whose state is modified
+        new_row -- the row the piece is being moved to
+        new_col -- the column the piece is being moved to
+
         """
-        self._state[new_row][new_col] = piece
+        self.__state[new_row][new_col] = piece
         piece.space = (new_row, new_col)
 
 
@@ -53,6 +57,7 @@ class Board:
             printed_board.append(''.join(new_row))
 
         printed_board.append('  abcdefgh  ')
+
         return '\n'.join(printed_board)
 
 

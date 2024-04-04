@@ -5,42 +5,63 @@ Defines a class BasePiece containing methods common among all piece types in
 chess. Other piece classes inherit from BasePiece
 """
 
-
 class BasePiece:
-    def __init__(self, space: tuple, color: str, chr: str) -> None:
-        self._chr = chr
-        self._color = color
-        self._space = space
-        self._is_captured = False
+    def __init__(self, space: tuple, color: str, chr: str, val: float) -> None:
+        self.__chr = chr
+        self.__color = color
+        self.__space = space
+        self.__is_captured = False
+        self.__val = val
 
 
     @property
     def color(self) -> str:
-        return self._color
+        return self.__color
 
 
     @color.setter
     def color(self, color: str) -> None:
-        self._color = color
+        self.__color = color
 
 
     @property
     def space(self) -> tuple:
-        return self._space
+        return self.__space
 
 
     @space.setter
     def space(self, new_space: tuple) -> None:
-        self._space = new_space
+        self.__space = new_space
+        self.__checking_king = False
 
 
     @property
     def direction(self) -> int:
-        if self.color == 'white':
+        """returns the multiplicative identity if the player is white, otherwise
+        returns its negative. This value is used as a scalar for movement of
+        pawns
+
+        """
+        if self.__color == 'white':
             return 1
-        elif self.color == 'black':
+
+        elif self.__color == 'black':
             return -1
 
 
+    @property
+    def checking_king(self) -> bool:
+        return self.__checking_king
+
+
+    @checking_king.setter
+    def checking_king(self, checking: bool) -> None:
+        self.__checking_king = checking
+
+
     def __str__(self):
-        return self._chr
+        return self.__chr
+
+
+    def __int__(self):
+        return self.__val
