@@ -75,3 +75,8 @@ class Player:
 
         """
         self.__uncaptured_pieces.append(piece)
+
+
+    def get_valid_moves(self, board) -> None:
+        for piece in self.__uncaptured_pieces:
+            piece.set_valid_moves(board)

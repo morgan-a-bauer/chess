@@ -9,6 +9,7 @@ class Pawn(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(self, space, color, 'p', 1)
         self.__has_moved = False
+        self.__valid_moves = []
 
 
     @property
@@ -20,8 +21,12 @@ class Pawn(BasePiece):
     def has_moved(self, new_state: bool) -> None:
         self.__has_moved = new_state
 
+    @property
+    def valid_moves(self) -> list:
+        return self.__valid_moves
 
-    def valid_moves(self, board) -> list:
+
+    def set_valid_moves(self, board) -> list:
         """Returns a list of all valid moves a selected pawn can make
 
         Input:
@@ -50,4 +55,4 @@ class Pawn(BasePiece):
             if new_row in range(8) and board.state[new_row][col] == 0:
                 moves.append((new_row, col))
 
-        return moves
+        self.__valid_moves = moves

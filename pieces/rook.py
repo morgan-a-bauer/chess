@@ -10,16 +10,24 @@ class Rook(BasePiece):
     def __init__(self, space: tuple, color: str) -> None:
         BasePiece.__init__(self, space, color, 'r', 5)
         self.__has_moved = False
+        self.__valid_moves = []
+
 
     @property
     def has_moved(self) -> bool:
         return self.__has_moved
 
+
     @has_moved.setter
     def has_moved(self, new_state: bool) -> None:
         self.__has_moved = new_state
 
-    def valid_moves(self, board):
+    @property
+    def valid_moves(self) -> list:
+        return self.__valid_moves
+
+
+    def set_valid_moves(self, board):
         """Returns a list of all valid moves a selected bishop can make
 
         Input:
@@ -55,4 +63,4 @@ class Rook(BasePiece):
                board.state[new_row][col].color != self.color:
                 vertical_moves.append((new_row, col))
 
-        return horizontal_moves + vertical_moves
+        self.__valid_moves =horizontal_moves + vertical_moves
