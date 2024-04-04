@@ -4,14 +4,17 @@ Morgan Bauer
 Defines a class BasePiece containing methods common among all piece types in
 chess. Other piece classes inherit from BasePiece
 """
+from copy import deepcopy
 
 class BasePiece:
-    def __init__(self, space: tuple, color: str, chr: str, val: float) -> None:
+    def __init__(self, space: tuple, color: str, chr: str, val: float,
+                 player) -> None:
         self.__chr = chr
         self.__color = color
         self.__space = space
         self.__is_captured = False
         self.__val = val
+        self.__player = player
 
 
     @property
@@ -50,13 +53,35 @@ class BasePiece:
 
 
     @property
-    def checking_king(self) -> bool:
-        return self.__checking_king
+    def player(self):
+        return self.__player
 
 
-    @checking_king.setter
-    def checking_king(self, checking: bool) -> None:
-        self.__checking_king = checking
+    @player.setter
+    def player(self, new_player) -> None:
+        self.__player = new_player
+
+
+    def remove_in_check_moves(self, board, opponent) -> None:
+        vm_copy = deepcopy(self.valid_moves)
+        for move in vm_copy:
+            row, col = self.space
+            opp_piece = board.state[move[0]][move[1]]
+            board.remove_piece(self)
+            board.place_piece(self, move[0], move[1])
+
+            opponent.get_valid_moves(board)
+
+            for piece in opponent.uncaptured_pieces:
+
+                if self.player.king.space in piece.valid_moves:
+                    self.toss_move(move)
+
+            board.remove_piece(self)
+            board.place_piece(self, row, col)
+
+            if opp_piece != 0:
+                board.place_piece(opp_piece, move[0], move[1])
 
 
     def __str__(self):

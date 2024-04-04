@@ -7,8 +7,8 @@ king movement
 from pieces.base_piece import BasePiece
 
 class King(BasePiece):
-    def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'k', 0)
+    def __init__(self, space: tuple, color: str, player) -> None:
+        BasePiece.__init__(self, space, color, 'k', 100, player)
         self.__has_moved = False
         self.__valid_moves = []
         self.__checking_pieces = []
@@ -69,7 +69,11 @@ class King(BasePiece):
         return castle_spaces
 
 
-    def set_valid_moves(self, board) -> list:
+    def toss_move(self, move: tuple) -> None:
+        self.__valid_moves.remove(move)
+
+
+    def set_valid_moves(self, board) -> None:
         """Returns a list of all valid moves a selected king can make
 
         Input:
@@ -109,23 +113,3 @@ class King(BasePiece):
                 moves.append((new_row, new_col))
 
         self.__valid_moves = moves + self.castle_spaces(board)
-
-
-    def in_check(self, opponent) -> bool:
-        """Çhecks all of the uncaptured pieces controlled by a player's opponent
-        to determine if the player's king is in check
-
-        Input:
-        opponent -- a Player object representing the opposing player
-
-        """
-        self.__checking_pieces.clear()
-
-        for piece in opponent.uncaptured_pieces:
-            if piece.checking_king:
-                self.__checking_pieces.append(piece)
-
-        if len(self.__checking_pieces) > 0:
-            return True
-
-        return False

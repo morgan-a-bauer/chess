@@ -7,8 +7,8 @@ bishop movement
 from pieces.base_piece import BasePiece
 
 class Bishop(BasePiece):
-    def __init__(self, space: tuple, color: str) -> None:
-        BasePiece.__init__(self, space, color, 'b', 3)
+    def __init__(self, space: tuple, color: str, player) -> None:
+        BasePiece.__init__(self, space, color, 'b', 3, player)
         self.__valid_moves = []
 
 
@@ -17,7 +17,11 @@ class Bishop(BasePiece):
         return self.__valid_moves
 
 
-    def set_valid_moves(self, board) -> list:
+    def toss_move(self, move: tuple) -> None:
+        self.__valid_moves.remove(move)
+
+
+    def set_valid_moves(self, board) -> None:
         """Returns a list of all valid moves a selected bishop can make"""
         row = self.space[0]
         col = self.space[1]
