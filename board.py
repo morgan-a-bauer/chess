@@ -49,11 +49,11 @@ class Board:
         printed_board.append('  abcdefgh  ')
 
         for row_num, row in enumerate(self.state):
-            new_row = [str(row_num + 1)]
+            new_row = [str(8 - row_num)]
             new_row.append(' ')
             new_row += [str(space) for space in row]
             new_row.append(' ')
-            new_row.append(str(row_num + 1))
+            new_row.append(str(8 - row_num))
             printed_board.append(''.join(new_row))
 
         printed_board.append('  abcdefgh  ')

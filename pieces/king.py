@@ -11,7 +11,6 @@ class King(BasePiece):
         BasePiece.__init__(self, space, color, 'k', 100, player)
         self.__has_moved = False
         self.__valid_moves = []
-        self.__checking_pieces = []
 
 
     @property

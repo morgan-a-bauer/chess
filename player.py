@@ -7,11 +7,12 @@ from pieces.base_piece import BasePiece
 
 class Player:
     def __init__(self, name: str) -> None:
-        self.__name = name
+        self.__name = name.capitalize()
         self.__uncaptured_pieces = []
         self.__score = 0
         self.__color = ''
         self.__king = None
+        self.__captured = []
 
 
     @property
@@ -52,6 +53,15 @@ class Player:
     @king.setter
     def king(self, new_king) -> None:
         self.__king = new_king
+
+
+    @property
+    def captured(self) -> list:
+        return self.__captured
+
+
+    def capture(self, piece) -> None:
+        self.__captured.append(piece)
 
 
     def lose_piece(self, piece) -> None:

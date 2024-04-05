@@ -59,7 +59,8 @@ class Pawn(BasePiece):
         if not self.has_moved:
             new_row = row + (2 * self.direction)
 
-            if new_row in range(8) and board.state[new_row][col] == 0:
+            if new_row in range(8) and board.state[new_row][col] == 0 and\
+               board.state[new_row - self.direction][col] == 0:
                 moves.append((new_row, col))
 
         self.__valid_moves = moves
