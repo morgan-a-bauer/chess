@@ -12,7 +12,6 @@ class BasePiece:
         self.__chr = chr
         self.__color = color
         self.__space = space
-        self.__is_captured = False
         self.__val = val
         self.__player = player
 
@@ -46,10 +45,10 @@ class BasePiece:
 
         """
         if self.__color == 'white':
-            return 1
+            return -1
 
         elif self.__color == 'black':
-            return -1
+            return 1
 
 
     @property
@@ -82,6 +81,14 @@ class BasePiece:
 
             if opp_piece != 0:
                 board.place_piece(opp_piece, move[0], move[1])
+
+
+    def capture_piece(self, board, row: int, col: int) -> None:
+        opp_piece = board.state[row][col]
+        board.remove_piece(self)
+        board.place_piece(self, row, col)
+        opp_piece.player.uncaptured_pieces.remove(opp_piece)
+        self.player.capture(opp_piece)
 
 
     def __str__(self):

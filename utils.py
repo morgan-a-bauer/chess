@@ -26,16 +26,15 @@ def algebraic_to_grid(space: str) -> tuple:
 
     """
     col = ord(space[0].lower())
-    row = int(space[1])
+    row = 8 - int(space[1])
 
     if (col < 97) or (col > 104):
         return False
 
-    if (row < 1) or (row > 8):
+    if (row < 0) or (row > 8):
         return False
 
     col -= 97
-    row -= 1
 
     return (row, col)
 
@@ -52,7 +51,7 @@ def grid_to_algebraic(coords: tuple) -> str:
     row = coords[0]
     col = coords[1]
 
-    row_an = str(row + 1)
+    row_an = str(8 - row)
     col_an = chr(col + 97)
 
     return col_an + row_an
@@ -242,7 +241,7 @@ def setup_board(new_board: Board, player_lyst: list) -> None:
     player_lyst -- a list of player names
 
     """
-    for new_color, row, new_player in zip(("white", "black"), (1, 6), (player_lyst)): #Should this be (6, 1)?
+    for new_color, row, new_player in zip(("white", "black"), (6, 1), (player_lyst)): #Should this be (6, 1)?
         new_player.color = new_color
         print(f'{new_player.name} will be {new_color}')
         generate_pawns(new_board, new_player, row)
@@ -254,15 +253,27 @@ def setup_board(new_board: Board, player_lyst: list) -> None:
         generate_king(new_board, new_player, row)
 
 
-def game_over() -> bool:
+def game_over(player: Player, opponent: Player, board: Board) -> bool:
     """
     Evaluates the state of the board and returns a boolean value reflecting
     if the game is over or not
 
     """
-    #TODO: Implement end condition
-    return False
+    player.get_valid_moves(board)
 
+    for piece in player.uncaptured_pieces:
+        piece.remove_in_check_moves(board, opponent)
+        if len(piece.valid_moves) > 0:
+            return False
+
+    opponent.get_valid_moves(board)
+
+    # If the game is over
+    for opp_piece in opponent.uncaptured_pieces:
+        if player.king.space in opp_piece.valid_moves:
+            return "Checkmate"
+
+    return "Stalemate"
 
 def start_space(board: Board, player: Player) -> tuple:
     """
@@ -424,11 +435,6 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     """
     print(f"{player.name}'s turn")
 
-    player.get_valid_moves(board)
-
-    for piece in player.uncaptured_pieces:
-        piece.remove_in_check_moves(board, opponent)
-
     # Gather important info and get valid moves
     start_row, start_col = start_space(board, player)
     piece_to_move = board.state[start_row][start_col]
@@ -443,8 +449,13 @@ def move(board: Board, player: Player, opponent: Player) -> None:
 
     # Move the piece
     new_row, new_col = new_space(board, player, piece_to_move)
-    board.remove_piece(piece_to_move)
-    board.place_piece(piece_to_move, new_row, new_col)
+
+    if board.state[new_row][new_col] != 0:
+        piece_to_move.capture_piece(board, new_row, new_col)
+
+    else:
+        board.remove_piece(piece_to_move)
+        board.place_piece(piece_to_move, new_row, new_col)
 
     # Set has_move marker when appropriate
     if type(piece_to_move) in [Pawn, Rook, King]:
