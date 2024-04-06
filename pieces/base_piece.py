@@ -8,12 +8,12 @@ from copy import deepcopy
 
 class BasePiece:
     def __init__(self, space: tuple, color: str, chr: str, val: float,
-                 player) -> None:
+                 player=None) -> None:
         self.__chr = chr
         self.__color = color
         self.__space = space
         self.__val = val
-        self.__player = player
+        self.__player = player = None
 
 
     @property

@@ -24,8 +24,8 @@ SCREEN_WIDTH       = 1000
 SCREEN_HEIGHT      = 1000
 GRID               = (2,2)
 
-BG_COLOUR          = (9,11,16)
-BD_COLOUR          = (225,204,183)
+BG_COLOR          = (9,11,16)
+BD_COLOR          = (225,204,183)
 WHITE              = (255,255,255)
 
 # Board Specifications

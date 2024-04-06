@@ -76,7 +76,7 @@ def is_valid_an(space: str) -> bool:
     row = space[0]
     col = space[1]
 
-    if (row not in 'abcdefgh') and (row not in 'ABCDEFGH'):
+    if (row.lower() not in 'abcdefgh'):
         return False
 
     if col not in '12345678':
