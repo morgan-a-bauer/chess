@@ -11,6 +11,8 @@ from pygame.locals import (
 )
 import os
 
+print(os.getcwd())
+
 FOLDER_PATH        = os.path.abspath("GuiFiles")
 SPRITE_FOLDER_PATH = os.path.join(FOLDER_PATH, "sprites/")
 PIECES_FOLDER_PATH = os.path.join(SPRITE_FOLDER_PATH, "pieces/")
@@ -42,5 +44,6 @@ BOARD_PADY         = 20
 PIECES             = ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook",
                       "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn"]
 
+PIECE_DICT         = ""
 
 
