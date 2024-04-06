@@ -1,5 +1,5 @@
 from math import ceil
-from Constants import *
+from .constants import *
 import pygame
 
 class GenericScreenElement(pygame.sprite.Sprite):
@@ -11,8 +11,9 @@ class GenericScreenElement(pygame.sprite.Sprite):
          You need to supply 
 
          parent:GenericScreenElement
-
+         or
          grid:tuple=None, 
+         
          parentPosition:tuple=(0,0), 
          parentSize:tuple=(SCREEN_WIDTH, SCREEN_HEIGHT), 
          row:int=BOARD_ROW, 
