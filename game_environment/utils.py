@@ -3,18 +3,18 @@ utils.py
 Morgan Bauer
 The utility functions needed to carry out in-game actions for a chess game
 """
-from player import Player
-from board import Board
-from pieces.base_piece import BasePiece
-from pieces.pawn import Pawn
-from pieces.bishop import Bishop
-from pieces.knight import Knight
-from pieces.rook import Rook
-from pieces.queen import Queen
-from pieces.king import King
-import player_input
+from .player import Player
+from .board import Board
+from .pieces.base_piece import BasePiece
+from .pieces.pawn import Pawn
+from .pieces.bishop import Bishop
+from .pieces.knight import Knight
+from .pieces.rook import Rook
+from .pieces.queen import Queen
+from .pieces.king import King
+import game_environment.player_input
+import game_environment.chess_errors
 import random
-import chess_errors
 
 def algebraic_to_grid(space: str) -> tuple:
     """

@@ -1,8 +1,8 @@
-from GuiFiles.sprites import BoardSprite, Shape, Piece
-from GuiFiles.GenericScreenElement import GenericScreenElement
-from GuiFiles.constants import *
-from player import Player
-from utils import *
+from gui_files.sprites import BoardSprite, Shape, Piece
+from gui_files.generic_element import GenericScreenElement
+from gui_files.constants import *
+from game_environment.player import Player
+from game_environment.utils import *
 import random
 import pygame
 import math
@@ -18,7 +18,7 @@ class Gui():
         self._running = True
         self._rows = grid[0]
         self._cols = grid[1]
-        self._container = GenericScreenElement(grid=GRID)
+        self._container = GenericScreenElement(childGrid=GRID)
 
         self._allSprites   = pygame.sprite.Group()
         self._pieceSprites = pygame.sprite.Group()
@@ -73,10 +73,10 @@ class Gui():
     def _spawn_objects(self):
 
         # Board Spawning
-        self._boardBackdrop = Shape(self._container, BD_COLOR, padx=0, pady=0, row=BOARD_ROW, col=BOARD_COL, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
+        self._boardBackdrop = Shape(self._container, BD_COLOR, childGrid=(1,1), padx=0, pady=0, row=BOARD_ROW, col=BOARD_COL, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
         self._allSprites.add(self._boardBackdrop)
 
-        self._board = BoardSprite(self._boardBackdrop, padx=20, pady=20, row=0, col=0)
+        self._board = BoardSprite(self._boardBackdrop, childGrid=(8,8), padx=20, pady=20, row=0, col=0)
         self._board.container
         self._allSprites.add(self._board)
         self._populate_board(1)
