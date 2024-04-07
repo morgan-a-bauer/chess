@@ -29,7 +29,9 @@ class Gui():
 
         self._spawn_objects()
 
+        self._turn = 1
         self._activePiece = None
+
 
 
     @property
@@ -91,10 +93,10 @@ class Gui():
     def _spawn_objects(self):
 
         # Board Spawning
-        self._boardBackdrop = Shape(self._container, BD_COLOR, padx=0, pady=0, row=0, col=0, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
+        self._boardBackdrop = Shape(self._container, BD_COLOR, padx=0, pady=0, row=1, col=1, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
         self._allSprites.add(self._boardBackdrop)
 
-        self._board = BoardSprite(self._boardBackdrop, padx=20, pady=20,)
+        self._board = BoardSprite(self._boardBackdrop, padx=20, pady=20, row=BOARD_ROW, col=BOARD_COL)
         self._board.container
         self._allSprites.add(self._board)
         self._populate_board(1)
@@ -102,7 +104,7 @@ class Gui():
 
     def _check_events(self):
         """
-        
+
         """
         for event in pygame.event.get():
 
@@ -113,6 +115,17 @@ class Gui():
 
             if event.type == KEYUP:
                 pass
+
+            if event.type == MOUSEBUTTONDOWN:
+
+                if event.button == 1:
+                    for sprite in self._pieceSprites:
+                        if (event.pos[0] in range(sprite.position[0], sprite.coords[0])) and (event.pos[1] in range(sprite.position[1], sprite.coords[1])):
+                                print(event)
+                                print(sprite.coords)
+                                if sprite.color == self._turn:
+                                    self._activePiece = sprite
+                    
 
             elif event.type == QUIT:
                 self._running = False

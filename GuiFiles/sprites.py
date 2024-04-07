@@ -34,12 +34,12 @@ class Piece(GenericScreenElement):
         self.surf.set_colorkey((255,255,255), RLEACCEL)
         self.rect   = self.surf.get_rect()
         self.color = color
-        
+
         white = 'white'
         black = 'black'
 
         exec(f"from pieces.{piece} import *")
-        exec(f'self.piece = {str(piece).title()}(({row},{col}),{str("white") if color else str("black")}, player)')
+        exec(f'self.piece = {piece.title()}(({row},{col}),{white if color else black}, player)')
         container.container.place_piece(self.piece, row, col)
         player.gain_piece(self.piece)
 

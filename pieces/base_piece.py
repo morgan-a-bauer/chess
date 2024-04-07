@@ -13,7 +13,7 @@ class BasePiece:
         self.__color = color
         self.__space = space
         self.__val = val
-        self.__player = player = None
+        self.__player = player
 
 
     @property
