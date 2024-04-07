@@ -62,20 +62,34 @@ class BasePiece:
 
 
     def remove_in_check_moves(self, board, opponent) -> None:
+        """Checks all possible valid moves that can be made by a piece and
+        invalidates any that would put the player in check
+
+        Input:
+        board -- a Board object representing the active board
+        opponent -- a Player object representing the opposing player
+
+        """
+        # Copy the list of valid moves to loop through
         vm_copy = deepcopy(self.valid_moves)
+
         for move in vm_copy:
+            # Put the board in a new potential state (after a valid move)
             row, col = self.space
             opp_piece = board.state[move[0]][move[1]]
             board.remove_piece(self)
             board.place_piece(self, move[0], move[1])
 
+            # See if the player's king is in the check after the potential move
             opponent.get_valid_moves(board)
 
             for piece in opponent.uncaptured_pieces:
 
+                # If in check, remove the move from the list of valid moves
                 if self.player.king.space in piece.valid_moves:
                     self.toss_move(move)
 
+            # Restore the board to its current state
             board.remove_piece(self)
             board.place_piece(self, row, col)
 
@@ -84,6 +98,11 @@ class BasePiece:
 
 
     def capture_piece(self, board, row: int, col: int) -> None:
+        """When a piece lands on a space containing another piece, that piece
+        gets captured
+        
+        Input:
+        """
         opp_piece = board.state[row][col]
         board.remove_piece(self)
         board.place_piece(self, row, col)
