@@ -1,6 +1,9 @@
-from GuiFiles.sprites import Board, Shape, Piece
+from GuiFiles.sprites import BoardSprite, Shape, Piece
 from GuiFiles.GenericScreenElement import GenericScreenElement
 from GuiFiles.constants import *
+from player import Player
+from utils import *
+import random
 import pygame
 import math
 
@@ -21,9 +24,15 @@ class Gui():
         self._pieceSprites = pygame.sprite.Group()
         self._blackSprites = pygame.sprite.Group()
         self._whiteSprites = pygame.sprite.Group()
+
+        self._players = [Player('Jackson'), Player('Morgan')]
+
         self._spawn_objects()
 
+        self._turn = 1
         self._activePiece = None
+        self._targetSquare = None
+
 
 
     @property
@@ -37,41 +46,45 @@ class Gui():
     
 
     def _populate_board(self, onTop=0):
-        colour = 0
-        while colour <= 1:
+
+        random.shuffle(self._players)
+
+        for color in range(2):
+            self._players[color].color = 'white' if color else 'black'
+
             for pieceIndex in range(len(PIECES)):
 
                 piece = PIECES[pieceIndex]  if not onTop else "queen" if PIECES[pieceIndex] == "king" else "king" if PIECES[pieceIndex] == "queen" else PIECES[pieceIndex] 
-                sprite = Piece(self._board, 
-                                           colour=colour, 
+                sprite = Piece(self._board,
+                               self._players[color],
+                                           color=color, 
                                            piece=piece, 
                                            grid=(8,8), 
-                                           row=abs((7*(not(colour) if onTop else colour))-(pieceIndex//(len(PIECES)//2))),
+                                           row=abs((7*(not(color) if onTop else color))-(pieceIndex//(len(PIECES)//2))),
                                            col=pieceIndex%(len(PIECES)//2))
                 self._allSprites.add(sprite)
                 self._pieceSprites.add(sprite)
-                if colour:
+                if color:
                     self._whiteSprites.add(sprite)
                 else:
                     self._blackSprites.add(sprite)
-
-            colour += 1
 
 
     def _spawn_objects(self):
 
         # Board Spawning
-        self._boardBackdrop = Shape(self._container, BD_COLOUR, padx=0, pady=0, row=0, col=0, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
+        self._boardBackdrop = Shape(self._container, BD_COLOR, padx=0, pady=0, row=BOARD_ROW, col=BOARD_COL, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
         self._allSprites.add(self._boardBackdrop)
 
-        self._board = Board(self._boardBackdrop, padx=20, pady=20, )
+        self._board = BoardSprite(self._boardBackdrop, padx=20, pady=20, row=0, col=0)
+        self._board.container
         self._allSprites.add(self._board)
         self._populate_board(1)
 
 
     def _check_events(self):
         """
-        
+
         """
         for event in pygame.event.get():
 
@@ -82,6 +95,24 @@ class Gui():
 
             if event.type == KEYUP:
                 pass
+
+            if event.type == MOUSEBUTTONDOWN:
+
+                if event.button == 1:
+
+                    for sprite in self._pieceSprites:
+
+                        if (event.pos[0] in range(sprite.position[0], sprite.coords[0])) and (event.pos[1] in range(sprite.position[1], sprite.coords[1])):
+                                
+                                print(event)
+                                print(sprite.coords)
+
+                                if sprite.color == self._turn:
+                                    self._activePiece = sprite
+                                
+
+
+                    
 
             elif event.type == QUIT:
                 self._running = False
@@ -101,7 +132,7 @@ class Gui():
         """
         
         """ 
-        self._screen.fill(BG_COLOUR)
+        self._screen.fill(BG_COLOR)
         self._draw()
         pygame.display.flip()
 
