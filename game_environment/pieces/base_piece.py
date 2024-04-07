@@ -103,9 +103,15 @@ class BasePiece:
         
         Input:
         """
+        # Get opponent's piece
         opp_piece = board.state[row][col]
+
+        # Place piece
         board.remove_piece(self)
         board.place_piece(self, row, col)
+
+        # Opponent's piece is removed from their uncaptured pieces and added
+        # to the current player's list of captured pieces
         opp_piece.player.uncaptured_pieces.remove(opp_piece)
         self.player.capture(opp_piece)
 
