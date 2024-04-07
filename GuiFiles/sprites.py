@@ -23,7 +23,7 @@ class Shape(GenericScreenElement):
         self.surf = pygame.Surface([*self.size])
         self.surf.fill(color)
         self.rect = self.surf.get_rect()
-        
+
 
 class Piece(GenericScreenElement):
     def __init__(self, container, player, color, piece, row, col, **kwargs):

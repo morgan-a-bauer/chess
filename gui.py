@@ -31,6 +31,7 @@ class Gui():
 
         self._turn = 1
         self._activePiece = None
+        self._targetSquare = None
 
 
 
@@ -43,27 +44,6 @@ class Gui():
     def cols(self):
         return self._cols
     
-    # def _setup_board(self, player_lyst: list) -> None:
-    #     """
-    #     Calls functions to create new players and generate pieces for each player
-    #     playing
-
-    #     Input:
-    #     new_board -- a Board object
-    #     player_lyst -- a list of player names
-
-    #     """
-    #     for new_color, row, new_player in zip(("white", "black"), (6, 1), (player_lyst)): #Should this be (6, 1)?
-    #         new_player.color = new_color
-
-
-    #         generate_pawns(self._board.container, new_player, row)
-    #         row = round((1.4 * row) - 1.4)
-    #         generate_rooks(self._board.container, new_player, row)
-    #         generate_knights(self._board.container, new_player, row)
-    #         generate_bishops(self._board.container, new_player, row)
-    #         generate_queen(self._board.container, new_player, row)
-    #         generate_king(self._board.container, new_player, row)
 
     def _populate_board(self, onTop=0):
 
@@ -93,10 +73,10 @@ class Gui():
     def _spawn_objects(self):
 
         # Board Spawning
-        self._boardBackdrop = Shape(self._container, BD_COLOR, padx=0, pady=0, row=1, col=1, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
+        self._boardBackdrop = Shape(self._container, BD_COLOR, padx=0, pady=0, row=BOARD_ROW, col=BOARD_COL, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
         self._allSprites.add(self._boardBackdrop)
 
-        self._board = BoardSprite(self._boardBackdrop, padx=20, pady=20, row=BOARD_ROW, col=BOARD_COL)
+        self._board = BoardSprite(self._boardBackdrop, padx=20, pady=20, row=0, col=0)
         self._board.container
         self._allSprites.add(self._board)
         self._populate_board(1)
@@ -119,12 +99,19 @@ class Gui():
             if event.type == MOUSEBUTTONDOWN:
 
                 if event.button == 1:
+
                     for sprite in self._pieceSprites:
+
                         if (event.pos[0] in range(sprite.position[0], sprite.coords[0])) and (event.pos[1] in range(sprite.position[1], sprite.coords[1])):
+                                
                                 print(event)
                                 print(sprite.coords)
+
                                 if sprite.color == self._turn:
                                     self._activePiece = sprite
+                                
+
+
                     
 
             elif event.type == QUIT:

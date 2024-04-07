@@ -422,7 +422,7 @@ def castle(board: Board, start: int, end: int, row: int) -> None:
     rook.has_moved = True
 
 
-def move(board: Board, player: Player, opponent: Player) -> None:
+def move(board: Board, player: Player, opponent: Player, start_row=-1, start_col=-1, new_row=-1, new_col=-1,) -> bool:
     """
     Gets the space containing the active player's piece and the space the player
     would like to move that piece to and carries out that action if it is a
@@ -432,23 +432,33 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     board -- a Board object
     player -- the Player object corresponding to the active player
 
+    Returns:
+    True -- if move is valid
+
     """
-    print(f"{player.name}'s turn")
+    gui = False
+    if start_row and start_col != -1:
+        gui = True
+    if not gui:
+        print(f"{player.name}'s turn")
+
 
     # Gather important info and get valid moves
-    start_row, start_col = start_space(board, player)
+    start_row, start_col = start_space(board, player)  if not gui else start_row, start_col
     piece_to_move = board.state[start_row][start_col]
     possible_moves = piece_to_move.valid_moves
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
-    print("Your possible moves are:", end = " ")
+    
+    if not gui:
+        print("Your possible moves are:", end = " ")
 
-    # Print valid moves
-    for an_move in an_moves:
-        print(an_move, end = " ")
-    print()
+        # Print valid moves
+        for an_move in an_moves:
+            print(an_move, end = " ")
+        print()
 
     # Move the piece
-    new_row, new_col = new_space(board, player, piece_to_move)
+    new_row, new_col = new_space(board, player, piece_to_move) if not gui else new_row, new_col
 
     if board.state[new_row][new_col] != 0:
         piece_to_move.capture_piece(board, new_row, new_col)
@@ -464,6 +474,8 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     # Handles castling if applicable
     if type(piece_to_move) == King and abs(start_col - new_col) == 2:
         castle(board, start_col, new_col, new_row)
+    
+    return True
 
 
 if __name__ == "__main__":

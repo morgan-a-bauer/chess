@@ -4,9 +4,7 @@ import pygame
 
 class GenericScreenElement(pygame.sprite.Sprite):
 
-    def __init__(self, parent=None, grid:tuple=(1,1), parentPosition:tuple=(0,0), parentSize:tuple=(SCREEN_WIDTH, SCREEN_HEIGHT), row:int=0, col:int=0, rowSpan:int=1, colSpan:int=1, padx:int=0, pady:int=0, **kwargs):
-        """"""
-        super(GenericScreenElement, self).__init__()
+    def __init__(self, parent=None, parentGrid:tuple=(1,1), childGrid:tuple=(1,1), parentPosition:tuple=(0,0), parentSize:tuple=(SCREEN_WIDTH, SCREEN_HEIGHT), row:int=0, col:int=0, rowSpan:int=1, colSpan:int=1, padx:int=0, pady:int=0, **kwargs):
         """
          You need to supply 
 
@@ -23,14 +21,16 @@ class GenericScreenElement(pygame.sprite.Sprite):
          padx:int=BOARD_PADX, 
          pady:int=BOARD_PADY, 
         """
+        super(GenericScreenElement, self).__init__()
         self._hasParent     = False             if parent == None else True
 
-        self._grid          = grid
+        self._parentGrid    = parentGrid        if parent == None else parent.childGrid
         self._parentWidth   = parentSize[0]     if parent == None else parent.size[0]
         self._parentHeight  = parentSize[1]     if parent == None else parent.size[1]
         self._parentX       = parentPosition[0] if parent == None else parent.position[0]
         self._parentY       = parentPosition[1] if parent == None else parent.position[1]
 
+        self._childGrid     = childGrid
         self._row           = row
         self._col           = col
         self._rowSpan       = rowSpan
@@ -50,17 +50,17 @@ class GenericScreenElement(pygame.sprite.Sprite):
     def containerDimensions(self, new:tuple):
         self._screenWidth  = new[0]
         self._screenHeight = new[1]
-        self._update()
+        self.update()
 
     @property
-    def grid(self):
-        return self._grid
+    def childGrid(self):
+        return self._childGrid
 
 
-    @grid.setter
-    def grid(self, new:tuple):
-        self._grid = new
-        self._update()
+    @childGrid.setter
+    def childGrid(self, new:tuple):
+        self._childGrid = new
+        self.update()
     
 
     @property
@@ -71,7 +71,7 @@ class GenericScreenElement(pygame.sprite.Sprite):
     @row.setter
     def row(self, new:int):
         self._col = new
-        self._update()
+        self.update()
 
 
     @property
@@ -82,7 +82,7 @@ class GenericScreenElement(pygame.sprite.Sprite):
     @col.setter
     def col(self, new:int):
         self._row = new
-        self._update()
+        self.update()
     
 
     @property
@@ -93,7 +93,7 @@ class GenericScreenElement(pygame.sprite.Sprite):
     @padx.setter
     def padx(self, new:int):
         self._padx = new
-        self._update()
+        self.update()
 
 
     @property
@@ -104,7 +104,7 @@ class GenericScreenElement(pygame.sprite.Sprite):
     @pady.setter
     def pady(self, new:int):
         self._pady = new
-        self._update()
+        self.update()
 
 
     @property
@@ -123,19 +123,19 @@ class GenericScreenElement(pygame.sprite.Sprite):
                 self._size[1] + self._position[1],)
     
 
-    def _update(self):
+    def update(self):
         self._position = self._get_position_coord()
         self._size     = self._get_size()
     
 
     def _get_position_coord(self):
-        return (ceil(( self._col * (self._parentHeight/self._grid[0])) + self._padx + self._parentX),
-                ceil(( self._row * (self._parentWidth/self._grid[1] ) ) + self._pady + self._parentY),)
+        return (ceil(( self._col * (self._parentHeight/self._parentGrid[0])) + self._padx + self._parentX),
+                ceil(( self._row * (self._parentWidth/self._parentGrid[1] ) ) + self._pady + self._parentY),)
 
 
     def _get_size(self):
-        return (ceil(( self._colSpan * (self._parentWidth/self._grid[0] ) ) - self._padx*2),
-                ceil(( self._rowSpan * (self._parentHeight/self._grid[1]) ) - self._pady*2),)
+        return (ceil(( self._colSpan * (self._parentWidth/self._parentGrid[0] ) ) - self._padx*2),
+                ceil(( self._rowSpan * (self._parentHeight/self._parentGrid[1]) ) - self._pady*2),)
     
 
 if __name__ == '__main__':
