@@ -12,8 +12,8 @@ from .pieces.knight import Knight
 from .pieces.rook import Rook
 from .pieces.queen import Queen
 from .pieces.king import King
-import game_environment.player_input
-import game_environment.chess_errors
+from game_environment import player_input
+from game_environment import chess_errors
 import random
 
 def algebraic_to_grid(space: str) -> tuple:
