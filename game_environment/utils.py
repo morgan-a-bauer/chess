@@ -25,15 +25,19 @@ def algebraic_to_grid(space: str) -> tuple:
     space -- a string representing a space on the chess board
 
     """
+    # Convert each character of a space in algeraic notation to an integer
     col = ord(space[0].lower())
     row = 8 - int(space[1])
 
+    # Does not accept letters not between a and h
     if (col < 97) or (col > 104):
         return False
 
-    if (row < 0) or (row > 8):
+    # Does not accept numbers not between 0 and 7
+    if (row < 0) or (row > 7):
         return False
 
+    # Convert ordinal value to a column value between 0 and 7
     col -= 97
 
     return (row, col)
@@ -67,18 +71,22 @@ def is_valid_an(space: str) -> bool:
     space -- A string representing a space on the chess board
 
     """
+    # If the user enters the empty string
     if space == None:
         return False
 
+    # Algebraic notation consists of one letter and one integer
     if len(space) != 2:
         return False
 
     row = space[0]
     col = space[1]
 
-    if (row.lower() not in 'abcdefgh'):
+    # Ensure that the character is one of the accepted letters
+    if (row not in 'abcdefgh') and (row not in 'ABCDEFGH'):
         return False
 
+    # Ensure that the integer is in the proper range
     if col not in '12345678':
         return False
 
@@ -99,11 +107,13 @@ def is_players_piece(player_color: str, row: int, col: int, board: Board) -> boo
     """
     space = board.state[row][col]
 
+    # If the space is empty
     if space == 0:
         return False
 
     piece_color = space.color  # The color of the piece at space
 
+    # If the piece and player share a color
     if player_color == piece_color:
         return True
 
@@ -118,11 +128,17 @@ def get_players() -> list:
     """
     players = []
 
+    # Iterates twice with loop value being assigned 1 and 2
     for player_num in range(1, 3):
+
+        # Create a new player object with the name input by the user
         new_name = player_input.name(player_num)
         new_player = Player(new_name)
+
+        # Add the player to the list of players
         players.append(new_player)
 
+    # Assign a random turn order
     random.shuffle(players)
 
     return players
@@ -241,9 +257,14 @@ def setup_board(new_board: Board, player_lyst: list) -> None:
     player_lyst -- a list of player names
 
     """
-    for new_color, row, new_player in zip(("white", "black"), (6, 1), (player_lyst)): #Should this be (6, 1)?
+    for new_color, row, new_player in zip(("white", "black"), (6, 1), (player_lyst)):
+
+        # Assign each player a color
         new_player.color = new_color
+
         print(f'{new_player.name} will be {new_color}')
+
+        # Generate the player's pieces
         generate_pawns(new_board, new_player, row)
         row = round((1.4 * row) - 1.4)
         generate_rooks(new_board, new_player, row)
@@ -261,18 +282,28 @@ def game_over(player: Player, opponent: Player, board: Board) -> bool:
     """
     player.get_valid_moves(board)
 
+    # Check valid moves for all of the player's pieces
     for piece in player.uncaptured_pieces:
+
+        # Remove any moves that leave the player's king in check
         piece.remove_in_check_moves(board, opponent)
+
+        # If any piece has at least one valid move, the game is not over
         if len(piece.valid_moves) > 0:
             return False
 
+    # Get the opponent's valid moves
     opponent.get_valid_moves(board)
 
     # If the game is over
     for opp_piece in opponent.uncaptured_pieces:
+
+        # If one of the opponent's pieces put the player's king in check,
+        # the game ends by Checkmate
         if player.king.space in opp_piece.valid_moves:
             return "Checkmate"
 
+    # Otherwise it is a stalemate
     return "Stalemate"
 
 def start_space(board: Board, player: Player) -> tuple:
@@ -412,17 +443,20 @@ def castle(board: Board, start: int, end: int, row: int) -> None:
     end -- the column number of the king after moving
 
     """
+    # Determine which rook to castle with
     if end < 4:
         rook = board.state[row][0]
+
     else:
         rook = board.state[row][-1]
 
+    # The king has already moved, so only the rook's position needs to be updated
     board.remove_piece(rook)
     board.place_piece(rook, row, (start + end) // 2)
     rook.has_moved = True
 
 
-def move(board: Board, player: Player, opponent: Player, start_row=-1, start_col=-1, new_row=-1, new_col=-1,) -> bool:
+def move(board: Board, player: Player, opponent: Player) -> None:
     """
     Gets the space containing the active player's piece and the space the player
     would like to move that piece to and carries out that action if it is a
@@ -432,34 +466,25 @@ def move(board: Board, player: Player, opponent: Player, start_row=-1, start_col
     board -- a Board object
     player -- the Player object corresponding to the active player
 
-    Returns:
-    True -- if move is valid
-
     """
-    gui = False
-    if start_row and start_col != -1:
-        gui = True
-    if not gui:
-        print(f"{player.name}'s turn")
-
+    print(f"{player.name}'s turn")
 
     # Gather important info and get valid moves
-    start_row, start_col = start_space(board, player)  if not gui else start_row, start_col
+    start_row, start_col = start_space(board, player)
     piece_to_move = board.state[start_row][start_col]
     possible_moves = piece_to_move.valid_moves
     an_moves = [grid_to_algebraic(move) for move in possible_moves]
-    
-    if not gui:
-        print("Your possible moves are:", end = " ")
+    print("Your possible moves are:", end = " ")
 
-        # Print valid moves
-        for an_move in an_moves:
-            print(an_move, end = " ")
-        print()
+    # Print valid moves
+    for an_move in an_moves:
+        print(an_move, end = " ")
+    print()
 
     # Move the piece
-    new_row, new_col = new_space(board, player, piece_to_move) if not gui else new_row, new_col
+    new_row, new_col = new_space(board, player, piece_to_move)
 
+    # Handle capturing of an opponent's piece if necessary
     if board.state[new_row][new_col] != 0:
         piece_to_move.capture_piece(board, new_row, new_col)
 
@@ -474,8 +499,6 @@ def move(board: Board, player: Player, opponent: Player, start_row=-1, start_col
     # Handles castling if applicable
     if type(piece_to_move) == King and abs(start_col - new_col) == 2:
         castle(board, start_col, new_col, new_row)
-    
-    return True
 
 
 if __name__ == "__main__":

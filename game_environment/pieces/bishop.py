@@ -27,21 +27,30 @@ class Bishop(BasePiece):
         col = self.space[1]
 
         moves = []
+
+        # Each direction represents a different diagonal segment
         directions = ((1, 1), (-1, 1), (-1, -1), (1, -1))
         for dir in directions:
             row_dir = dir[0]
             col_dir = dir[1]
+
+            # Calculate new space on diagonal
             new_row = row + row_dir
             new_col = col + col_dir
 
+            # Only check spaces on the board
             while new_row in range(8) and new_col in range(8):
+
+                # If the space is not empty
                 if board.state[new_row][new_col] != 0:
 
+                    # If the space contains an opponent's piece, it can be captured
                     if board.state[new_row][new_col].color != self.color:
                         moves.append((new_row, new_col))
 
                     break
 
+                # Include this move in the list of valid moves
                 moves.append((new_row, new_col))
                 new_row += row_dir
                 new_col += col_dir

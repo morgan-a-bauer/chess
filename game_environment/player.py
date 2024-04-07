@@ -61,6 +61,10 @@ class Player:
 
 
     def capture(self, piece) -> None:
+        """If the player captures an opponent's piece, it gets added to the
+        player's list of captured pieces
+
+        """
         self.__captured.append(piece)
 
 
@@ -88,5 +92,11 @@ class Player:
 
 
     def get_valid_moves(self, board) -> None:
+        """Gets valid moves for all of a player's pieces
+
+        Input:
+        board -- a Board object representing the active board
+
+        """
         for piece in self.__uncaptured_pieces:
             piece.set_valid_moves(board)

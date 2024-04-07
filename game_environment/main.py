@@ -13,10 +13,13 @@ from pieces.knight import Knight
 from pieces.bishop import Bishop
 from pieces.queen import Queen
 from pieces.king import King
-import utils
+import game_environment.utils as utils
 
 
 def main():
+    """A standard game of chess"""
+
+    # Set up game environment
     board = Board()
     players = utils.get_players()
     utils.setup_board(board, players)
@@ -28,10 +31,17 @@ def main():
         print(board)
         curr_player = players[player_index]
         opp_player = players[int(not player_index)]
+
+        # Player moves a piece
         utils.move(board, curr_player, opp_player)
-        player_index = int(not player_index)  # switch active player
+
+        # Switch active player
+        player_index = int(not player_index)
+
+        # Check game end condition
         game_over = utils.game_over(opp_player, curr_player, board)
 
+    # Print a message when the game is over
     print(f"{game_over}!", end = " ")
     if game_over == "Checkmate":
         print(f"{curr_player.name} won!")
