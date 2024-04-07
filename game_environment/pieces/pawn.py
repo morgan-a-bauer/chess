@@ -27,6 +27,14 @@ class Pawn(BasePiece):
 
 
     def toss_move(self, move: tuple) -> None:
+        """Removes a potential move from the piece's list of valid moves. This
+        is used if that move would leave the player's king in check
+
+        Input:
+        move -- a tuple of the form (row, col) representing the move to be
+                invalidated in grid notation
+
+        """
         self.__valid_moves.remove(move)
 
 
@@ -47,7 +55,7 @@ class Pawn(BasePiece):
         if new_row in range(8) and board.state[new_row][col] == 0:
             moves.append((new_row, col))
 
-        # Pawns capture diagonally
+        # Pawns capture diagonally, but not forward
         for i in [-1, 1]:
             new_col = col + i
             if new_col in range(8) and\

@@ -69,6 +69,14 @@ class King(BasePiece):
 
 
     def toss_move(self, move: tuple) -> None:
+        """Removes a potential move from the piece's list of valid moves. This
+        is used if that move would leave the player's king in check
+
+        Input:
+        move -- a tuple of the form (row, col) representing the move to be
+                invalidated in grid notation
+
+        """
         self.__valid_moves.remove(move)
 
 
@@ -84,9 +92,11 @@ class King(BasePiece):
 
         moves = []
 
+        # Checks symmetrical moves (horizontal, vertical, and diagonal)
         for i in (-1, 1):
             new_row = row + i
 
+            # Vertical moves
             if new_row in range(8) and (board.state[new_row][col] == 0 or\
                                         board.state[new_row][col].color !=\
                                         self.color):
@@ -94,11 +104,13 @@ class King(BasePiece):
 
             new_col = col + i
 
+            # Horizontal moves
             if new_col in range(8) and (board.state[row][new_col] == 0 or\
                                         board.state[row][new_col].color !=\
                                         self.color):
                 moves.append((row, new_col))
 
+            # Diagonal moves
             if new_row in range(8) and new_col in range(8) and\
                (board.state[new_row][new_col] == 0 or\
                 board.state[new_row][new_col].color != self.color):
@@ -106,6 +118,7 @@ class King(BasePiece):
 
             new_col = col - i
 
+            # Diagonal moves along the other diagonal
             if new_row in range(8) and new_col in range(8) and\
                (board.state[new_row][new_col] == 0 or\
                 board.state[new_row][new_col].color != self.color):
