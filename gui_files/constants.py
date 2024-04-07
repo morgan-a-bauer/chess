@@ -12,9 +12,8 @@ from pygame.locals import (
 )
 import os
 
-print(os.getcwd())
 
-FOLDER_PATH        = os.path.abspath("GuiFiles")
+FOLDER_PATH        = os.path.abspath("gui_files")
 SPRITE_FOLDER_PATH = os.path.join(FOLDER_PATH, "sprites/")
 PIECES_FOLDER_PATH = os.path.join(SPRITE_FOLDER_PATH, "pieces/")
 WHITE_PIECE = os.path.join(PIECES_FOLDER_PATH, "white")
@@ -25,8 +24,8 @@ SCREEN_WIDTH       = 1000
 SCREEN_HEIGHT      = 1000
 GRID               = (4,4)
 
-BG_COLOR          = (9,11,16)
-BD_COLOR          = (225,204,183)
+BG_COLOR           = (9,11,16)
+BD_COLOR           = (225,204,183)
 WHITE              = (255,255,255)
 
 # Board Specifications
@@ -36,8 +35,8 @@ BOARD_SPRITE       = "Chess_board.png"
 
 BOARD_ROW          = 0
 BOARD_COL          = 0
-BOARD_ROW_SPAN     = 3
-BOARD_COL_SPAN     = 3
+BOARD_ROW_SPAN     = 4
+BOARD_COL_SPAN     = 4
 
 BOARD_PADX         = 20
 BOARD_PADY         = 20

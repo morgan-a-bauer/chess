@@ -1,7 +1,7 @@
 import pygame
-from .GenericScreenElement import GenericScreenElement
+from .generic_element import GenericScreenElement
 from .constants import *
-from board import Board as board
+from game_environment.board import Board as board
 # from pieces import *
 
 class BoardSprite(GenericScreenElement):
@@ -38,7 +38,7 @@ class Piece(GenericScreenElement):
         white = 'white'
         black = 'black'
 
-        exec(f"from pieces.{piece} import *")
+        exec(f"from game_environment.pieces.{piece} import *")
         exec(f'self.piece = {piece.title()}(({row},{col}),{white if color else black}, player)')
         container.container.place_piece(self.piece, row, col)
         player.gain_piece(self.piece)

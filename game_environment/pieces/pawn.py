@@ -3,7 +3,7 @@ pawn.py
 Morgan Bauer
 Defines an inherited class Pawn with methods specific to the mechanics of pawn movement
 """
-from pieces.base_piece import BasePiece
+from .base_piece import BasePiece
 
 class Pawn(BasePiece):
     def __init__(self, space: tuple, color: str, player) -> None:
