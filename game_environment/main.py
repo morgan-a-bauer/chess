@@ -13,7 +13,7 @@ from pieces.knight import Knight
 from pieces.bishop import Bishop
 from pieces.queen import Queen
 from pieces.king import King
-import game_environment.utils as utils
+import utils as utils
 
 
 def main():
