@@ -12,9 +12,10 @@ from .pieces.knight import Knight
 from .pieces.rook import Rook
 from .pieces.queen import Queen
 from .pieces.king import King
-import game_environment.player_input
-import game_environment.chess_errors
+from game_environment import player_input
+from game_environment import chess_errors
 import random
+
 
 def algebraic_to_grid(space: str) -> tuple:
     """
@@ -282,15 +283,17 @@ def game_over(player: Player, opponent: Player, board: Board) -> bool:
     """
     player.get_valid_moves(board)
 
+    # print("uncaptured",[str(p) for p in player.uncaptured_pieces])
     # Check valid moves for all of the player's pieces
+    returnChar = 'Stalemate'
     for piece in player.uncaptured_pieces:
-
+        print('next Iter', piece)
         # Remove any moves that leave the player's king in check
         piece.remove_in_check_moves(board, opponent)
 
         # If any piece has at least one valid move, the game is not over
         if len(piece.valid_moves) > 0:
-            return False
+            returnChar = False
 
     # Get the opponent's valid moves
     opponent.get_valid_moves(board)
@@ -301,10 +304,10 @@ def game_over(player: Player, opponent: Player, board: Board) -> bool:
         # If one of the opponent's pieces put the player's king in check,
         # the game ends by Checkmate
         if player.king.space in opp_piece.valid_moves:
-            return "Checkmate"
+            returnChar = 'Checkmate'
 
     # Otherwise it is a stalemate
-    return "Stalemate"
+    return returnChar
 
 def start_space(board: Board, player: Player) -> tuple:
     """
@@ -491,6 +494,7 @@ def move(board: Board, player: Player, opponent: Player) -> None:
     else:
         board.remove_piece(piece_to_move)
         board.place_piece(piece_to_move, new_row, new_col)
+
 
     # Set has_move marker when appropriate
     if type(piece_to_move) in [Pawn, Rook, King]:

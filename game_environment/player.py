@@ -76,6 +76,7 @@ class Player:
         piece -- the piece object that was captured
 
         """
+        
         self.__uncaptured_pieces.remove(piece)
 
 
@@ -99,4 +100,5 @@ class Player:
 
         """
         for piece in self.__uncaptured_pieces:
+            
             piece.set_valid_moves(board)
