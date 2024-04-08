@@ -1,5 +1,6 @@
 from math import ceil
 from .constants import *
+import itertools as it
 import pygame
 
 class GenericScreenElement(pygame.sprite.Sprite):
@@ -48,8 +49,8 @@ class GenericScreenElement(pygame.sprite.Sprite):
 
     @containerDimensions.setter
     def containerDimensions(self, new:tuple):
-        self._screenWidth  = new[0]
-        self._screenHeight = new[1]
+        self._parentWidth  = new[0]
+        self._parentHeight = new[1]
         self.update()
 
     @property
@@ -61,27 +62,35 @@ class GenericScreenElement(pygame.sprite.Sprite):
     def childGrid(self, new:tuple):
         self._childGrid = new
         self.update()
-    
+
+
+    @property
+    def cellCorners(self):
+        cellCorners = [(((self.size[0]//self._childGrid[0])*x) + self._padx + self._parentX, ((self.size[1]//self._childGrid[1])*y) + self._pady + self._parentY) for x,y in zip(range(1, self._childGrid[0]), range(1, self._childGrid[1]))]
+        cellCorners.insert(0, self.position)
+        cellCorners.append(self.coords)
+        return cellCorners
+
 
     @property
     def row(self):
-        return self._col
+        return self._row
     
 
     @row.setter
     def row(self, new:int):
-        self._col = new
+        self._row = new
         self.update()
 
 
     @property
     def col(self):
-        return self._row
+        return self._col
     
 
     @col.setter
     def col(self, new:int):
-        self._row = new
+        self._col = new
         self.update()
     
 
@@ -121,6 +130,12 @@ class GenericScreenElement(pygame.sprite.Sprite):
     def coords(self):
         return (self._size[0] + self._position[0],
                 self._size[1] + self._position[1],)
+    
+    
+    def move(self, row, col):
+        self._row = row
+        self._col = col
+        self.update()
     
 
     def update(self):
