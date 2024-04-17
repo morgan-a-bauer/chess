@@ -72,6 +72,7 @@ class BasePiece:
         """
         # Copy the list of valid moves to loop through
         vm_copy = deepcopy(self.valid_moves)
+        board = deepcopy(board )
 
         for move in vm_copy:
             # Put the board in a new potential state (after a valid move)
@@ -79,14 +80,20 @@ class BasePiece:
             opp_piece = board.state[move[0]][move[1]]
             board.remove_piece(self)
             board.place_piece(self, move[0], move[1])
+            
+            if opp_piece != 0:
+                print(move)
+                # opponent.lose_piece(opp_piece)               
+                # board.remove_piece(opp_piece)
 
             # See if the player's king is in the check after the potential move
             opponent.get_valid_moves(board)
 
             for piece in opponent.uncaptured_pieces:
-
+                # print(piece, piece.valid_moves,end='\n')
                 # If in check, remove the move from the list of valid moves
                 if self.player.king.space in piece.valid_moves:
+                    print("IN CHECK", (row,col), move)
                     self.toss_move(move)
 
             # Restore the board to its current state
@@ -95,6 +102,8 @@ class BasePiece:
 
             if opp_piece != 0:
                 board.place_piece(opp_piece, move[0], move[1])
+                opponent.gain_piece(opp_piece)               
+
 
 
     def capture_piece(self, board, row: int, col: int) -> None:

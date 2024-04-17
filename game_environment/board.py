@@ -3,17 +3,17 @@ board.py
 Morgan Bauer
 Defines a class Board to keep track of the state of the active game board
 """
-from pieces.base_piece import BasePiece
-from pieces.pawn import Pawn
+from .pieces.base_piece import BasePiece
+from .pieces.pawn import Pawn
 
 class Board:
     def __init__(self) -> None:
-        self.__state = [[0 for i in range(8)] for j in range(8)]
+        self._state = [[0 for i in range(8)] for j in range(8)]
 
 
     @property
     def state(self) -> list:
-        return self.__state
+        return self._state
 
 
     def remove_piece(self, piece: BasePiece) -> None:
@@ -27,7 +27,7 @@ class Board:
         """
         row = piece.space[0]
         col = piece.space[1]
-        self.__state[row][col] = 0
+        self._state[row][col] = 0
 
 
     def place_piece(self, piece: BasePiece, new_row: int, new_col: int) -> None:
@@ -40,7 +40,7 @@ class Board:
         new_col -- the column the piece is being moved to
 
         """
-        self.__state[new_row][new_col] = piece
+        self._state[new_row][new_col] = piece
         piece.space = (new_row, new_col)
 
 

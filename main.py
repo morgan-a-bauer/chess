@@ -4,6 +4,7 @@ Morgan Bauer
 A digital representation of the game chess. Intended for use to test
 functionality of our chess models using neural networks
 """
+<<<<<<< HEAD:game_environment/main.py
 from board import Board
 from player import Player
 from pieces.base_piece import BasePiece
@@ -14,6 +15,18 @@ from pieces.bishop import Bishop
 from pieces.queen import Queen
 from pieces.king import King
 import utils as utils
+=======
+from game_environment.board import Board
+from game_environment.player import Player
+from game_environment.pieces.base_piece import BasePiece
+from game_environment.pieces.pawn import Pawn
+from game_environment.pieces.rook import Rook
+from game_environment.pieces.knight import Knight
+from game_environment.pieces.bishop import Bishop
+from game_environment.pieces.queen import Queen
+from game_environment.pieces.king import King
+from game_environment import utils
+>>>>>>> main:main.py
 
 
 def main():

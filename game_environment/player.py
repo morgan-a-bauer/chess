@@ -3,7 +3,7 @@ player.py
 Morgan Bauer
 Defines an class Player to keep track of attributes for each player in the game
 """
-from pieces.base_piece import BasePiece
+from .pieces.base_piece import BasePiece
 
 class Player:
     def __init__(self, name: str) -> None:
@@ -76,6 +76,7 @@ class Player:
         piece -- the piece object that was captured
 
         """
+        
         self.__uncaptured_pieces.remove(piece)
 
 
@@ -99,4 +100,5 @@ class Player:
 
         """
         for piece in self.__uncaptured_pieces:
+            
             piece.set_valid_moves(board)
