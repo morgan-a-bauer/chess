@@ -282,6 +282,7 @@ def game_over(player: Player, opponent: Player, board: Board) -> bool:
 
     """
     player.get_valid_moves(board)
+    game_end = True
 
     # print("uncaptured",[str(p) for p in player.uncaptured_pieces])
     # Check valid moves for all of the player's pieces
@@ -293,21 +294,25 @@ def game_over(player: Player, opponent: Player, board: Board) -> bool:
 
         # If any piece has at least one valid move, the game is not over
         if len(piece.valid_moves) > 0:
-            returnChar = False
+            game_end = False
 
-    # Get the opponent's valid moves
-    opponent.get_valid_moves(board)
+    if game_end:
+        # Get the opponent's valid moves
+        opponent.get_valid_moves(board)
 
-    # If the game is over
-    for opp_piece in opponent.uncaptured_pieces:
+        # If the game is over
+        for opp_piece in opponent.uncaptured_pieces:
 
-        # If one of the opponent's pieces put the player's king in check,
-        # the game ends by Checkmate
-        if player.king.space in opp_piece.valid_moves:
-            returnChar = 'Checkmate'
+            # If one of the opponent's pieces put the player's king in check,
+            # the game ends by Checkmate
+            if player.king.space in opp_piece.valid_moves:
+                game_end = "Checkmate"
 
-    # Otherwise it is a stalemate
-    return returnChar
+        if game_end != "Checkmate":
+            # Otherwise it is a stalemate
+            game_end = "Stalemate"
+
+    return game_end
 
 def start_space(board: Board, player: Player) -> tuple:
     """
