@@ -148,7 +148,7 @@ class Gui():
                 print(self._turn)
                 print("just went:",self._players[not(self._turn)].name, "now turn:",self._players[self._turn].name)
                 print(self._board.container)
-                self._running = not(game_over(self._players[not self._turn], self._players[self._turn], self._board.container))
+                self._running = not(game_over(self._players[self._turn], self._players[not self._turn], self._board.container))
 
     
     def _move(self, row, col):

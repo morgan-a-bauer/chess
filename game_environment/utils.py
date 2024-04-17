@@ -286,7 +286,6 @@ def game_over(player: Player, opponent: Player, board: Board) -> bool:
 
     # print("uncaptured",[str(p) for p in player.uncaptured_pieces])
     # Check valid moves for all of the player's pieces
-    returnChar = 'Stalemate'
     for piece in player.uncaptured_pieces:
         print('next Iter', piece)
         # Remove any moves that leave the player's king in check
