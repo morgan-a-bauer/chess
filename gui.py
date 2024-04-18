@@ -14,11 +14,11 @@ class Gui():
         """
         
         """
-        self._screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self._screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
         self._running = True
         self._rows = grid[0]
         self._cols = grid[1]
-        self._container = GenericScreenElement(childGrid=GRID)
+        self._container = GenericScreenElement(screen=self._screen, grid=GRID)
 
         self._allSprites   = pygame.sprite.Group()
         self._pieceSprites = pygame.sprite.Group()
@@ -35,8 +35,6 @@ class Gui():
         self._pieceMoved = False
         self._activePiece = None
         game_over(self._players[not(self._turn)], self._players[self._turn], self._board.container)
-
-
 
 
     @property
@@ -62,13 +60,14 @@ class Gui():
                 row    = abs((7*(not(color) if self._onTop else color))-(pieceIndex//(len(PIECES)//2)))
                 col    = pieceIndex%(len(PIECES)//2)
                 
-                sprite = Piece(self._board,
-                               self._players[color],
-                                           color=color, 
-                                           piece=piece, 
-                                           grid=(8,8), 
-                                           row=row,
-                                           col=col)
+                sprite = Piece(player=self._players[color],
+                                container=self._board,
+                                screen=self._screen,
+                                color=color,
+                                piece=piece, 
+                                grid=(8,8), 
+                                row=row,
+                                col=col)
                 
                 self._allSprites.add(sprite)
                 self._pieceSprites.add(sprite)
@@ -83,11 +82,10 @@ class Gui():
     def _spawn_objects(self):
 
         # Board Spawning
-        self._boardBackdrop = Shape(self._container, BD_COLOR, childGrid=(1,1), padx=0, pady=0, row=BOARD_ROW, col=BOARD_COL, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
+        self._boardBackdrop = Shape(color=BD_COLOR, container=self._container, screen=self._screen, grid=(1,1), padx=0, pady=0, row=BOARD_ROW, col=BOARD_COL, rowSpan=BOARD_ROW_SPAN, colSpan=BOARD_COL_SPAN)
         self._allSprites.add(self._boardBackdrop)
 
-        self._board = BoardSprite(self._boardBackdrop, childGrid=(8,8), padx=20, pady=20, row=0, col=0)
-        self._board.container
+        self._board = BoardSprite(container=self._boardBackdrop, screen=self._screen, grid=(8,8), padx=20, pady=20, row=0, col=0)
         self._allSprites.add(self._board)
         self._populate_board()
 
@@ -179,8 +177,6 @@ class Gui():
 
 
 
-
-
     def _draw(self):
         """
 
@@ -194,7 +190,10 @@ class Gui():
         
         """ 
         self._screen.fill(BG_COLOR)
-        self._draw()
+        
+        # draws all sprites
+        # self._container.update()
+        self._container.draw()
         pygame.display.flip()
 
 
