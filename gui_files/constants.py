@@ -9,6 +9,7 @@ from pygame.locals import (
     KEYDOWN,
     KEYUP,
     QUIT,
+    RESIZABLE,
 )
 import os
 
