@@ -4,7 +4,6 @@ Morgan Bauer
 Defines a class Board to keep track of the state of the active game board
 """
 from .pieces.base_piece import BasePiece
-from .pieces.pawn import Pawn
 
 class Board:
     def __init__(self) -> None:
