@@ -9,6 +9,7 @@ import math
 
 
 class Gui():
+    
 
     def __init__(self, grid:tuple=GRID):
         """
@@ -19,6 +20,7 @@ class Gui():
         self._rows = grid[0]
         self._cols = grid[1]
         self._container = GenericScreenElement(screen=self._screen, grid=GRID)
+
 
         self._allSprites   = pygame.sprite.Group()
         self._pieceSprites = pygame.sprite.Group()
@@ -128,7 +130,11 @@ class Gui():
         col actually represents y coord
         """
 
-        boardRow, boardCol = math.floor(y/(self._board.size[1]//8)), math.floor(x/(self._board.size[0]//8))
+        rowHeight = (self._board.size[1]//8)
+        colWidth = (self._board.size[0]//8)
+        print((x, y), (rowHeight, colWidth), (math.floor(y/rowHeight), math.floor(x/colWidth)))
+
+        boardRow, boardCol = math.floor((y-self._board.pady + MOUSE_TIP_BIAS)/rowHeight), math.floor((x-self._board.padx + MOUSE_TIP_BIAS)/colWidth)
         # print(boardRow, boardCol)
         
         selected = self._board.matrix[boardRow][boardCol]
