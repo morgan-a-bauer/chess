@@ -13,6 +13,8 @@ from pygame.locals import (
 )
 import os
 
+MOUSE_TIP_BIAS     = -5
+
 
 FOLDER_PATH        = os.path.abspath("gui_files")
 SPRITE_FOLDER_PATH = os.path.join(FOLDER_PATH, "sprites/")
