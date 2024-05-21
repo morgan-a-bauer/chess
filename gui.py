@@ -132,7 +132,7 @@ class Gui():
 
         rowHeight = (self._board.size[1]//8)
         colWidth = (self._board.size[0]//8)
-        print((x, y), (rowHeight, colWidth), (math.floor(y/rowHeight), math.floor(x/colWidth)))
+        # print((x, y), (rowHeight, colWidth), (math.floor(y/rowHeight), math.floor(x/colWidth)))
 
         boardRow, boardCol = math.floor((y-self._board.pady + MOUSE_TIP_BIAS)/rowHeight), math.floor((x-self._board.padx + MOUSE_TIP_BIAS)/colWidth)
         # print(boardRow, boardCol)
@@ -149,9 +149,9 @@ class Gui():
             if self._move(boardRow, boardCol):
                 self._activePiece = None
                 self._turn = not(self._turn)
-                print(self._turn)
+                # print(self._turn)
                 print("just went:",self._players[not(self._turn)].name, "now turn:",self._players[self._turn].name)
-                print(self._board.container)
+                # print(self._board.container)
                 self._running = not(game_over(self._players[self._turn], self._players[not self._turn], self._board.container))
 
     
