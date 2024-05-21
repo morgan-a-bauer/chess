@@ -74,6 +74,7 @@ class BasePiece:
         vm_copy = deepcopy(self.valid_moves)
         board = deepcopy(board )
 
+        print(self.valid_moves)
         for move in vm_copy:
             # Put the board in a new potential state (after a valid move)
             row, col = self.space
