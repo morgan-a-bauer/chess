@@ -2,6 +2,7 @@ import os
 import json
 import random
 from stockfish import Stockfish
+
 """
 What does this file need to do?
 
@@ -43,37 +44,41 @@ save_tensor_as_json: -> None
 
 """
 
+# RUN FROM chess directory
 class BoardStateConverter:
 
-    def __init__(self, stockfish="stockfish", labels=["moves", "currentTurn"], target="stockfish-eval"):
+    def __init__(self, stockfish="stockfish", stockfishRating = 2000):
         self.workingDir = os.path.abspath("data")
         self.stockfish = Stockfish(os.path.join(self.workingDir,stockfish))
-        self.labels = labels
-        self.target = target
-        
 
-    def load_label_data_from_json(self, jsonFileDir="jsonObjects/pgnDataAsJson.json"):
-        # loads just the labels requested?
+        self.inputTensor = []
 
+    def stockfish_eval(self, moves):
+        self.stockfish.set_position(moves)
+        return self.stockfish.get_evaluation()
 
-        # Need to add os usage for abs path once "__main__" is in final dir location
-        print(os.path.join(self.workingDir, jsonFileDir))
+    def process_json_file(self, jsonFileDir="jsonObjects/pgnDataAsJson_corrected.json") -> list:
+        # loads just the labels requested
+
+        # opens json file
         with open(os.path.join(self.workingDir, jsonFileDir), "r") as gamesFile:
 
-            gameData = json.load(gamesFile)
-
-
-            for game in gameData:
-                labelValues = []
+            for moves in json.load(gamesFile):
+                boardStates, stockfishMoves =  self.convert_labels_to_representation(moves)
                 
+                stockfishEval = self.stockfish_eval(stockfishMoves)
 
+                self.inputTensor.append([boardStates, stockfishEval])
+                # print(moves)
+    
+    def write_as_json(self, jsonFileDir="trainingData/training_data.json"):
+        
+        with open(os.path.join(self.workingDir, jsonFileDir), "w") as file:
 
+            json.dump(self.inputTensor, file)
 
-
-
-
+            
 if __name__ == "__main__":
     converter = BoardStateConverter()
-    converter.load_label_data_from_json()
-
+    converter.process_json_file()
 

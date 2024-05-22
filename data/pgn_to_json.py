@@ -9,9 +9,9 @@ import os
 import re
 
 dataLocation = os.path.abspath("data")
-pgnLocation = dataLocation + "/LichessData"
+pgnLocation = dataLocation + "/lichessData"
 jsonLocation = dataLocation + "/jsonObjects"
-jsonFileName = "pgnDataAsJson.json"
+jsonFileName = "pgnDataAsJson_corrected.json"
 pgnList = sorted([file for file in os.listdir(pgnLocation) if os.path.join(pgnLocation, file).endswith(".pgn")], key=lambda x:x[14:-4], reverse=True)
 # print(pgnList)
 
@@ -45,8 +45,9 @@ for file in pgnList:
         for pgnLine in pgnContent:
 
             if pgnLine[0] == '[':
-
                 savingMoves = False
+                continue
+
                 result = re.sub("[\[\]]", '', pgnLine).strip()
                 # result = pgnLine.strip()
                 # print(result)
@@ -63,6 +64,7 @@ for file in pgnList:
             elif pgnLine == '\n':
                 savingMoves = False
                 continue
+
                 # print(pgnLine)
             else:
                 # result = re.split(r'(?<=\d)\.', pgnLine)
@@ -89,9 +91,9 @@ for file in pgnList:
                 # print("moves:", result)
 
                 if not savingMoves:
-                    pgnJsonObject[pgnObjectIndex]['moves'] = []
+                    pgnJsonObject.append([])
 
-                [pgnJsonObject[pgnObjectIndex]['moves'].append(i) for item in result for i in item if i != '']
+                [pgnJsonObject[-1].append(i) for item in result for i in item if i != '']
 
                 savingMoves = True
                 # print(pgnLine)
@@ -101,9 +103,7 @@ for file in pgnList:
 
 # print(pgnJsonObject)
 with open(os.path.join(jsonLocation, jsonFileName), 'w') as file:
-    string = json.dumps(pgnJsonObject,
-                        indent=4)
-    file.writelines(string)
+    json.dump(pgnJsonObject, file)
 
 
 

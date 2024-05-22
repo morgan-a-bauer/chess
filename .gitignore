@@ -6,5 +6,6 @@ GuiFiles/__pycache__
 
 data/LichessData/*
 data/jsonObjects/*
+data/stockfish
 
 .DS_STORE
