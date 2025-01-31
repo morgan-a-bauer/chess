@@ -136,23 +136,26 @@ class Gui():
 
         boardRow, boardCol = math.floor((y-self._board.pady + MOUSE_TIP_BIAS)/rowHeight), math.floor((x-self._board.padx + MOUSE_TIP_BIAS)/colWidth)
         # print(boardRow, boardCol)
-        
-        selected = self._board.matrix[boardRow][boardCol]
-        print(selected, boardRow, boardCol)
+        try:
+            selected = self._board.matrix[boardRow][boardCol]
+            print(selected, boardRow, boardCol)
 
-        if selected in (self._whiteSprites if self._turn else self._blackSprites):
-            self._activePiece = selected
-            print(self._activePiece.piece.valid_moves)
+            if selected in (self._whiteSprites if self._turn else self._blackSprites):
+                self._activePiece = selected
+                print(self._activePiece.piece.valid_moves)
 
-        elif self._activePiece != None:
+            elif self._activePiece != None:
 
-            if self._move(boardRow, boardCol):
-                self._activePiece = None
-                self._turn = not(self._turn)
-                # print(self._turn)
-                print("just went:",self._players[not(self._turn)].name, "now turn:",self._players[self._turn].name)
-                # print(self._board.container)
-                self._running = not(game_over(self._players[self._turn], self._players[not self._turn], self._board.container))
+                if self._move(boardRow, boardCol):
+                    self._activePiece = None
+                    self._turn = not(self._turn)
+                    # print(self._turn)
+                    print("just went:",self._players[not(self._turn)].name, "now turn:",self._players[self._turn].name)
+                    # print(self._board.container)
+                    self._running = not(game_over(self._players[self._turn], self._players[not self._turn], self._board.container))
+
+        except IndexError as IE:
+            print(IE)
 
     
     def _move(self, row, col):

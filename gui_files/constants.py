@@ -25,7 +25,7 @@ BLACK_PIECE = os.path.join(PIECES_FOLDER_PATH, "black")
 # Screen Specifications
 SCREEN_WIDTH       = 1000
 SCREEN_HEIGHT      = 1000
-GRID               = (4,4)
+GRID               = (5,5)
 
 BG_COLOR           = (9,11,16)
 BD_COLOR           = (225,204,183)
@@ -38,8 +38,8 @@ BOARD_SPRITE       = "Chess_board.png"
 
 BOARD_ROW          = 0
 BOARD_COL          = 0
-BOARD_ROW_SPAN     = 4
-BOARD_COL_SPAN     = 4
+BOARD_ROW_SPAN     = 3
+BOARD_COL_SPAN     = 3
 
 BOARD_PADX         = 20
 BOARD_PADY         = 20
