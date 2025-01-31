@@ -95,7 +95,9 @@ class BasePiece:
                 # If in check, remove the move from the list of valid moves
                 if self.player.king.space in piece.valid_moves:
                     print("IN CHECK", (row,col), move)
-                    self.toss_move(move)
+
+                    ### This is the problem causing the crash -----------------------
+                    self.toss_move(move) 
 
             # Restore the board to its current state
             board.remove_piece(self)
