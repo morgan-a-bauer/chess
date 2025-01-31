@@ -11,7 +11,7 @@ import re
 dataLocation = os.path.abspath("data")
 pgnLocation = dataLocation + "/lichessData"
 jsonLocation = dataLocation + "/jsonObjects"
-jsonFileName = "pgnDataAsJson_corrected.json"
+jsonFileName = "pgnDataAsJson_corrected_test.json"
 pgnList = sorted([file for file in os.listdir(pgnLocation) if os.path.join(pgnLocation, file).endswith(".pgn")], key=lambda x:x[14:-4], reverse=True)
 # print(pgnList)
 
@@ -46,28 +46,10 @@ for file in pgnList:
 
             if pgnLine[0] == '[':
                 savingMoves = False
-                continue
-
-                result = re.sub("[\[\]]", '', pgnLine).strip()
-                # result = pgnLine.strip()
-                # print(result)
-                result = re.split(r'\s(?=(?:[^"]*"[^"]*")*[^"]*$)', result, maxsplit=1)
-                result[1] = result[1].strip('"')
-                # print(result)
-
-                if result[0] == 'Event':
-                    pgnObjectIndex += 1
-                    pgnJsonObject.append({})
-
-                pgnJsonObject[pgnObjectIndex][result[0]] = result[1]
                     
             elif pgnLine == '\n':
                 savingMoves = False
-                continue
-
-                # print(pgnLine)
             else:
-                # result = re.split(r'(?<=\d)\.', pgnLine)
                 splitLine = re.split(r'\s(?=\d)', pgnLine)
                 result = []
                 for section in splitLine:
@@ -76,27 +58,20 @@ for file in pgnList:
                     if len(splitSection) == 1:
                         temp = splitSection[0].strip().split(' ')
                         if temp == ['1-0'] or temp == ['0-1'] or temp == ['']:
-                            # print('bad:', temp)
-                            continue
+                            pass
                         else:
                             result.append(temp)
                     elif len(splitSection) == 2:
                         result.append(splitSection[1].strip().split(' '))
                     else:
-                        continue
-
-
-                # print(result)
-                # result = [re.split(r'(?<=\d)\.', section)[1].strip().split(" ") for section in splitLine]
-                # print("moves:", result)
+                        pass
 
                 if not savingMoves:
                     pgnJsonObject.append([])
 
                 [pgnJsonObject[-1].append(i) for item in result for i in item if i != '']
-
                 savingMoves = True
-                # print(pgnLine)
+
     iterCount += 1
     print(f'File Complete {iterCount} out of {len(pgnList)}')
 
@@ -104,11 +79,6 @@ for file in pgnList:
 # print(pgnJsonObject)
 with open(os.path.join(jsonLocation, jsonFileName), 'w') as file:
     json.dump(pgnJsonObject, file)
-
-
-
-
-            
             # TODO: Create clause for empty lines and then actual game moves
         
         
