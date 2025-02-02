@@ -21,6 +21,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3B9D64FA2D4D2C250052755A /* New Folder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "New Folder";
+			sourceTree = "<group>";
+		};
 		3B9F70762D4C6CEC00F15EC2 /* ChessApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -47,6 +52,7 @@
 			children = (
 				3B9F70762D4C6CEC00F15EC2 /* ChessApp */,
 				3B9F70752D4C6CEC00F15EC2 /* Products */,
+				3B9D64FA2D4D2C250052755A /* New Folder */,
 			);
 			sourceTree = "<group>";
 		};
@@ -74,6 +80,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				3B9D64FA2D4D2C250052755A /* New Folder */,
 				3B9F70762D4C6CEC00F15EC2 /* ChessApp */,
 			);
 			name = ChessApp;
