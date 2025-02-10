@@ -7,5 +7,6 @@
 
 // Check out protocol extensions for cool functionality
 protocol BasePiece {
-    
+    func moveIsValid(_ destination: Cell) -> Bool
+    func charRepresentation() -> String
 }

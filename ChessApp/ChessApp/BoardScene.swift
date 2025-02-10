@@ -12,8 +12,12 @@ import UIKit
 // Morgan this is a base for you to jump off of when developing the board and pieces. Change whatever you want to change
 class GameScene: SKScene {
     
+    
     var touchedNode: SKShapeNode? = nil
     var originalLocation: CGPoint? = nil
+    var moveHistory: MoveHistory = MoveHistory(gameId:1)
+    weak var sceneDelegate: BoardToSceneDelegate?
+    
     
     // Kind of "Main"
     override func didMove(to view: SKView) {
@@ -50,6 +54,7 @@ class GameScene: SKScene {
                 colour = !colour
             }
         }
+        
     }
     
     
@@ -62,8 +67,10 @@ class GameScene: SKScene {
         
         // Currently can pick up any drawn node, board cells included
         if let node = self.atPoint(touchLocation) as? SKShapeNode {
+            
             touchedNode = node
             originalLocation = node.position
+            
             //  findValidMoves()
         }
         print(self.atPoint(touchLocation))
@@ -102,10 +109,23 @@ class GameScene: SKScene {
               touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
           }
         
+        
         // An idea of how to lock piece to a board cell center
         // pieceNode?.run(SKAction.move(to: CGPoint(x: nodesBelow.first!.position.x, y: nodesBelow.first!.position.y), duration: 0.005))
         
         print("Touch Stopped At: \(touchLocation)")
+        
+        // Testing Code for move history
+        let startCell: Cell = Cell("e2")
+        let targetCell: Cell = Cell("e4")
+        let pieceMoved: Bishop = Bishop()
+        let pieceCaptured: BasePiece? = nil
+        let inCheck: Bool = false
+        let inMate: Bool = false
+        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+        moveHistory.append(move)
+        sceneDelegate?.updateViewableMoveHistory(moveHistory)
+        
     }
     
     

@@ -6,5 +6,10 @@
 //
 
 struct King: BasePiece {
-    
+    func moveIsValid(_ destination: Cell) -> Bool {
+        return true
+    }
+    func charRepresentation() -> String {
+        return "k"
+    }
 }

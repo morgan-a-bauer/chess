@@ -6,11 +6,18 @@
 //
 
 struct Move {
-    let cell: Cell
     let startCell: Cell
     let targetCell: Cell
-//    let pieceMoved: Piece
-//    let pieceCaptured: Piece?
+    let pieceMoved: BasePiece
+    let pieceCaptured: BasePiece?
     let inCheck: Bool
     let inMate: Bool
+    
+    func asShortAlgebraicNotation() -> String {
+        return "\(pieceMoved.charRepresentation())\(pieceCaptured != nil ? "x" : "") \(targetCell.pos)"
+    }
+    
+    func asLongAlgebraicNotation() -> String {
+        return ""
+    }
 }
