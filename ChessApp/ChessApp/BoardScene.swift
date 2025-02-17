@@ -12,23 +12,58 @@ import UIKit
 // Morgan this is a base for you to jump off of when developing the board and pieces. Change whatever you want to change
 class GameScene: SKScene {
     
+    // Testing Variable
+    let targetCell: Int = 11
     
     var touchedNode: SKShapeNode? = nil
     var originalLocation: CGPoint? = nil
     var moveHistory: MoveHistory = MoveHistory(gameId:1)
     weak var sceneDelegate: BoardToSceneDelegate?
     
+    var childNodeMap: [String: SKNode] = [:]
+    
+    
+    override var children: [SKNode] {
+        return Array(childNodeMap.values)
+    }
+    
+    override func addChild(_ node: SKNode) {
+        guard let name = node.name else{
+            fatalError("Nodes muust have a unique name.")
+        }
+        childNodeMap[name] = node
+        super.addChild(node)
+    }
+    
+    override func removeChildren(in nodes: [SKNode]) {
+        for node in nodes {
+            if let name = node.name {
+                childNodeMap.removeValue(forKey: name)
+            }
+        }
+        super.removeChildren(in: nodes)
+    }
+    
+    // Use this for checking node locations...
+    // Hmmmmm. This is the actual square cells themselves. Some more is needed to check for if a piece is present...
+    func getNode(named name: Int) -> SKNode? {
+        return childNodeMap[String(name)]
+    }
+    
+    
     
     // Kind of "Main"
     override func didMove(to view: SKView) {
         // Build chess/checkers board
         //        board = Array(repeating: Array(repeating: boardCell(), count: Int(content!.number)), count: Int(content!.number))
+        // Piece seems to need to be added within this scope to "view"
         let squareWidth = self.size.width/8
         let squareHeight = self.size.height/8
         
         
         // Basic board draw
         // Rows
+        var cell = 0
         for row in 0..<Int(8) {
             var colour: Bool
             let squarePosY = (squareHeight * CGFloat(row)) + (squareHeight/2)
@@ -45,14 +80,16 @@ class GameScene: SKScene {
                 square.position = CGPoint(x: squarePosX, y: squarePosY)
                 square.zPosition = 1
                 if colour {square.fillColor = .white} else {square.fillColor = .brown}
-                square.name = "\(row),\(column),square"
+                square.name = "\(cell)"
                 
                 
                 // !! Places SKShape into SKScene
                 addChild(square)
                 //                board[column][row] = boardCell(square: square)
                 colour = !colour
+                cell += 1
             }
+            cell += 2
         }
         
     }
@@ -73,7 +110,13 @@ class GameScene: SKScene {
             
             //  findValidMoves()
         }
-        print(self.atPoint(touchLocation))
+        // Testing square naming
+        if getNode(named: targetCell) == touchedNode {
+            print("Target Cell", touchedNode?.name!)
+        }
+        else {
+            print("Non Target", touchedNode?.name!)
+        }
     }
     
     
@@ -113,17 +156,17 @@ class GameScene: SKScene {
         // An idea of how to lock piece to a board cell center
         // pieceNode?.run(SKAction.move(to: CGPoint(x: nodesBelow.first!.position.x, y: nodesBelow.first!.position.y), duration: 0.005))
         
-        print("Touch Stopped At: \(touchLocation)")
+//        print("Touch Stopped At: \(touchLocation)")
         
         // Testing Code for move history
-        let startCell: Cell = Cell("e2")
-        let targetCell: Cell = Cell("e4")
-        let pieceMoved: Bishop = Bishop()
-        let pieceCaptured: BasePiece? = nil
-        let inCheck: Bool = false
-        let inMate: Bool = false
-        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-        moveHistory.append(move)
+//        let startCell: Cell = Cell("e2")
+//        let targetCell: Cell = Cell("e4")
+//        let pieceMoved: Bishop = Bishop()
+//        let pieceCaptured: BasePiece? = nil
+//        let inCheck: Bool = false
+//        let inMate: Bool = false
+//        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+//        moveHistory.append(move)
         sceneDelegate?.updateViewableMoveHistory(moveHistory)
         
     }
