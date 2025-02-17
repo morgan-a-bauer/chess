@@ -7,4 +7,14 @@
 
 struct Bishop: BasePiece {
     
+    init(){
+        
+    }
+    
+    func moveIsValid(_ destination: Cell) -> Bool {
+        return true
+    }
+    func charRepresentation() -> String {
+        return "b"
+    }
 }

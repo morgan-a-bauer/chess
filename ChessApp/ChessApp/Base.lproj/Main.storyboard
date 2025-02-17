@@ -48,8 +48,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.69999999999999996" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bDe-wA-fdf">
-                                <rect key="frame" x="76" y="430" width="301" height="210"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.69999999999999996" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bDe-wA-fdf">
+                                <rect key="frame" x="79" y="430" width="298" height="210"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.98882908489999999" blue="0.91923804809999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -73,6 +73,7 @@
                     </view>
                     <connections>
                         <outlet property="gameView" destination="yxu-ei-b2G" id="qpG-1a-6Cc"/>
+                        <outlet property="moveHistoryScroll" destination="bDe-wA-fdf" id="zvq-5C-CDU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JHy-dW-Dsq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
