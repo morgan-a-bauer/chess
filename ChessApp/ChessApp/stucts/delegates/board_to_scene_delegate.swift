@@ -7,5 +7,4 @@
 
 protocol BoardToSceneDelegate: AnyObject {
     func updateViewableMoveHistory(_ moveHistory: MoveHistory)
-    
 }
