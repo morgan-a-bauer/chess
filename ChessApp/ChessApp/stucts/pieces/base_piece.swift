@@ -10,5 +10,6 @@ protocol BasePiece {
     var cellId: UInt8 { get set }
 
     func moveIsValid(_ destination: Cell) -> Bool
+    func getMoves() -> Array<UInt8>
     func charRepresentation() -> String
 }
