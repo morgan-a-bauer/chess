@@ -80,7 +80,8 @@ class GameScene: SKScene {
                 square.position = CGPoint(x: squarePosX, y: squarePosY)
                 square.zPosition = 1
                 if colour {square.fillColor = .white} else {square.fillColor = .brown}
-                square.name = "\(cell)"
+                let cellStrValue:UnicodeScalar = UnicodeScalar(column+97)!
+                square.name = "\(String(describing: cellStrValue))\(row+1)"
                 
                 
                 // !! Places SKShape into SKScene
@@ -112,10 +113,10 @@ class GameScene: SKScene {
         }
         // Testing square naming
         if getNode(named: targetCell) == touchedNode {
-            print("Target Cell", touchedNode?.name!)
+            print("Target Cell", touchedNode?.name ?? "Nil")
         }
         else {
-            print("Non Target", touchedNode?.name!)
+            print("Non Target", touchedNode?.name ?? "Nil")
         }
     }
     
