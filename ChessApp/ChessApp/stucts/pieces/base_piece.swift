@@ -7,6 +7,8 @@
 
 // Check out protocol extensions for cool functionality
 protocol BasePiece {
+    var cellId: UInt8 { get set }
+
     func moveIsValid(_ destination: Cell) -> Bool
     func charRepresentation() -> String
 }

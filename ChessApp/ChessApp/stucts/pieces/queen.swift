@@ -6,6 +6,8 @@
 //
 
 struct Queen: BasePiece {
+    var cellId: UInt8
+
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
