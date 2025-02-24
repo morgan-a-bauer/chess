@@ -6,11 +6,16 @@
 //
 
 struct EmptyPiece: BasePiece {
-    var cellId: UInt8
+    var cellId: Int
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
+
+    func getMoves() -> Array<Int> {
+        return [0]
+    }
+
     func charRepresentation() -> String {
         return ""
     }

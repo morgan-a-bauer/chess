@@ -6,11 +6,18 @@
 //
 
 struct King: BasePiece {
-    var cellId: UInt8
+    var cellId: Int
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
+
+    func getMoves() -> Array<Int> {
+        var moves = [-11, -10, -9, -1, 1, 9, 10, 11]
+
+        return moves
+    }
+
     func charRepresentation() -> String {
         return "k"
     }
