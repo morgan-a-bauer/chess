@@ -35,13 +35,18 @@ class Player {
     var isHuman : Bool
     var playerName : String
     var moveCount: Int = 0
+    var turn : Bool
 
     
-    init(color: String, isHuman : Bool = true, playerName : String) {
+    init(color: String, isHuman : Bool = true, playerName : String, turn : Bool = false) {
         self.color = color
         self.isHuman = isHuman
         self.playerName = playerName
+        self.turn = turn
+        
+        
         //I think this is redundant and assumed to be self when made in the class? But need to double check
+            //Update: the program gets mad at me if I make the timer and dont specify self declarations for everything else. I don't know why
         createTimer()
         
     }
@@ -82,4 +87,13 @@ class Player {
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true) //recreate invalidated timer. Timer-affected variables like runCount are preserved. 
         pausedTimer = false
     }
+    func startturn() {
+        self.turn = true
+        unpauseTimer()
+    }
+    func endturn() {
+        pauseTimer()
+        self.turn = false
+    }
+
 }
