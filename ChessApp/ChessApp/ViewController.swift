@@ -12,10 +12,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        print("program online")
-        var p1 = Player(color:"black", playerName:"Nate")
-        print(p1.color)
-        print(Date())
+        var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
 
 
@@ -44,41 +41,45 @@ class Player {
         self.color = color
         self.isHuman = isHuman
         self.playerName = playerName
+        //I think this is redundant and assumed to be self when made in the class? But need to double check
         createTimer()
         
     }
     @objc func fireTimer() {
-        print("Timer fired!")
+        //print("Timer fired!")
         runCount += 1
+        //runCount keeps track of how many seconds go by- tick interval can be lowered or raised @ timeInterval is Timer object. runCount retains its value when the timer is paused (destroyed) and unpaused (recreated)
         
         
-        if runCount == 4500 { //4500 for first 90 minutes
-            print("first 90 minutes up")
+        if runCount == 5400 { //5400 for first 90 minutes
+            print()
+            //Implement effect in game once first 90 minutes are up, and then the last next 30 are up
         }
         
-        if runCount == 5 {
+        /*if runCount == 5 {
             pauseTimer()
             print("wait")
             print("wait")
             print("wait")
             print("wait")
             unpauseTimer()
-        }
+        }*/
     }
+    
     var timer:Timer?
     var pausedTimer = false
     var runCount = 0
     func createTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true) //creates a timer that performs the fireTimer() function every timeInterval (currently 1)
  }
     
     func pauseTimer() {
-        timer?.invalidate()
+        timer?.invalidate() //Makes the timer stop ticking
         print("ideally paused")
         pausedTimer = true
     }
     func unpauseTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true) //recreate invalidated timer. Timer-affected variables like runCount are preserved. 
         pausedTimer = false
     }
 }
