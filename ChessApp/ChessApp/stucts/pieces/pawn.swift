@@ -6,14 +6,19 @@
 //
 
 struct Pawn: BasePiece {
-    var cellId: UInt8
+    var cellId: Int
+    var hasMoved = false
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
 
-    func getMoves() -> Array<UInt8> {
-        return []
+    func getMoves() -> Array<Int> {
+        var moves = [10]
+        if self.hasMoved == false {
+            moves.append(20)
+        }
+        return moves
     }
 
     func charRepresentation() -> String {

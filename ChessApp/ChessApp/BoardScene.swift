@@ -62,8 +62,9 @@ class GameScene: CustomSKScene {
             }
         }
     }
-    
-    
+
+    // Get valid moves
+
     // Called if something is touched within scene
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Gets current mouse location
