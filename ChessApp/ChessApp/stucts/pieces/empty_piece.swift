@@ -1,17 +1,17 @@
 //
-//  knight.swift
+//  empty_piece.swift
 //  ChessApp
 //
-//  Created by Jackson Butler on 2/3/25.
+//  Created by Morgan Bauer on 2/19/25.
 //
 
-struct Knight: BasePiece {
+struct EmptyPiece: BasePiece {
     var cellId: UInt8
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
     func charRepresentation() -> String {
-        return "n"
+        return ""
     }
 }

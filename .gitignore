@@ -9,3 +9,5 @@ data/jsonObjects/*
 data/stockfish
 
 .DS_STORE
+
+ChessBackEnd/node_modules/

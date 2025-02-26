@@ -14,8 +14,6 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
-
-
 }
 
 class Player {
