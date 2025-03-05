@@ -19,7 +19,7 @@ class WebSocketManager: NSObject, ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession: URLSession = URLSession(configuration: .default)
-    private let url = URL(string: "ws://localhost:8080")!  // Replace with your server URL
+    private let url = URL(string: "ws://chessbackend-iwcv.onrender.com:8080")!  // Replace with your server URL
     private var connectionState: WebSocketState = .disconnected
     @Published private var messageQueue: [String] = []
     
