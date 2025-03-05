@@ -6,14 +6,39 @@
 //
 
 import UIKit
+import ObjectiveC
+import Foundation
+
 
 class ViewController: UIViewController {
-
+    @IBOutlet weak var query1: UIButton!
+    @IBOutlet weak var query2: UIButton!
+    @IBOutlet weak var revive: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
+        @IBAction func query(_ sender: Any) {
+            if sender as? UIButton == query1 {
+                
+                let queryDict: [String: Any] = [
+                    "game_id": 2,
+                    "username": "Androodle",
+                    "move": "e4"
+                ]
+                WebSocketManager.shared.addMessage(queryDict)
+            } else if (sender as? UIButton == query2){
+                let queryDict: [String: Any] = [
+                    "game_id": 2,
+                    "username": "Jackcameback",
+                    "move": "e4"
+                ]
+                WebSocketManager.shared.addMessage(queryDict)
+            }
+            
+        }
 }
 
 class Player {
