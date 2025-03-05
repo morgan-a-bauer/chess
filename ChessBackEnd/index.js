@@ -89,5 +89,4 @@ try {
 // app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
-const wss = new WebSocketServer({port: 8080});
-
+const wss = new WebSocketServer({port: process.env.PORT || 8080});
