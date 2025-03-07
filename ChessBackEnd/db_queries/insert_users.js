@@ -1,13 +1,21 @@
 import {Sequelize, DataTypes, Model, sequelize} from './sql_init.js';
 
-class User extends Model {
-    getUsername() {
-        return this.username
-    }
+class Users extends Model {
     /* can add methods to this */
 };
 
-User.init(
+/*
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    password TEXT NOT NULL,
+);
+*/
+
+Users.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -36,8 +44,7 @@ User.init(
     },
     {
         sequelize,
-        
-
+        modelName: 'users'
     },
 );
 
