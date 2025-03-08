@@ -31,7 +31,6 @@ class GameQueue {
 
     async listen() {
         while (true) {
-            console.log(this.queue)
             const users = this.find_match()
             if (users !== null) {
                 this.leave(users[0]);

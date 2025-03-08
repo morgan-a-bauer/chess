@@ -76,7 +76,7 @@ async function queue_listener_handler() {
                     if (is_authenticated) {
                         // You are not the droids we are looking for
 
-                        switch (parsedData["type"]) {
+                        switch (parsedData.type) {
                             case "add_move": {
                                 const move = await Moves.create({"game_id": parsedData.game_id, "turn": parsedData.turn, "move": parsedData.move});
                                 break;
@@ -87,10 +87,6 @@ async function queue_listener_handler() {
                             }
                             case "end_game": {
                                 // find game where id == game_id set is_active false
-                                break;
-                            }
-                            case "add_user": {
-                                await Users.create({ username: parsedData["username"], email: parsedData["email"], first_name: parsedData["first_name"], last_name: parsedData["last_name"], password: parsedData["password"] });
                                 break;
                             }
                             case "get_username": {
@@ -107,28 +103,38 @@ async function queue_listener_handler() {
                                 queue.leave(parsedData["user_id"]);
                                 break;
                             }
-
                             default: {
                                 ws.send("ya done fucked it")
                             }
                         }
                     } else {
-                        if (!is_authenticated && (parsedData["type"] == "auth")){
-                            // Need a more secure way of sending password...
-                            const login = await verifyLogin(parsedData["username"], parsedData["password"])
-                            if (login === "Invalid Login" || login === "User not found") {
-                                ws.send(login); // Send "Invalid Login" or "User not found" message
-                                
-                            } else {
-                                is_authenticated = true;
-                                clients.set(login, ws);
-                                console.log(login); // login now holds the user id (or other value from verifyLogin)
-                                ws.send(String(login)); // Send the user ID or whatever is returned from verifyLogin
+                        switch (parsedData.type) {
+                            case "auth": {
+                                // Need a more secure way of sending password...
+                                const login = await verifyLogin(parsedData["username"], parsedData["password"])
+                                if (login === "Invalid Login" || login === "User not found") {
+                                    ws.send(login); // Send "Invalid Login" or "User not found" message
+                                } else {
+                                    is_authenticated = true;
+                                    clients.set(login, ws);
+                                    console.log(login); // login now holds the user id (or other value from verifyLogin)
+                                    ws.send(String(login)); // Send the user ID or whatever is returned from verifyLogin
+                                }
+                                break;
                             }
-                        }
-                        else {
-                            ws.send("Unauthenticated User")
-                        }
+                            case "create_user": {
+                                try{
+                                    await Users.create({ username: parsedData["username"], email: parsedData["email"], first_name: parsedData["first_name"], last_name: parsedData["last_name"], password: parsedData["password"] });
+                                    ws.send(JSON.stringify({"type":"success", "sub_type":"created_user", "message": "User created successfully"}))
+                                }catch {
+                                    ws.send(JSON.stringify({"type":"error", "sub_type":"invalid_user", "message": "Username/Email is already in use"}))
+                                }
+                                break;
+                            }
+                            default: {
+                                ws.send("Unauthenticated User")
+                            }
+                        };
                     };
                     
                 })()
