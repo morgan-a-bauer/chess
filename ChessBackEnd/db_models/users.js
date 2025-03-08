@@ -33,12 +33,6 @@ Users.init(
         },
         password: {
             type: DataTypes.TEXT,
-            set(value) {
-                // Storing passwords in plaintext in the database is terrible.
-                // Hashing the value with an appropriate cryptographic hash function is better.
-                // Using the username as a salt is better.
-                this.setDataValue('password', hash(this.username + value));
-            },
             allowNull: false,
         },
     },
