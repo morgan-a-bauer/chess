@@ -61,8 +61,25 @@ class GameScene: CustomSKScene {
                 colour = !colour
             }
         }
+        myDatabase = [["Nate","Goucher"],["John", "Hilliard"]]
+        var p1 = Player(color:"white",playerName:myDatabase[0][0])
+        var p1 = Player(color:"black",playerName:myDatabase[1][0])
+        players = [p1,p2]
     }
-
+    func getPlayerPhase() {
+        for player in players {
+            if player.turn == true {
+                return player
+            }
+        }
+    }
+    func getWaitingPlayer() {
+        for player in players {
+            if player.turn == false {
+                return player
+            }
+        }
+    }
     // Get valid moves
 
     // Called if something is touched within scene
@@ -144,6 +161,13 @@ class GameScene: CustomSKScene {
         // let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
         // moveHistory.append(move)
         sceneDelegate?.updateViewableMoveHistory(moveHistory)
+        
+        //begin code for updating turns and timers.
+        //Use same conditions for updating move history to trigger timer change from white to black and vice versa.
+        movedPlayer = getPlayerPhase()
+        waitingPlayer = getWaitingPlayer()
+        movedPlayer.endturn()
+        waitingPlayer.startturn() //fix camel cases
         
     }
     

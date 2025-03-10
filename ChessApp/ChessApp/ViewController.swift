@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
+        var p0s = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
 }
 
