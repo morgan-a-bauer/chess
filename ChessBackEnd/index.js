@@ -9,6 +9,7 @@ import Moves from './db_models/moves.js'
 import GameQueue from './helpers.js/game_queue.js';
 import verifyLogin from './db_queries/login_verification.js'
 import select_username_by_id from './db_queries/select_username_by_id.js';
+import { parse } from 'dotenv';
 
 const queue = new GameQueue();
 const clients = new Map();
@@ -50,6 +51,7 @@ async function queue_listener_handler() {
             clients.get(player2).send(message);
         }
         else {
+            ws.send(JSON.stringify({"type":"error", "sub_type":"queue_failed", "message": "Trying To Requeue You"}));
             console.log("Invalid Match");
         }
         
@@ -63,7 +65,9 @@ async function queue_listener_handler() {
     wss.on ('connection', function connection(ws) {
 
         var is_authenticated = false;
-        var game_id = null
+        var game = null;
+        var opponent = null;
+        var user = null;
         ws.on('error', console.error);
 
         ws.on('message', function message(data) {
@@ -74,33 +78,101 @@ async function queue_listener_handler() {
                     // Might need to check what create does and substitute it out...
                     // All ws.send should use the same formating that swift client sends to this server, parsable json.
                     if (is_authenticated) {
-                        // You are not the droids we are looking for
+                        // This is not the droid you are looking for
 
                         switch (parsedData.type) {
                             case "add_move": {
-                                const move = await Moves.create({"game_id": parsedData.game_id, "turn": parsedData.turn, "move": parsedData.move});
+                                /*
+                                {"type":"add_move", "game_id": 1, "turn": 1, "move":"e2e4"}
+                                */
+                               if (game.is_active) {
+                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "turn":parsedData.turn,"move":parsedData.move}));
+                                    ws.send(JSON.stringify({"type":"success", "sub_type":"move_sent", "message": "Move Sent Successfully"}));
+                                    await Moves.create({"game_id": game.id, "turn": parsedData.turn, "move": parsedData.move});
+                                } else {
+                                    ws.send(JSON.stringify({"type":"error", "sub_type":"game_not_active", "message": "There is no active game"}));
+                                }
                                 break;
                             }
-                            case "start_game": {
-                                game_id = parsedData.game_id;
-                                break
+                            case "join_game": {
+                                /*
+                                {"type":"join_game", "game_id": 1, "user_id": 1}
+                                */
+                                game = await Games.findOne({
+                                    where: { id: parsedData.game_id }
+                                  });
+                                opponent = await GameParticipants.findOne({
+                                    where: {
+                                      game_id: parsedData.game_id,
+                                      user_id: { [Op.ne]: parsedData.user_id } // Exclude the current user
+                                    }
+                                });
+                                user = await GameParticipants.findOne({
+                                    where: {
+                                        game_id: parsedData.game_id,
+                                        user_id: { [Op.eq]: parsedData.user_id } // Includes the current user
+                                    }
+                                });
+                                  clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"opponent_joined_game", "message": "Your opponenet has connected"}));
+                                  ws.send(JSON.stringify({"type":"success", "sub_type":"joined_game", "message": "Joined Game"}));
+                                break;
                             }
                             case "end_game": {
                                 // find game where id == game_id set is_active false
+                                /* 
+                                {"type":"end_game", "game_id": 1, "result": "win"}
+                                
+                                SQL Query for checking if code works:
+                                SELECT U.*, P.* FROM users U INNER JOIN game_participants P ON U.id = P.user_id WHERE P.game_id = 1;
+                                */
+                                
+                                game = await Games.findOne({
+                                    where: { id: parsedData.game_id }
+                                  });
+                                if (game.is_active) {
+                                    game.is_active = false;
+                                    switch (parsedData.result) {
+                                        case "win": {
+                                            user.won_game = true;
+                                            opponent.won_game = false;
+                                            break;
+                                        }
+                                        case "lose": {
+                                            user.won_game = false;
+                                            opponent.won_game = true;
+                                            break;
+                                        }
+                                        case "draw": {
+                                            break;
+                                        }
+                                    };
+                                    await game.save()
+                                    await user.save()
+                                    await opponent.save()
+                                    ws.send(JSON.stringify({"type":"success", "sub_type":"game_ended", "message": "Game Result Recorded"}));
+                                } else {
+                                    ws.send(JSON.stringify({"type":"success", "sub_type":"game_ended", "message": "Game Result Already Recorded"}));
+                                }
                                 break;
                             }
                             case "get_username": {
+                                /*
+                                {"type":"get_username","user_id"}
+                                */
                                 ws.send(JSON.stringify({"username": await select_username_by_id(parsedData.user_id), "user_id": parsedData.user_id}));
                                 break;
                             }
                             case "enter_game_queue": {
+                                /*
+                                {"type":"enter_game_queue","user_id": 1}
+                                */
                                 console.log("enteredGamequeue")
-                                queue.add(parsedData["user_id"]);
-                                // Have fun with the game queue and listener to create game and game_participants
+                                queue.add(parsedData.user_id);
+                                // Have fun with the game queue and listener to create game and game_participants was not actually bad :)
                                 break;
                             }
                             case "leave_game_queue": {
-                                queue.leave(parsedData["user_id"]);
+                                queue.leave(parsedData.user_id);
                                 break;
                             }
                             default: {
@@ -110,20 +182,26 @@ async function queue_listener_handler() {
                     } else {
                         switch (parsedData.type) {
                             case "auth": {
+                                /* 
+                                {"type":"auth","username":"jackcameback","password":"foobar"}
+                                */
                                 // Need a more secure way of sending password...
-                                const login = await verifyLogin(parsedData["username"], parsedData["password"])
+                                const login = await verifyLogin(parsedData.username, parsedData.password)
                                 if (login === "Invalid Login" || login === "User not found") {
                                     ws.send(login); // Send "Invalid Login" or "User not found" message
                                 } else {
+                                    ws.send(String(login)); // Send the user ID or whatever is returned from verifyLogin
                                     is_authenticated = true;
                                     clients.set(login, ws);
                                     console.log(login); // login now holds the user id (or other value from verifyLogin)
-                                    ws.send(String(login)); // Send the user ID or whatever is returned from verifyLogin
                                 }
                                 break;
                             }
                             case "create_user": {
                                 try{
+                                    /* 
+                                    {"type":"create_user", "username":"jackcameback","email":"jackson@butler.net", "first_name":"jackson", "last_name":"butler", "password":"foobar"}
+                                    */
                                     await Users.create({ username: parsedData["username"], email: parsedData["email"], first_name: parsedData["first_name"], last_name: parsedData["last_name"], password: parsedData["password"] });
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"created_user", "message": "User created successfully"}))
                                 }catch {
@@ -132,52 +210,15 @@ async function queue_listener_handler() {
                                 break;
                             }
                             default: {
-                                ws.send("Unauthenticated User")
+                                ws.send(JSON.stringify({"type":"error", "sub_type":"no_auth_user", "message": "Username/Email is already in use"}));
                             }
                         };
                     };
                     
                 })()
             } catch {
-                ws.send("Invalid Message")
-            }
-            
-            // Parse message here
-            // Decide on format for message
-            // Unique game_id, username, move_occured?,
-            // move_occured needs to be something capable of being saved in backend here
-                // as well as something which can be decoded by
-            // ws.send('%s,%s,%s',game_id,username,move);
-
-
-            /*
-            New User
-            {command:str, username:str, email:str, first_name:str, last_name:str, password:str}
-            Delete User
-
-            Game Start
-
-            Game End
-
-            Move Occured
-
-            */
-
-            // Save to backend here asynced as to not delay message to other user
-            // OR get info from backend... These queries should be divied up in different files
-            // (async () => {const data = await Users.findAll({
-            //     attributes:['first_name', 'last_name'],
-            //     where: {
-            //         username: {
-            //             [Op.eq]: parsedData.username,
-            //         },
-            //     },
-            // })
-            // console.log(data[0])
-
-            // ws.send(JSON.stringify({"first_name": data[0].dataValues["first_name"], "last_name":data[0].dataValues["last_name"]}));
-            // })();
-
+                ws.send(JSON.stringify({"type":"error", "sub_type":"invalid_message", "message": `Message ${data} is invalid`}))
+            };
         });
 
 

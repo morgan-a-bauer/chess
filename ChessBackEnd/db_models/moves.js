@@ -7,18 +7,23 @@ class Moves extends Model {
 
 Moves.init(
     {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true,
+        },
         game_id : {
             type: DataTypes.INTEGER,
-            primaryKey: true,
             allowNull: false,
             references: {
                 model: Games,
                 key: 'id',
-            }
+            },
+            onDelete: 'CASCADE',
         },
         turn: {
             type: DataTypes.INTEGER,
-            primaryKey: true,
             allowNull: false,
         },
         move: {
