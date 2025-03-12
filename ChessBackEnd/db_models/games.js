@@ -13,13 +13,6 @@ Games.init(
             allowNull: false,
             primaryKey: true,
         },
-        winner_id : {
-            type: DataTypes.INTEGER,
-            references: {
-                model: Users,
-                key: 'id',
-            }
-        },
         is_active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true

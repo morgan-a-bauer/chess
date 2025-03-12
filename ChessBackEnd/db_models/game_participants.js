@@ -15,6 +15,7 @@ GameParticipants.init(
                 model: Games,
                 key: 'id',
             },
+            onDelete: 'CASCADE',
             allowNull: false,
         },
         user_id : {
@@ -24,12 +25,16 @@ GameParticipants.init(
                 model: Users,
                 key: 'id',
             },
+            onDelete: 'CASCADE',
             allowNull: false,
         },
         is_white: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
+        won_game: {
+            type: DataTypes.BOOLEAN,
+        }
     },
     {
         sequelize,
