@@ -10,35 +10,42 @@ import ObjectiveC
 import Foundation
 
 
-class ViewController: UIViewController {
-    @IBOutlet weak var query1: UIButton!
-    @IBOutlet weak var query2: UIButton!
-    @IBOutlet weak var revive: UIButton!
+class ViewController: UIViewController, HomeDelegate{
+    
+    @IBOutlet weak var enter_queue: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        WebSocketManager.shared.homeDelegate = self;
         // Do any additional setup after loading the view.
-        var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
+//        var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
-        @IBAction func query(_ sender: Any) {
-            if sender as? UIButton == query1 {
-                
-                let queryDict: [String: Any] = [
-                    "game_id": 2,
-                    "username": "Androodle",
-                    "move": "e4"
-                ]
-                WebSocketManager.shared.addMessage(queryDict)
-            } else if (sender as? UIButton == query2){
-                let queryDict: [String: Any] = [
-                    "game_id": 2,
-                    "username": "Jackcameback",
-                    "move": "e4"
-                ]
-                WebSocketManager.shared.addMessage(queryDict)
-            }
-            
+    
+    
+    @IBAction func enterGameQueue(_ sender: Any) {
+        WebSocketManager.shared.addMessage(["type":"enter_game_queue", "user_id": WebSocketManager.shared.userID!])
+    }
+    func enteredGameQueue() {
+        
+    }
+    func matchFound() {
+        WebSocketManager.shared.addMessage(["type":"join_game", "game_id": WebSocketManager.shared.gameID!, "user_id": WebSocketManager.shared.userID!])
+    }
+    
+    func joinedGame() {
+        if (false && false) {
+            print("ruh roh falses")
         }
+        if (WebSocketManager.shared.userConnectedToGame &&  WebSocketManager.shared.opponentConnectedToGame){
+            DispatchQueue.main.async {
+                self.performSegue(withIdentifier: "goToGameBoard", sender: self)
+            }
+        }
+        
+    }
+    
+
+
 }
 
 class Player {

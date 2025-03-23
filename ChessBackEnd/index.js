@@ -46,15 +46,12 @@ async function queue_listener_handler() {
             // Communication to clients
             const username1 = await select_username_by_id(player1);
             const username2 = await select_username_by_id(player2);
-            const message = JSON.stringify({"game_id": game.dataValues.id, "user1": {"username": username1, "user_id": player1}, "user2":{"username": username2, "user_id": player2}})
-            clients.get(player1).send(message);
-            clients.get(player2).send(message);
+            clients.get(player1).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username2}", "game_id": ${game.dataValues.id}, "is_white": ${true}}`}));
+            clients.get(player2).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username1}", "game_id": ${game.dataValues.id}, "is_white": ${false}}`}));
         }
         else {
             ws.send(JSON.stringify({"type":"error", "sub_type":"queue_failed", "message": "Trying To Requeue You"}));
-            console.log("Invalid Match");
         }
-        
     }
 };
 
@@ -77,6 +74,7 @@ async function queue_listener_handler() {
                 (async () =>{
                     // Might need to check what create does and substitute it out...
                     // All ws.send should use the same formating that swift client sends to this server, parsable json.
+                    console.log("authed?:", is_authenticated)
                     if (is_authenticated) {
                         // This is not the droid you are looking for
 
@@ -86,7 +84,7 @@ async function queue_listener_handler() {
                                 {"type":"add_move", "game_id": 1, "turn": 1, "move":"e2e4"}
                                 */
                                if (game.is_active) {
-                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "turn":parsedData.turn,"move":parsedData.move}));
+                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "data":parsedData.move}));
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"move_sent", "message": "Move Sent Successfully"}));
                                     await Moves.create({"game_id": game.id, "turn": parsedData.turn, "move": parsedData.move});
                                 } else {
@@ -114,7 +112,7 @@ async function queue_listener_handler() {
                                     }
                                 });
                                   clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"opponent_joined_game", "message": "Your opponenet has connected"}));
-                                  ws.send(JSON.stringify({"type":"success", "sub_type":"joined_game", "message": "Joined Game"}));
+                                  ws.send(JSON.stringify({"type":"success", "sub_type":"user_joined_game", "message": "Joined Game"}));
                                 break;
                             }
                             case "end_game": {
@@ -155,28 +153,29 @@ async function queue_listener_handler() {
                                 }
                                 break;
                             }
-                            case "get_username": {
-                                /*
-                                {"type":"get_username","user_id"}
-                                */
-                                ws.send(JSON.stringify({"username": await select_username_by_id(parsedData.user_id), "user_id": parsedData.user_id}));
-                                break;
-                            }
+                            // case "get_username": {
+                            //     /*
+                            //     {"type":"get_username","user_id"}
+                            //     */
+                            //     ws.send(JSON.stringify({"type": "success","sub_type":"get_username","username": await select_username_by_id(parsedData.user_id), "user_id": parsedData.user_id}));
+                            //     break;
+                            // }
                             case "enter_game_queue": {
                                 /*
                                 {"type":"enter_game_queue","user_id": 1}
                                 */
-                                console.log("enteredGamequeue")
                                 queue.add(parsedData.user_id);
+                                ws.send(JSON.stringify({"type": "success", "sub_type": "entered_game_queue"}))
                                 // Have fun with the game queue and listener to create game and game_participants was not actually bad :)
                                 break;
                             }
                             case "leave_game_queue": {
                                 queue.leave(parsedData.user_id);
+                                ws.send(JSON.stringify({"type": "success", "sub_type": "left_game_queue"}))
                                 break;
                             }
                             default: {
-                                ws.send("ya done fucked it")
+                                ws.send(JSON.stringify({"type":"error", "sub_type": "invalid_query", "message":"ya done fucked it"}))
                             }
                         }
                     } else {
@@ -187,13 +186,18 @@ async function queue_listener_handler() {
                                 */
                                 // Need a more secure way of sending password...
                                 const login = await verifyLogin(parsedData.username, parsedData.password)
-                                if (login === "Invalid Login" || login === "User not found") {
-                                    ws.send(login); // Send "Invalid Login" or "User not found" message
-                                } else {
-                                    ws.send(String(login)); // Send the user ID or whatever is returned from verifyLogin
-                                    is_authenticated = true;
-                                    clients.set(login, ws);
-                                    console.log(login); // login now holds the user id (or other value from verifyLogin)
+                                switch (login) {
+                                    case "invalid_username": {
+                                        ws.send(JSON.stringify({"type": "error", "sub_type": "invalid_username", "message":"Username does not exist"}))
+                                    }
+                                    case "invalid_password": {
+                                        ws.send(JSON.stringify({"type": "error", "sub_type": "invalid_password", "message":"Password is not correct"}))
+                                    }
+                                    default: {
+                                        ws.send(JSON.stringify({"type": "success", "sub_type": "login_successful", "message":"Logged in", "data":`{"user_id":${login}}`}))
+                                        is_authenticated = true;
+                                        clients.set(login, ws);
+                                    }
                                 }
                                 break;
                             }
@@ -210,7 +214,7 @@ async function queue_listener_handler() {
                                 break;
                             }
                             default: {
-                                ws.send(JSON.stringify({"type":"error", "sub_type":"no_auth_user", "message": "Username/Email is already in use"}));
+                                ws.send(JSON.stringify({"type":"error", "sub_type":"no_auth_user", "message": "Invalid query"}));
                             }
                         };
                     };
@@ -251,10 +255,6 @@ check out refrence for foreign keys
 https://sequelize.org/docs/v6/core-concepts/model-basics/
 */
 
-// API ROUTING FUNCTIONALITY?
-
-
-// app.get('/', (req, res) => res.json({ message: 'Hello World' }));
 
 try {
     sequelize.authenticate()
