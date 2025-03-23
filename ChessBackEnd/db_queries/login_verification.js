@@ -17,10 +17,10 @@ export default async function verifyLogin(username, password) {
         if (data.dataValues.password == password) {
             return data.dataValues.id;
         } else {
-            return "Invalid Password";
+            return "invalid_password";
         }
     } catch (error) {
         console.error("Error during user lookup:", error);
-        return "An error occurred";
+        return "invalid_username";
     }
 };
