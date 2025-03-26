@@ -12,36 +12,63 @@ import Foundation
 
 class ViewController: UIViewController, HomeDelegate{
     
+    var timer: Timer?;
+    var secondsElapsed = 0;
+    
     @IBOutlet weak var enter_queue: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         WebSocketManager.shared.homeDelegate = self;
+//        enter_queue.addTarget(self, action: #selector(startTimer), for: .touchUpInside)
         // Do any additional setup after loading the view.
 //        var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
     
     
     @IBAction func enterGameQueue(_ sender: Any) {
+        enter_queue.setTitleColor(.gray, for: .highlighted)
         WebSocketManager.shared.addMessage(["type":"enter_game_queue", "user_id": WebSocketManager.shared.userID!])
     }
     func enteredGameQueue() {
-        
+        DispatchQueue.main.async { [weak self] in
+                self?.startTimer()
+            }
     }
     func matchFound() {
         WebSocketManager.shared.addMessage(["type":"join_game", "game_id": WebSocketManager.shared.gameID!, "user_id": WebSocketManager.shared.userID!])
     }
     
     func joinedGame() {
-        if (false && false) {
-            print("ruh roh falses")
-        }
+        // bug where this is sometimes not called, I think the response is getting eated by the opponent joined and by the time the next receive message occurs it is already missed...
         if (WebSocketManager.shared.userConnectedToGame &&  WebSocketManager.shared.opponentConnectedToGame){
+            timer?.invalidate() //Makes the timer stop ticking
             DispatchQueue.main.async {
                 self.performSegue(withIdentifier: "goToGameBoard", sender: self)
             }
         }
         
+    }
+    @objc func startTimer() {
+        self.enter_queue.setTitle("In Queue: \(self.secondsElapsed)s", for: .normal)
+        timer?.invalidate()
+        secondsElapsed = 0
+        
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true);
+        RunLoop.main.add(timer!, forMode: .common)
+
+        }
+    @objc func updateTime() {
+        print(secondsElapsed)
+            secondsElapsed += 1
+            updateButtonTitle()
+        
+        }
+
+    func updateButtonTitle() {
+        DispatchQueue.main.async {
+            self.enter_queue.setTitle("In Queue: \(self.secondsElapsed)s", for: .normal)
+        }
     }
     
 

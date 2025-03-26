@@ -1,5 +1,4 @@
 import { WebSocketServer } from 'ws';
-import bodyParser from 'body-parser';
 import {Sequelize, DataTypes, Model, sequelize, Op} from './db_models/sql_init.js';
 
 import Users from './db_models/users.js'
@@ -9,7 +8,6 @@ import Moves from './db_models/moves.js'
 import GameQueue from './helpers.js/game_queue.js';
 import verifyLogin from './db_queries/login_verification.js'
 import select_username_by_id from './db_queries/select_username_by_id.js';
-import { parse } from 'dotenv';
 
 const queue = new GameQueue();
 const clients = new Map();

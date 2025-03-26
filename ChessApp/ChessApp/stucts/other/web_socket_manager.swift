@@ -35,7 +35,8 @@ class WebSocketManager: NSObject, ObservableObject {
     var opponentConnectedToGame: Bool = false;
     var userConnectedToGame: Bool = false;
     var gameID: Int? = nil;
-    var opponentUsername: String? = nil;
+    var opponentUsername: String? = "Jeremy";
+    var username: String? = "Doctor";
     var userID: Int? = nil;
     var isWhite: Bool = false;
     
