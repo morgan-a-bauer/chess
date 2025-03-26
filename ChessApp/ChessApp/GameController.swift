@@ -11,7 +11,13 @@ import SpriteKit
 class GameController: UIViewController, BoardToSceneDelegate {
 
     @IBOutlet weak var gameView: SKView!
-    @IBOutlet weak var moveHistoryScroll: UIScrollView!
+    @IBOutlet weak var moveHistoryScroll:
+    UIScrollView!
+    @IBOutlet weak var opponentImage: UIImageView!
+    @IBOutlet weak var opponentLabel: UILabel!
+    
+    @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var userLabel: UILabel!
     let contentView = UIView()
     var previousButton: UIButton?
     //    weak var puzzleDelate: PuzzleToGameDelegate?
@@ -19,6 +25,9 @@ class GameController: UIViewController, BoardToSceneDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        opponentLabel.text = WebSocketManager.shared.opponentUsername
+        userLabel.text = WebSocketManager.shared.username
+        
         
         // Scroll View
         setupScrollView()

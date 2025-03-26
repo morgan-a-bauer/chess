@@ -24,6 +24,7 @@ class LoginViewController: UIViewController, LoginDelegate{
 //        WebSocketManager.shared.receiveMessage();
     }
     func didReceiveLoginSuccess() {
+        WebSocketManager.shared.username = username_field.text ?? "jackcameback";
             DispatchQueue.main.async {
                 self.performSegue(withIdentifier: "goToHomeScreen", sender: self)
             }

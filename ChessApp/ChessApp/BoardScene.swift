@@ -11,18 +11,18 @@ import UIKit
 
 // Morgan this is a base for you to jump off of when developing the board and pieces. Change whatever you want to change
 class GameScene: CustomSKScene {
+
     
     // Testing Variable
     let targetCell: Int = 11
     
     var touchedNode: SKShapeNode? = nil
     var originalLocation: CGPoint? = nil
-    var moveHistory: MoveHistory = MoveHistory(gameId:1)
+    var moveHistory: MoveHistory = MoveHistory(gameId:WebSocketManager.shared.gameID!)
     weak var sceneDelegate: BoardToSceneDelegate?
     // nodeMap is an implied data type check ./structs/other for more info
     // use and treat it as hashMap
-    
-    
+
     // Kind of "Main"
     override func didMove(to view: SKView) {
         // Build chess board
@@ -135,14 +135,14 @@ class GameScene: CustomSKScene {
         
                 
         // Testing Code for move history
-        // let startCell: Cell = Cell("e2")
-        // let targetCell: Cell = Cell("e4")
-        // let pieceMoved: Bishop = Bishop()
-        // let pieceCaptured: BasePiece? = nil
-        // let inCheck: Bool = false
-        // let inMate: Bool = false
-        // let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-        // moveHistory.append(move)
+//        let startCell: Cell = Cell(cell: 5)
+//        let targetCell: Cell = Cell(cell: 23)
+//        let pieceMoved: Bishop = Bishop(cellId: 5)
+//         let pieceCaptured: BasePiece? = nil
+//         let inCheck: Bool = false
+//         let inMate: Bool = false
+//         let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+//         moveHistory.append(move)
         sceneDelegate?.updateViewableMoveHistory(moveHistory)
         
     }
