@@ -29,6 +29,7 @@ enum ResponseSubType: String, Codable {
     case invalid_message = "invalid_message"
     case match_made = "match_made"
     case queue_failed = "queue_failed"
+    case game_history = "game_history"
     case unknown = "unknown"
 }
 //
@@ -49,5 +50,6 @@ struct ResponseMessage: Codable {
     let sub_type: ResponseSubType;
     let message: String?;
     let data: String?;
+    let dataArray: [String]?;
     
 }

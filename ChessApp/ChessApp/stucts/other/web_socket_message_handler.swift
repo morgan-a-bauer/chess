@@ -32,25 +32,8 @@ extension WebSocketManager {
         handlers["invalid_message"] = handleInvalidMessage
         handlers["match_made"] = handleMatchMade
         handlers["queue_failed"] = handleQueueFailed
+        handlers["game_history"] = gameHistory
         
-//        handlers[ResponseSubType.move_received.rawValue] = handleMoveReceived
-//        handlers[ResponseSubType.move_sent.rawValue] = handleMoveSent
-//        handlers[ResponseSubType.game_ended.rawValue] = handleGameEnded
-//        handlers[ResponseSubType.user_joined_game.rawValue] = handleUserJoinedGame
-//        handlers[ResponseSubType.opponent_joined_game.rawValue] = handleOpponentJoinedGame
-//        handlers[ResponseSubType.enter_game_queue.rawValue] = handleEnterGameQueue
-//        handlers[ResponseSubType.left_game_queue.rawValue] = handleLeftGameQueue
-//        handlers[ResponseSubType.invalid_query.rawValue] = handleInvalidQuery
-//        handlers[ResponseSubType.login_successful.rawValue] = handleLoginSuccessful
-//        handlers[ResponseSubType.invalid_username.rawValue] = handleInvalidUsername
-//        handlers[ResponseSubType.invalid_password.rawValue] = handleInvalidPassword
-//        handlers[ResponseSubType.created_user.rawValue] = handleCreatedUser
-//        handlers[ResponseSubType.invalid_user.rawValue] = handleInvalidUser
-//        handlers[ResponseSubType.no_auth_user.rawValue] = handleNoAuthUser
-//        handlers[ResponseSubType.game_not_active.rawValue] = handleGameNotActive
-//        handlers[ResponseSubType.invalid_message.rawValue] = handleInvalidMessage
-//        handlers[ResponseSubType.match_made.rawValue] = handleMatchMade
-//        handlers[ResponseSubType.queue_failed.rawValue] = handleQueueFailed
         }
     
     func decodeMessage(_ data: String) -> ResponseMessage? {
@@ -217,6 +200,29 @@ extension WebSocketManager {
     func handleQueueFailed(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the invalid match
         let result: HandlerResponse = HandlerResponse(successful: false);
+        return result;
+    }
+    
+    func gameHistory(_ message: ResponseMessage) -> HandlerResponse {
+        
+        if let dataArray = message.dataArray {
+            var decodedGames: [GameHistory] = []
+            
+            for jsonString in dataArray {
+                if let jsonData = jsonString.data(using: .utf8) {
+                    do {
+                        let game = try JSONDecoder().decode(GameHistory.self, from: jsonData)
+                        decodedGames.append(game)
+                    } catch {
+                        print("Error decoding JSON: \(error)")
+                    }
+                }
+            }
+//            print(decodedGames)
+            homeDelegate?.receiveGameHistory(decodedGames)
+        }
+                    
+        let result: HandlerResponse = HandlerResponse(successful: true);
         return result;
     }
     

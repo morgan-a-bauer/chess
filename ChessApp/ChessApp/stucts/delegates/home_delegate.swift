@@ -9,4 +9,5 @@ protocol HomeDelegate: AnyObject {
     func enteredGameQueue();
     func matchFound();
     func joinedGame();
+    func receiveGameHistory(_ response:[GameHistory]);
 }
