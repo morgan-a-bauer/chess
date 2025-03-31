@@ -10,17 +10,24 @@ import ObjectiveC
 import Foundation
 
 
-class ViewController: UIViewController, HomeDelegate{
+class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITableViewDataSource{
     
     var timer: Timer?;
     var secondsElapsed = 0;
     
+    @IBOutlet weak var game_history: UITableView!
     @IBOutlet weak var enter_queue: UIButton!
+    var gameHistoryData: [GameHistory] = [GameHistory()];
     
     override func viewDidLoad() {
         super.viewDidLoad()
         WebSocketManager.shared.homeDelegate = self;
-//        enter_queue.addTarget(self, action: #selector(startTimer), for: .touchUpInside)
+        game_history.delegate = self
+        game_history.dataSource = self
+        game_history.rowHeight = 80;
+        WebSocketManager.shared.addMessage(["type":"get_game_history", "user_id": WebSocketManager.shared.userID!])
+        
+        
         // Do any additional setup after loading the view.
 //        var p1 = Player(color:"black", playerName:"Nate") //isHuman will be assumed to be true
     }
@@ -49,6 +56,35 @@ class ViewController: UIViewController, HomeDelegate{
         }
         
     }
+    func receiveGameHistory(_ response:[GameHistory]) {
+        gameHistoryData = response;
+        
+        DispatchQueue.main.async {
+            self.game_history.reloadData()
+        }
+        
+    }
+    
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return gameHistoryData.count
+        }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContainerTableViewCell
+
+        // Pass data to each cell and embed a new child view controller
+        let data = gameHistoryData[indexPath.row]
+        print(data)
+        cell.userLabel.text = data.user.username;
+        cell.userOutcomeLabel.text = data.user.outcome;
+        cell.opponentLabel.text = data.opponent.username;
+        cell.opponentOutcomeLabel.text = data.opponent.outcome;
+        cell.movesLabel.text = String(data.moves);
+
+        return cell
+        }
+    
     @objc func startTimer() {
         self.enter_queue.setTitle("In Queue: \(self.secondsElapsed)s", for: .normal)
         timer?.invalidate()
