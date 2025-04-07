@@ -11,3 +11,4 @@ data/stockfish
 .DS_STORE
 
 ChessBackEnd/node_modules/
+ChessBackEnd/.env

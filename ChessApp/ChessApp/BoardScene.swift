@@ -10,19 +10,23 @@ import UIKit
 
 
 // Morgan this is a base for you to jump off of when developing the board and pieces. Change whatever you want to change
-class GameScene: CustomSKScene {
+class GameScene: CustomSKScene, GameSceneActionsDelegate {
+    
+    
+    weak var viewControllerDelegate: GameSceneDelegate? // Delegate property for boardscene -> VC
     
     // Testing Variable
     let targetCell: Int = 11
     
     var touchedNode: SKShapeNode? = nil
     var originalLocation: CGPoint? = nil
-    var moveHistory: MoveHistory = MoveHistory(gameId:1)
+    //var moveHistory: MoveHistory = MoveHistory(gameId:WebSocketManager.shared.gameID!)
+    var moveHistory: MoveHistory = MoveHistory(gameId: WebSocketManager.shared.gameID ?? 0)
     weak var sceneDelegate: BoardToSceneDelegate?
+    var players: [Player] = []
     // nodeMap is an implied data type check ./structs/other for more info
     // use and treat it as hashMap
-    
-    
+
     // Kind of "Main"
     override func didMove(to view: SKView) {
         // Build chess board
@@ -59,27 +63,72 @@ class GameScene: CustomSKScene {
                 
                 // House Keeping
                 colour = !colour
+                
+                var myDatabase = [["Nate","Goucher"],["John", "Hilliard"]]
+                var p1 = Player(color:"white",playerName:myDatabase[0][0], turn:true)
+                var p2 = Player(color:"black",playerName:myDatabase[1][0])
+                var players = [p1,p2]
             }
         }
-        myDatabase = [["Nate","Goucher"],["John", "Hilliard"]]
-        var p1 = Player(color:"white",playerName:myDatabase[0][0])
-        var p1 = Player(color:"black",playerName:myDatabase[1][0])
-        players = [p1,p2]
+
+        
     }
-    func getPlayerPhase() {
+
+    func getCurrentPlayer() -> Player? {
         for player in players {
             if player.turn == true {
+                print(player)
                 return player
             }
         }
+        print("bug!")
+        return nil
     }
-    func getWaitingPlayer() {
+    
+    func getWaitingPlayer() -> Player?{
         for player in players {
             if player.turn == false {
                 return player
             }
         }
+        return nil
     }
+    
+    func completeMove() {
+        print("complete move called")
+        if let currentPlayer = getCurrentPlayer(), let nextPlayer = getWaitingPlayer() {
+            print("Ending turn for \(currentPlayer.playerName) (\(currentPlayer.color))")
+            currentPlayer.endturn() //calls pauseTimer()
+            
+            print("Starting turn for \(nextPlayer.playerName) (\(nextPlayer.color))")
+            nextPlayer.startturn() //calls unpauseTimer()
+            
+            viewControllerDelegate?.didCompleteMove()
+        } else {
+            print("Error: Cannot complete move - players not properly initialized")
+        }
+    }
+    
+    func performCompleteMove() {
+        print("debug: performCompleteMove called")
+        
+        //debugging
+        if let currentPlayer = getCurrentPlayer() {
+            print("Current player before move completion: \(currentPlayer.playerName) (\(currentPlayer.color))")
+            print("Timer state: \(currentPlayer.pausedTimer ? "paused" : "running")")
+        }
+        
+        self.completeMove()
+        
+        //Debugging
+        if let newCurrentPlayer = getCurrentPlayer() {
+            print("Current player after move completion: \(newCurrentPlayer.playerName) (\(newCurrentPlayer.color))")
+            print("Timer state: \(newCurrentPlayer.pausedTimer ? "paused" : "running")")
+        }
+    }
+    
+    
+    
     // Get valid moves
 
     // Called if something is touched within scene
@@ -152,22 +201,23 @@ class GameScene: CustomSKScene {
         
                 
         // Testing Code for move history
-        // let startCell: Cell = Cell("e2")
-        // let targetCell: Cell = Cell("e4")
-        // let pieceMoved: Bishop = Bishop()
-        // let pieceCaptured: BasePiece? = nil
-        // let inCheck: Bool = false
-        // let inMate: Bool = false
-        // let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-        // moveHistory.append(move)
+//        let startCell: Cell = Cell(cell: 5)
+//        let targetCell: Cell = Cell(cell: 23)
+//        let pieceMoved: Bishop = Bishop(cellId: 5)
+//         let pieceCaptured: BasePiece? = nil
+//         let inCheck: Bool = false
+//         let inMate: Bool = false
+//         let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+//         moveHistory.append(move)
         sceneDelegate?.updateViewableMoveHistory(moveHistory)
         
         //begin code for updating turns and timers.
         //Use same conditions for updating move history to trigger timer change from white to black and vice versa.
-        movedPlayer = getPlayerPhase()
-        waitingPlayer = getWaitingPlayer()
-        movedPlayer.endturn()
-        waitingPlayer.startturn() //fix camel cases
+        
+        // NEW TIMER CODE: Removed automatic completeMove() call here
+        // Now the user must explicitly press the "End Move" button to complete their move
+        // This gives them a chance to adjust their move if needed
+        // completeMove()
         
     }
     
@@ -186,4 +236,3 @@ class GameScene: CustomSKScene {
     
     
 }
-
