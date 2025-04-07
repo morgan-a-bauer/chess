@@ -1,16 +1,14 @@
 import { WebSocketServer } from 'ws';
 import {Sequelize, DataTypes, Model, sequelize, Op} from './db_models/sql_init.js';
-
-import Users from './db_models/users.js'
-import Games from './db_models/games.js'
-import GameParticipants from './db_models/game_participants.js'
-import Moves from './db_models/moves.js'
+import {Users, Games, GameParticipants, Moves} from "./db_models/model_init.js"
 import GameQueue from './helpers.js/game_queue.js';
 import verifyLogin from './db_queries/login_verification.js'
 import select_username_by_id from './db_queries/select_username_by_id.js';
+import get_game_history from './db_queries/get_game_history.js';
 
 const queue = new GameQueue();
 const clients = new Map();
+
 
 async function queue_listener_handler() {
     while (true) {
@@ -63,6 +61,7 @@ async function queue_listener_handler() {
         var game = null;
         var opponent = null;
         var user = null;
+        var game_history_pointer = 0;
         ws.on('error', console.error);
 
         ws.on('message', function message(data) {
@@ -109,8 +108,9 @@ async function queue_listener_handler() {
                                         user_id: { [Op.eq]: parsedData.user_id } // Includes the current user
                                     }
                                 });
-                                  clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"opponent_joined_game", "message": "Your opponenet has connected"}));
-                                  ws.send(JSON.stringify({"type":"success", "sub_type":"user_joined_game", "message": "Joined Game"}));
+                                clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"opponent_joined_game", "message": "Your opponenet has connected"}));
+                                ws.send(JSON.stringify({"type":"success", "sub_type":"user_joined_game", "message": "Joined Game"}));
+                                game_history_pointer = 0;
                                 break;
                             }
                             case "end_game": {
@@ -170,6 +170,13 @@ async function queue_listener_handler() {
                             case "leave_game_queue": {
                                 queue.leave(parsedData.user_id);
                                 ws.send(JSON.stringify({"type": "success", "sub_type": "left_game_queue"}))
+                                break;
+                            }
+                            case "get_game_history": {
+                                const temp = await get_game_history(parsedData.user_id);
+                                console.log("get_game_history")
+                                console.log(temp)
+                                ws.send(JSON.stringify({"type": "success", "sub_type": "game_history", "dataArray":temp}))
                                 break;
                             }
                             default: {

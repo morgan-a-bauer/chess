@@ -1,3 +1,4 @@
+import GameParticipants from './game_participants.js';
 import {Sequelize, DataTypes, Model, sequelize} from './sql_init.js';
 import Users from './users.js';
 
@@ -24,5 +25,4 @@ Games.init(
         tableName: 'games',
     }
 )
-
 export default Games
