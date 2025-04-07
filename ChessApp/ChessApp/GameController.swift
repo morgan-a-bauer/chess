@@ -8,18 +8,21 @@
 import UIKit
 import SpriteKit
 
-class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate {
+class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var gameView: SKView!
-    @IBOutlet weak var moveHistoryScroll:
-    UIScrollView!
+    @IBOutlet weak var mainTableView: UITableView!
+
+    @IBOutlet weak var altTableView: UITableView!
     @IBOutlet weak var opponentImage: UIImageView!
     @IBOutlet weak var opponentLabel: UILabel!
     
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var userLabel: UILabel!
+
     let contentView = UIView()
     var previousButton: UIButton?
+    var move_history: MoveHistory = MoveHistory();
     
     
     //TIMER stuff
@@ -29,7 +32,6 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate 
     var gameScene: GameScene?
     var players: [Player] = []
     //end moved new timer stuff
-    
     //    weak var puzzleDelate: PuzzleToGameDelegate?
 //    var contentKey = ""
     
@@ -37,10 +39,12 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate 
         super.viewDidLoad()
         opponentLabel.text = WebSocketManager.shared.opponentUsername
         userLabel.text = WebSocketManager.shared.username
-        
-        
-        // Scroll View
-        setupScrollView()
+        mainTableView.delegate = self
+        mainTableView.dataSource = self
+        mainTableView.rowHeight = 30;
+        altTableView.delegate = self
+        altTableView.dataSource = self
+        altTableView.rowHeight = 30;
         
         
         // Create a SpriteKit view
@@ -88,6 +92,31 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate 
         blackPlayerTimerLabel.text = "Black: \(formatTime(5400))"
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == mainTableView {
+            altTableView.contentOffset = scrollView.contentOffset
+        } else if scrollView == altTableView {
+            mainTableView.contentOffset = scrollView.contentOffset
+        }
+        }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return (move_history.moves.count+1)/2
+        }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let visibleIndexPaths = tableView.indexPathsForVisibleRows
+        if tableView == mainTableView {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "main", for: indexPath) as! MoveHistoryControllerCellMain
+        
+            
+            // Pass data to each cell and embed a new child view controller
+            let data = move_history.moves[indexPath.row*2]
+//            print("main",data)
+            
+            cell.turnLabel.text = "Turn: " + String(indexPath.row+1)
+            cell.moveLabel.text = data.asShortAlgebraicNotation()
+                
     func formatTime(_ seconds: Int) -> String {
             let minutes = seconds / 60
             let secs = seconds % 60
@@ -114,43 +143,38 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate 
             contentView.translatesAutoresizingMaskIntoConstraints = false
             moveHistoryScroll.addSubview(contentView)
 
-            // Constraints for contentView inside scrollView
-            // Not Working
-            NSLayoutConstraint.activate([
-                contentView.topAnchor.constraint(equalTo: moveHistoryScroll.topAnchor),
-                contentView.leadingAnchor.constraint(equalTo: moveHistoryScroll.leadingAnchor),
-                contentView.trailingAnchor.constraint(equalTo: moveHistoryScroll.trailingAnchor),
-                contentView.bottomAnchor.constraint(equalTo: moveHistoryScroll.bottomAnchor),
-                contentView.widthAnchor.constraint(equalTo: moveHistoryScroll.widthAnchor) // Vertical Scrolling
-            ])
+            return cell
+        } else {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "alt", for: indexPath) as! MoveHistoryControllerCellAlt
+            
+            
+            if (move_history.moves.count-1 >= indexPath.row*2+1) {
+                // Pass data to each cell and embed a new child view controller
+//                
+//                let minIndexPath = visibleIndexPaths?.min { $0.row < $1.row }
+//                let maxIndexPath = visibleIndexPaths?.max { $0.row < $1.row }
+                let data = move_history.moves[indexPath.row*2+1]
+                print(indexPath.row*2+1, indexPath.row)
+//                print("alt", move_history.moves.count, indexPath.row*2+1,data)
+                
+                cell.moveLabel.text = data.asShortAlgebraicNotation()
+            }
+            return cell
+    
         }
+
+    }
 
     
     func updateViewableMoveHistory(_ moveHistory: MoveHistory){
-        print(moveHistory.moves)
+        move_history = moveHistory;
+        mainTableView.reloadData()
+        altTableView.reloadData()
         
-        // Boiler plate button for testing... Button yet to do anything
-        let button = UIButton()
-        button.setTitle(moveHistory.getLast()?.asLongAlgebraicNotation(), for: .normal)
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(button)
-        NSLayoutConstraint.activate([
-                        button.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-                        button.widthAnchor.constraint(equalToConstant: 200),
-                        button.heightAnchor.constraint(equalToConstant: 50)
-                    ])
-        if let prev = previousButton {
-            button.topAnchor.constraint(equalTo: prev.bottomAnchor, constant: 20).isActive = true
-        } else {
-            button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
+        DispatchQueue.main.async {
+            let index = IndexPath(row: self.altTableView.numberOfRows(inSection: 0) - 1, section: 0)
+            self.altTableView.scrollToRow(at: index, at: .bottom, animated: true)
         }
-        previousButton = button
-        // Ensure last button defines the content size
-//        if let lastButton = previousButton {
-//            lastButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
-//        }
     }
 }

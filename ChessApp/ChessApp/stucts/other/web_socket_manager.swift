@@ -28,7 +28,7 @@ class WebSocketManager: NSObject, ObservableObject {
     private var connectionState: WebSocketState = .disconnected
     @Published private var messageQueue: [String] = []
     var handlers: [String: Handler] = [:]
-    
+
     
     var inGameQueue: Bool = false;
     var inGame: Bool = false;

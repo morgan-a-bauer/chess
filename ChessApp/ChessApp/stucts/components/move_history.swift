@@ -6,12 +6,7 @@
 //
 
 struct MoveHistory {
-    let gameId: Int
     var moves: [Move] = []
-    
-    init(gameId: Int) {
-        self.gameId = gameId
-    }
     
     mutating func append(_ move: Move) {
         self.moves.append(move)
