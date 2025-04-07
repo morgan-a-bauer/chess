@@ -38,6 +38,26 @@ class LoginViewController: UIViewController, LoginDelegate{
             }
         }
     
+    // timer test button
+    @IBAction func skipToGameButton(_ sender: Any) {
+        // First navigate to ViewController (home screen)
+        performSegue(withIdentifier: "goToHomeScreen", sender: self)
+        
+    }
+
+    // TIMER code
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToHomeScreen" {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                if let viewController = segue.destination as? ViewController {
+                    viewController.performSegue(withIdentifier: "goToGameBoard", sender: nil)
+                }
+            }
+        }
+    }
     
 }
+
+
+
 
