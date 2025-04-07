@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gXY-Wd-I4x">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gXY-Wd-I4x">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -131,12 +131,12 @@
                     <connections>
                         <outlet property="enter_queue" destination="gC1-LG-SYJ" id="Za7-34-YhZ"/>
                         <outlet property="game_history" destination="mXh-e6-omm" id="9no-2p-pmb"/>
-                        <segue destination="nlx-qS-jnd" kind="presentation" identifier="goToGameBoard" modalPresentationStyle="fullScreen" id="ppO-Xy-KSi"/>
+                        <segue destination="nlx-qS-jnd" kind="presentation" identifier="goToGameBoard" modalPresentationStyle="fullScreen" id="jVp-qj-GMH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="101.5267175572519" y="-2.1126760563380285"/>
+            <point key="canvasLocation" x="94" y="-17"/>
         </scene>
         <!--Game Controller-->
         <scene sceneID="nDb-yZ-yH3">
@@ -243,15 +243,6 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lgq-dP-QN1">
-                                <rect key="frame" x="260" y="35" width="123" height="66"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="End move"/>
-                                <connections>
-                                    <action selector="endMoveButton:" destination="nlx-qS-jnd" eventType="touchUpInside" id="QJz-4B-xfC"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JWW-Bw-RER">
                                 <rect key="frame" x="70" y="422" width="122" height="137"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -266,15 +257,24 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Js4-WK-oY9">
+                                <rect key="frame" x="264" y="43" width="113" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="End Move"/>
+                                <connections>
+                                    <action selector="endMoveButton:" destination="nlx-qS-jnd" eventType="touchUpInside" id="QBH-GB-xFY"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="FxO-we-wNI"/>
                         <color key="backgroundColor" red="0.13623039649999999" green="0.1922466555" blue="0.2414993392" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </view>
                     <connections>
-                        <outlet property="altTableView" destination="D0K-hH-w50" id="UmG-Pv-yyj"/>
+                        <outlet property="altTableView" destination="D0K-hH-w50" id="Js9-yG-hze"/>
                         <outlet property="blackPlayerTimerLabel" destination="JWW-Bw-RER" id="5qi-ja-6J3"/>
                         <outlet property="gameView" destination="yxu-ei-b2G" id="qpG-1a-6Cc"/>
-                        <outlet property="mainTableView" destination="qNo-k8-EFa" id="85Q-fu-wkz"/>
+                        <outlet property="mainTableView" destination="qNo-k8-EFa" id="lLB-oE-uW2"/>
                         <outlet property="opponentImage" destination="2kh-Pd-H0Q" id="kVZ-m7-e73"/>
                         <outlet property="opponentLabel" destination="Lmv-Qh-DJm" id="hVo-Ce-SG4"/>
                         <outlet property="userImage" destination="fQB-ng-BrL" id="Wh4-rA-Q88"/>
@@ -338,7 +338,6 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2po-Gf-vfA">
                                 <rect key="frame" x="264" y="579" width="75" height="35"/>
-
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Button"/>
@@ -359,11 +358,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oe0-WK-oS7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-833" y="-125"/>
+            <point key="canvasLocation" x="-743" y="-2"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="vKY-fD-w8S"/>
+        <segue reference="jVp-qj-GMH"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="square.and.arrow.up" catalog="system" width="110" height="128"/>

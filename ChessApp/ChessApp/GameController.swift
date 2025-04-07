@@ -7,6 +7,8 @@
 
 import UIKit
 import SpriteKit
+import Foundation
+import ObjectiveC
 
 class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate, UITableViewDelegate, UITableViewDataSource {
 
@@ -20,7 +22,6 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate,
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var userLabel: UILabel!
 
-    let contentView = UIView()
     var previousButton: UIButton?
     var move_history: MoveHistory = MoveHistory();
     
@@ -98,24 +99,54 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate,
         } else if scrollView == altTableView {
             mainTableView.contentOffset = scrollView.contentOffset
         }
-        }
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (move_history.moves.count+1)/2
         }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let visibleIndexPaths = tableView.indexPathsForVisibleRows
+        //        let visibleIndexPaths = tableView.indexPathsForVisibleRows
         if tableView == mainTableView {
             let cell = tableView.dequeueReusableCell(withIdentifier: "main", for: indexPath) as! MoveHistoryControllerCellMain
-        
+            
             
             // Pass data to each cell and embed a new child view controller
             let data = move_history.moves[indexPath.row*2]
-//            print("main",data)
+            //            print("main",data)
             
             cell.turnLabel.text = "Turn: " + String(indexPath.row+1)
             cell.moveLabel.text = data.asShortAlgebraicNotation()
+            return cell
+        }
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "alt", for: indexPath) as! MoveHistoryControllerCellAlt
+            
+            
+            // Pass data to each cell and embed a new child view controller
+            if indexPath.row*2+1 < move_history.moves.count {
+                let data = move_history.moves[indexPath.row*2+1]
+                //            print("main",data)
+                
+                cell.moveLabel.text = data.asShortAlgebraicNotation()
+            } else {
+                cell.moveLabel.text = ""
+            }
+            
+            return cell
+        }
+    }
+    
+    @IBAction func endMoveButton(_ sender: Any) {
+        // NEW TIMER CODE: Call performCompleteMove on the gameScene
+        // This will pause current player's timer, end their turn,
+        // and start the next player's timer
+        if let scene = gameView.scene as? GameScene {
+            scene.performCompleteMove()
+        } else {
+            print("Warning: Could not access GameScene")
+        }
+    }
                 
     func formatTime(_ seconds: Int) -> String {
             let minutes = seconds / 60
@@ -126,44 +157,6 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate,
     //
     func didCompleteMove() {
         print("Move completed - timers have been switched")
-    }
-        
-        @IBAction func endMoveButton(_ sender: Any) {
-            // NEW TIMER CODE: Call performCompleteMove on the gameScene
-            // This will pause current player's timer, end their turn,
-            // and start the next player's timer
-            if let scene = gameView.scene as? GameScene {
-                scene.performCompleteMove()
-            } else {
-                print("Warning: Could not access GameScene")
-            }
-        }
-    
-    func setupScrollView() {
-            contentView.translatesAutoresizingMaskIntoConstraints = false
-            moveHistoryScroll.addSubview(contentView)
-
-            return cell
-        } else {
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: "alt", for: indexPath) as! MoveHistoryControllerCellAlt
-            
-            
-            if (move_history.moves.count-1 >= indexPath.row*2+1) {
-                // Pass data to each cell and embed a new child view controller
-//                
-//                let minIndexPath = visibleIndexPaths?.min { $0.row < $1.row }
-//                let maxIndexPath = visibleIndexPaths?.max { $0.row < $1.row }
-                let data = move_history.moves[indexPath.row*2+1]
-                print(indexPath.row*2+1, indexPath.row)
-//                print("alt", move_history.moves.count, indexPath.row*2+1,data)
-                
-                cell.moveLabel.text = data.asShortAlgebraicNotation()
-            }
-            return cell
-    
-        }
-
     }
 
     

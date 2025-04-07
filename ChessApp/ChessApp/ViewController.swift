@@ -110,7 +110,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
 
         }
     @objc func updateTime() {
-        print(secondsElapsed)
+//        print(secondsElapsed)
             secondsElapsed += 1
             updateButtonTitle()
         
