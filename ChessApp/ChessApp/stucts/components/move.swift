@@ -14,8 +14,8 @@ struct Move {
     let inMate: Bool;
     
     func asShortAlgebraicNotation() -> String {
-        // \(pieceMoved.charRepresentation())\(pieceCaptured != nil ? "x" : "") \(targetCell.pos)
-        return ""
+//         \(pieceMoved.charRepresentation())\(pieceCaptured != nil ? "x" : "") \(targetCell.pos)
+        return String(startCell.cell) + String(targetCell.cell)
     }
     
     func asLongAlgebraicNotation() -> String {

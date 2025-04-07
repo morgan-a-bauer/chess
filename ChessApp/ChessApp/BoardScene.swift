@@ -15,10 +15,11 @@ class GameScene: CustomSKScene {
     
     // Testing Variable
     let targetCell: Int = 11
+    var counter: Int = 0
     
     var touchedNode: SKShapeNode? = nil
     var originalLocation: CGPoint? = nil
-    var moveHistory: MoveHistory = MoveHistory(gameId:WebSocketManager.shared.gameID!)
+    var moveHistory: MoveHistory = MoveHistory()
     weak var sceneDelegate: BoardToSceneDelegate?
     // nodeMap is an implied data type check ./structs/other for more info
     // use and treat it as hashMap
@@ -135,14 +136,17 @@ class GameScene: CustomSKScene {
         
                 
         // Testing Code for move history
-//        let startCell: Cell = Cell(cell: 5)
-//        let targetCell: Cell = Cell(cell: 23)
-//        let pieceMoved: Bishop = Bishop(cellId: 5)
-//         let pieceCaptured: BasePiece? = nil
-//         let inCheck: Bool = false
-//         let inMate: Bool = false
-//         let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-//         moveHistory.append(move)
+        let startCell: Cell = Cell(cell: 5)
+        let targetCell: Cell = Cell(cell: counter)
+        let pieceMoved: Bishop = Bishop(cellId: 5)
+         let pieceCaptured: BasePiece? = nil
+         let inCheck: Bool = false
+         let inMate: Bool = false
+         
+        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+            moveHistory.append(move)
+        counter += 1;
+         
         sceneDelegate?.updateViewableMoveHistory(moveHistory)
         
     }
