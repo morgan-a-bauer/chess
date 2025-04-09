@@ -18,13 +18,14 @@ class WebSocketManager: NSObject, ObservableObject {
     static let shared = WebSocketManager();
     weak var loginDelegate: LoginDelegate?;
     weak var homeDelegate: HomeDelegate?;
+    weak var boardDelegate: BoardDelegate?;
 
     
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession: URLSession = URLSession(configuration: .default)
     //"ws://localhost:10000"
     //wss://chessbackend-iwcv.onrender.com
-    private let url = URL(string: "wss://chessbackend-iwcv.onrender.com")!
+    private let url = URL(string: "ws://localhost:10000")!
     private var connectionState: WebSocketState = .disconnected
     @Published private var messageQueue: [String] = []
     var handlers: [String: Handler] = [:]

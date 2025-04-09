@@ -10,7 +10,7 @@ import SpriteKit
 import Foundation
 import ObjectiveC
 
-class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate, UITableViewDelegate, UITableViewDataSource {
+class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var gameView: SKView!
     @IBOutlet weak var mainTableView: UITableView!
@@ -137,17 +137,6 @@ class GameController: UIViewController, BoardToSceneDelegate, GameSceneDelegate,
         }
     }
     
-    @IBAction func endMoveButton(_ sender: Any) {
-        // NEW TIMER CODE: Call performCompleteMove on the gameScene
-        // This will pause current player's timer, end their turn,
-        // and start the next player's timer
-        if let scene = gameView.scene as? GameScene {
-            scene.performCompleteMove()
-        } else {
-            print("Warning: Could not access GameScene")
-        }
-    }
-                
     func formatTime(_ seconds: Int) -> String {
             let minutes = seconds / 60
             let secs = seconds % 60
