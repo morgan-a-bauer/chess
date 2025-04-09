@@ -10,10 +10,12 @@ import UIKit
 
 
 // Morgan this is a base for you to jump off of when developing the board and pieces. Change whatever you want to change
-class GameScene: CustomSKScene, GameSceneActionsDelegate {
+class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
     
     
-    weak var viewControllerDelegate: GameSceneDelegate? // Delegate property for boardscene -> VC
+    weak var viewControllerDelegate: GameSceneDelegate?; // Delegate property for boardscene -> VC
+    weak var sceneDelegate: GameDelegate?;
+    
     
     // Testing Variable
     let targetCell: Int = 11
@@ -23,13 +25,15 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
     var originalLocation: CGPoint? = nil
     var moveHistory: MoveHistory = MoveHistory()
 
-    weak var sceneDelegate: BoardToSceneDelegate?
+    
     var players: [Player] = []
+    var turn: Int = 1
     // nodeMap is an implied data type check ./structs/other for more info
     // use and treat it as hashMap
 
     // Kind of "Main"
     override func didMove(to view: SKView) {
+        WebSocketManager.shared.boardDelegate = self;
         // Build chess board
         // Piece seems to need to be added within this scope to "view"
         
@@ -64,11 +68,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
                 
                 // House Keeping
                 colour = !colour
-                
-                var myDatabase = [["Nate","Goucher"],["John", "Hilliard"]]
-                var p1 = Player(color:"white",playerName:myDatabase[0][0], turn:true)
-                var p2 = Player(color:"black",playerName:myDatabase[1][0])
-                var players = [p1,p2]
             }
         }
 
@@ -100,6 +99,10 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
         if let currentPlayer = getCurrentPlayer(), let nextPlayer = getWaitingPlayer() {
             print("Ending turn for \(currentPlayer.playerName) (\(currentPlayer.color))")
             currentPlayer.endturn() //calls pauseTimer()
+            if currentPlayer.color == "black" {
+                turn += 1;
+            }
+                    
             
             print("Starting turn for \(nextPlayer.playerName) (\(nextPlayer.color))")
             nextPlayer.startturn() //calls unpauseTimer()
@@ -128,6 +131,27 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
         }
     }
     
+    func opponentMove(_ move: Int) {
+        DispatchQueue.main.async {
+            self.performCompleteMove()
+        }
+        // Testing Code for move history
+        let start = move/1000;
+        let end = move - start*1000
+        let startCell: Cell = Cell(cell: start)
+        let targetCell: Cell = Cell(cell: end)
+        let pieceMoved: Bishop = Bishop(cellId: 5)
+        let pieceCaptured: BasePiece? = nil
+        let inCheck: Bool = false
+        let inMate: Bool = false
+        print("start:",start,"end:",end)
+        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+        moveHistory.append(move)
+//        WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
+        counter += 1;
+         
+        sceneDelegate?.updateViewableMoveHistory(moveHistory)
+    }
     
     
     // Get valid moves
@@ -187,6 +211,24 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
           if  touchedNode != nil {
               touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
               
+              performCompleteMove()
+              // Testing Code for move history
+              let startCell: Cell = Cell(cell: 5)
+              let targetCell: Cell = Cell(cell: counter)
+              let pieceMoved: Bishop = Bishop(cellId: 5)
+              let pieceCaptured: BasePiece? = nil
+              let inCheck: Bool = false
+              let inMate: Bool = false
+               
+              let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+                  moveHistory.append(move)
+              
+              // Maybe include a current time as to deal with discontinuous delays in move send and receive
+              WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
+              counter += 1;
+               
+              sceneDelegate?.updateViewableMoveHistory(moveHistory)
+              
               // Just Spitballing on ideas for checking valid moves, I'll stop this and leave it up to you.
 //              if (nodeMap.move(piece: touchedNode, to: 11)) == false {
 //                  // if move invalid?
@@ -201,19 +243,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
         
         
                 
-        // Testing Code for move history
-        let startCell: Cell = Cell(cell: 5)
-        let targetCell: Cell = Cell(cell: counter)
-        let pieceMoved: Bishop = Bishop(cellId: 5)
-         let pieceCaptured: BasePiece? = nil
-         let inCheck: Bool = false
-         let inMate: Bool = false
-         
-        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-            moveHistory.append(move)
-        counter += 1;
-         
-        sceneDelegate?.updateViewableMoveHistory(moveHistory)
+        
         
         //begin code for updating turns and timers.
         //Use same conditions for updating move history to trigger timer change from white to black and vice versa.

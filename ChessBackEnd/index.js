@@ -5,6 +5,7 @@ import GameQueue from './helpers.js/game_queue.js';
 import verifyLogin from './db_queries/login_verification.js'
 import select_username_by_id from './db_queries/select_username_by_id.js';
 import get_game_history from './db_queries/get_game_history.js';
+import { parse } from 'dotenv';
 
 const queue = new GameQueue();
 const clients = new Map();
@@ -78,12 +79,13 @@ async function queue_listener_handler() {
                         switch (parsedData.type) {
                             case "add_move": {
                                 /*
-                                {"type":"add_move", "game_id": 1, "turn": 1, "move":"e2e4"}
+                                {"type":"add_move", "game_id": 1, "turn": 1, "move":11033}
                                 */
                                if (game.is_active) {
-                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "data":parsedData.move}));
+                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "dataInt":parsedData.move}));
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"move_sent", "message": "Move Sent Successfully"}));
-                                    await Moves.create({"game_id": game.id, "turn": parsedData.turn, "move": parsedData.move});
+                                    // moves needs to take a move as an integer not text...
+                                    // await Moves.create({"game_id": game.id, "turn": parsedData.turn, "move": parsedData.move});
                                 } else {
                                     ws.send(JSON.stringify({"type":"error", "sub_type":"game_not_active", "message": "There is no active game"}));
                                 }
@@ -174,8 +176,8 @@ async function queue_listener_handler() {
                             }
                             case "get_game_history": {
                                 const temp = await get_game_history(parsedData.user_id);
-                                console.log("get_game_history")
-                                console.log(temp)
+                                // console.log("get_game_history")
+                                // console.log(temp)
                                 ws.send(JSON.stringify({"type": "success", "sub_type": "game_history", "dataArray":temp}))
                                 break;
                             }
@@ -202,6 +204,8 @@ async function queue_listener_handler() {
                                         ws.send(JSON.stringify({"type": "success", "sub_type": "login_successful", "message":"Logged in", "data":`{"user_id":${login}}`}))
                                         is_authenticated = true;
                                         clients.set(login, ws);
+                                        // Check to see if user is still in a game.
+                                        // Maybe keep connection alive for some amount of time before killing it? and load them back into game upon reconnect?
                                     }
                                 }
                                 break;

@@ -12,7 +12,6 @@ extension WebSocketManager {
     typealias Handler = (ResponseMessage) -> HandlerResponse
     
     
-    
     func registerHandlers() {
         handlers["move_received"] = handleMoveReceived
         handlers["move_sent"] = handleMoveSent
@@ -60,8 +59,10 @@ extension WebSocketManager {
     func handleMoveReceived(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the move received case
         do {
-            let jsonData = message.data?.data(using: .utf8)
-            let data = try JSONDecoder().decode(MoveData.self, from: jsonData!)
+            let data = message.dataInt!
+            print(data)
+            print("successful receive", data)
+            boardDelegate?.opponentMove(data);
             let result: HandlerResponse = HandlerResponse(listenForMessage: false, isMove: true, hasData: true, data: data, successful: true);
             return result;
         } catch {
@@ -179,6 +180,7 @@ extension WebSocketManager {
         let result: HandlerResponse = HandlerResponse(successful: false);
         return result;
     }
+    
     func handleMatchMade(_ message: ResponseMessage) -> HandlerResponse {
         // Handle valid match creation
         do {
