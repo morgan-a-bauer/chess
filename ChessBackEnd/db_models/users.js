@@ -23,6 +23,10 @@ Users.init(
             unqie: true,
             allowNull: false,
         },
+        password: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
         first_name: {
             type: DataTypes.TEXT,
             allowNull: false,
@@ -31,9 +35,14 @@ Users.init(
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        password: {
-            type: DataTypes.TEXT,
+        elo : {
+            type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 600,
+        },
+        icon : {
+            type: Sequelize.BLOB('long'),
+            allowNull: true,
         },
     },
     {

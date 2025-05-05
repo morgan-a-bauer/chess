@@ -15,10 +15,12 @@ async function queue_listener_handler() {
     while (true) {
         var match_valid = false
         const {player1, player2} = await queue.listen();
+        console.log(player1, player2)
         if (clients.get(player1)?.readyState === WebSocket.OPEN) {
             match_valid = true;
         }
         else {
+            console.log("match fucked due to websocket failure")
             clients.delete(player1);
             match_valid = false;
         }
@@ -27,6 +29,7 @@ async function queue_listener_handler() {
                 match_valid = true;
             }
             else {
+                console.log("match fucked due to websocket failure")
                 queue.add(player1)
                 clients.delete(player2);
                 match_valid = false;
@@ -35,16 +38,17 @@ async function queue_listener_handler() {
             queue.add(player2)
         }
         if (match_valid) {
+            console.log("match good so far")
             // Database game creation
             const game = await Games.create({});
             const game_participant1 = await GameParticipants.create({"game_id": game.dataValues.id, "user_id": player1, "is_white": true});
             const game_participant2 = await GameParticipants.create({"game_id": game.dataValues.id, "user_id": player2, "is_white": false});
-
             // Communication to clients
             const username1 = await select_username_by_id(player1);
             const username2 = await select_username_by_id(player2);
             clients.get(player1).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username2}", "game_id": ${game.dataValues.id}, "is_white": ${true}}`}));
             clients.get(player2).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username1}", "game_id": ${game.dataValues.id}, "is_white": ${false}}`}));
+            console.log("match success")
         }
         else {
             ws.send(JSON.stringify({"type":"error", "sub_type":"queue_failed", "message": "Trying To Requeue You"}));
@@ -62,6 +66,11 @@ async function queue_listener_handler() {
         var game = null;
         var opponent = null;
         var user = null;
+        var in_game = false;
+        
+        var user_id = null;
+        var in_queue = false;
+        var time_control = "";
         var game_history_pointer = 0;
         ws.on('error', console.error);
 
@@ -112,7 +121,9 @@ async function queue_listener_handler() {
                                 });
                                 clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"opponent_joined_game", "message": "Your opponenet has connected"}));
                                 ws.send(JSON.stringify({"type":"success", "sub_type":"user_joined_game", "message": "Joined Game"}));
+                                in_game = true;
                                 game_history_pointer = 0;
+
                                 break;
                             }
                             case "end_game": {
@@ -151,6 +162,7 @@ async function queue_listener_handler() {
                                 } else {
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"game_ended", "message": "Game Result Already Recorded"}));
                                 }
+                                in_game = false;
                                 break;
                             }
                             // case "get_username": {
@@ -162,19 +174,36 @@ async function queue_listener_handler() {
                             // }
                             case "enter_game_queue": {
                                 /*
-                                {"type":"enter_game_queue","user_id": 1}
+                                {"type":"enter_game_queue","user_id": 1, "time_control":"15|10"}
                                 */
-                                queue.add(parsedData.user_id);
-                                ws.send(JSON.stringify({"type": "success", "sub_type": "entered_game_queue"}))
+                                if (!in_queue) {
+                                    if (queue.add(parsedData.user_id, String(parsedData.time_control))) {
+                                        ws.send(JSON.stringify({"type": "success", "sub_type": "entered_game_queue"}))
+                                        in_queue = true;
+                                        time_control = String(parsedData.time_control);
+                                    } else {
+                                        ws.send(JSON.stringify({"type": "error", "sub_type": "invalid_query", "message": "failed to join game queue"}))
+                                    }
+
+                                    
                                 // Have fun with the game queue and listener to create game and game_participants was not actually bad :)
+                                };
                                 break;
                             }
                             case "leave_game_queue": {
-                                queue.leave(parsedData.user_id);
-                                ws.send(JSON.stringify({"type": "success", "sub_type": "left_game_queue"}))
+                                // {"type":"leave_game_queue","user_id": 1, "time_control":"15|10"}
+                                if (in_queue) {
+                                    if (queue.leave(parsedData.user_id, String(parsedData.time_control))) {
+                                        ws.send(JSON.stringify({"type": "success", "sub_type": "left_game_queue"}))
+                                        in_queue = false;
+                                    } else {
+                                        ws.send(JSON.stringify({"type": "error", "sub_type": "invalid_query", "message": "failed to leave game queue"}))
+                                    }
+                                };
                                 break;
                             }
                             case "get_game_history": {
+                                // {"type":"get_game_history","user_id": 1}
                                 const temp = await get_game_history(parsedData.user_id);
                                 // console.log("get_game_history")
                                 // console.log(temp)
@@ -196,26 +225,32 @@ async function queue_listener_handler() {
                                 switch (login) {
                                     case "invalid_username": {
                                         ws.send(JSON.stringify({"type": "error", "sub_type": "invalid_username", "message":"Username does not exist"}))
+                                        break;
                                     }
                                     case "invalid_password": {
                                         ws.send(JSON.stringify({"type": "error", "sub_type": "invalid_password", "message":"Password is not correct"}))
+                                        break;
                                     }
                                     default: {
-                                        ws.send(JSON.stringify({"type": "success", "sub_type": "login_successful", "message":"Logged in", "data":`{"user_id":${login}}`}))
+                                        ws.send(JSON.stringify({"type": "success", "sub_type": "login_successful", "message":"Logged in", "data":JSON.stringify(login)}))
+                                        // `{'user_id':${login.user_id}, 'icon':${login.icon}, 'milestones':${login.milestones}}`
                                         is_authenticated = true;
+                                        user_id = login.user_id;
                                         clients.set(login, ws);
                                         // Check to see if user is still in a game.
                                         // Maybe keep connection alive for some amount of time before killing it? and load them back into game upon reconnect?
+                                        break;
                                     }
                                 }
                                 break;
                             }
-                            case "create_user": {
+                            case "create_account": {
                                 try{
                                     /* 
-                                    {"type":"create_user", "username":"jackcameback","email":"jackson@butler.net", "first_name":"jackson", "last_name":"butler", "password":"foobar"}
-                                    */
-                                    await Users.create({ username: parsedData["username"], email: parsedData["email"], first_name: parsedData["first_name"], last_name: parsedData["last_name"], password: parsedData["password"] });
+                                    {"type":"create_account", "username":"jackcameback","email":"jackson@butler.net", "first_name":"jackson", "last_name":"butler", "password":"foobar"}
+                                    */ 
+                                    
+                                    await Users.create({ username: parsedData["username"], email: parsedData["email"], first_name: parsedData["first_name"], last_name: parsedData["last_name"], elo: parsedData["elo"],password: parsedData["password"] });
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"created_user", "message": "User created successfully"}))
                                 }catch {
                                     ws.send(JSON.stringify({"type":"error", "sub_type":"invalid_user", "message": "Username/Email is already in use"}))
@@ -234,24 +269,19 @@ async function queue_listener_handler() {
             };
         });
 
-
+        ws.on('close', () => {
+            console.log("connection closed to user:", user_id)
+            if (in_queue) {
+                console.log(queue.queue[time_control].length)
+                queue.leave(user_id, time_control)
+                console.log(queue.queue[time_control].length)
+            }
+            if (in_game) {
+                // Figure out what this entails...
+            }
+        });
     });
-
-    // create user
-    // const Jackson = await Users.create({ username: 'jackcameback', email: 'jackson@butler.net', first_name: 'Jackson', last_name: 'Butler', password: 'foobar' });
-    // create game
-    // const game1 = await Games.create({});
-    // create game_participant
-    // const game_participant = await GameParticipants.create({"game_id": 1, "user_id": 1, "is_white": true});
-    // create move
-    // const move = await Moves.create({"game_id": 1, "turn": 1, "move": "e2e4"})
-
-    // // // Jackson exists in the database now!
-    // console.log(Jackson instanceof User); // true
-    // console.log(Jackson.username); // "Jackcameback"
-    // Code here
-
-  })() ; // These call the async function... careful to not get rid of them
+})() ; // These call the async function... careful to not get rid of them
 
 /*
 Testing Only, migrations should be used in production
@@ -263,7 +293,6 @@ console.log('All models were synchronized successfully.');
 check out refrence for foreign keys
 https://sequelize.org/docs/v6/core-concepts/model-basics/
 */
-
 
 try {
     sequelize.authenticate()

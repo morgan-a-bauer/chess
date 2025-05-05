@@ -15,11 +15,11 @@ struct UserHistory: Codable {
     }
 }
 
-
 struct GameHistory: Codable {
     let user: UserHistory;
     let opponent: UserHistory;
     let moves: Int;
+    let moveHistory: [Move];
     
     init(user: UserHistory=UserHistory(), opponent: UserHistory=UserHistory(), moves: Int=0) {
         self.user = user

@@ -7,6 +7,7 @@
 
 protocol HomeDelegate: AnyObject {
     func enteredGameQueue();
+    func leftGameQueue();
     func matchFound();
     func joinedGame();
     func receiveGameHistory(_ response:[GameHistory]);

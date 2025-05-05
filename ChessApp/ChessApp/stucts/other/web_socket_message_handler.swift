@@ -32,7 +32,6 @@ extension WebSocketManager {
         handlers["match_made"] = handleMatchMade
         handlers["queue_failed"] = handleQueueFailed
         handlers["game_history"] = gameHistory
-        
         }
     
     func decodeMessage(_ data: String) -> ResponseMessage? {
@@ -105,6 +104,9 @@ extension WebSocketManager {
     func handleLeftGameQueue(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the left game queue case
         let result: HandlerResponse = HandlerResponse(listenForMessage: false, hasData: false, successful: true);
+        if message.type == .success {
+            homeDelegate?.leftGameQueue()
+        }
         return result;
     }
     
@@ -125,10 +127,15 @@ extension WebSocketManager {
         do {
             let jsonData = message.data?.data(using: .utf8);
             let data = try JSONDecoder().decode(UserData.self, from: jsonData!);
+//            let milestonesJsonData = data.milestones.data?.data(using: .utf8);
+//            let milestones = try JSONDecoder().decode(MilestonesData.self, from: milestonesJsonData!);
+//            
             userID = data.user_id;
+            userIcon = data.user_icon;
+            userMilestones = data.milestones;
             loginDelegate?.didReceiveLoginSuccess()
             let result: HandlerResponse = HandlerResponse(successful: true);
-            print("successfuly decoded login message")
+            print("successfuly decoded login message", jsonData, data)
             return result;
         } catch {
             print("ruh roh \(error)")
@@ -154,12 +161,14 @@ extension WebSocketManager {
     func handleCreatedUser(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the created user case
         let result: HandlerResponse = HandlerResponse(listenForMessage: false, hasData: false, successful: true);
+        createAccountDelegate?.didReceiveCreateAccount()
         return result;
     }
 
     func handleInvalidUser(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the invalid user case
         let result: HandlerResponse = HandlerResponse(successful: false);
+        createAccountDelegate?.didReceiveCreateAccountFailure(error: message.message!)
         return result;
     }
 

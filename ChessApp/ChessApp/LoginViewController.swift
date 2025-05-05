@@ -38,6 +38,12 @@ class LoginViewController: UIViewController, LoginDelegate{
             }
         }
     
+    @IBAction func jacksonLogin(_ sender: Any) {
+        WebSocketManager.shared.addMessage(["type":"auth", "username": "jackcameback", "password": "foobar"])
+    }
+    @IBAction func morganLogin(_ sender: Any) {
+        WebSocketManager.shared.addMessage(["type":"auth", "username": "mbauer", "password": "foobar"])
+    }
 }
 
 

@@ -32,6 +32,7 @@ enum ResponseSubType: String, Codable {
     case game_history = "game_history"
     case unknown = "unknown"
 }
+
 //
 struct MoveData: Codable {
     let move: Int;
@@ -42,7 +43,9 @@ struct GameData: Codable {
     let is_white: Bool;
 }
 struct UserData: Codable {
-    let user_id: Int;
+    let user_id: Int
+    let user_icon: String?
+    let milestones: [String: Bool]
 }
 
 struct ResponseMessage: Codable {
