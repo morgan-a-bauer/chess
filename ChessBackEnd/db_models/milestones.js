@@ -1,12 +1,11 @@
-import GameParticipants from './game_participants.js';
 import {Sequelize, DataTypes, Model, sequelize} from './sql_init.js';
 import Users from './users.js';
 
-class Games extends Model {
+class Milestones extends Model {
     /* can add methods to this */
 }
 
-Games.init(
+Milestones.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -14,36 +13,29 @@ Games.init(
             allowNull: false,
             primaryKey: true,
         },
-        is_active: {
+        user_id : {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Users,
+                key: 'id',
+            },
+            onDelete: 'CASCADE',
+        },
+        title: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        is_complete: {
             type: DataTypes.BOOLEAN,
-            defaultValue: true
-        },
-        white_player_id: {
-            type: DataTypes.INTEGER,
             allowNull: false,
-            references: {
-                model: Users,
-                key: 'id',
-            },
-            onDelete: 'CASCADE',
-        },
-        black_player_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: Users,
-                key: 'id',
-            },
-            onDelete: 'CASCADE',
-        },
-        result: {
-            type: DataTypes.TEXT
         }
     },
     {
         sequelize,
-        timestamps: true,
-        tableName: 'games',
+        timestamps: false,
+        tableName: 'milestones',
     }
 )
-export default Games
+
+export default Milestones

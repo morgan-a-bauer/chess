@@ -17,6 +17,7 @@ enum WebSocketState {
 class WebSocketManager: NSObject, ObservableObject {
     static let shared = WebSocketManager();
     weak var loginDelegate: LoginDelegate?;
+    weak var createAccountDelegate: CreateAccountDelegate?;
     weak var homeDelegate: HomeDelegate?;
     weak var boardDelegate: BoardDelegate?;
 
@@ -32,14 +33,22 @@ class WebSocketManager: NSObject, ObservableObject {
 
     
     var inGameQueue: Bool = false;
-    var inGame: Bool = false;
+    
     var opponentConnectedToGame: Bool = false;
     var userConnectedToGame: Bool = false;
+    var opponentUsername: String = "Jeremy";
+    var opponentIcon: String? = "🕺🏻"; // Needs to change later
+    
+    var inGame: Bool = false;
     var gameID: Int? = nil;
-    var opponentUsername: String? = "Jeremy";
+
+    var isWhite: Bool = false;
+
     var username: String? = "Doctor";
     var userID: Int? = nil;
-    var isWhite: Bool = false;
+    var userIcon: String? = "👨‍⚕️"; // Needs to change later
+    var userMilestones: [String: Bool] = [:]; // Probably needs to change later
+    
     
     deinit {
         print("WebSocketManager deinitialized")

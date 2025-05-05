@@ -19,9 +19,10 @@ protocol GameSceneDelegate: AnyObject { //BS response certification to VC
 
 class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITableViewDataSource{
     
+    var inQueue: Bool = false;
     var timer: Timer?;
     var secondsElapsed = 0;
-    var gameScene: GameScene?
+    var gameScene: GameScene?;
     weak var gameSceneActionDelegate: GameSceneActionsDelegate? // vc -> bs
     
     @IBOutlet weak var game_history: UITableView!
@@ -42,6 +43,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         game_history.rowHeight = 80;
         WebSocketManager.shared.addMessage(["type":"get_game_history", "user_id": WebSocketManager.shared.userID!])
         
+        enter_queue.setTitleColor(.gray, for: .highlighted)
         // Do any additional setup after loading the view.
  
 
@@ -49,14 +51,33 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     
     
     @IBAction func enterGameQueue(_ sender: Any) {
-        enter_queue.setTitleColor(.gray, for: .highlighted)
-        WebSocketManager.shared.addMessage(["type":"enter_game_queue", "user_id": WebSocketManager.shared.userID!])
+        if !inQueue {
+            WebSocketManager.shared.addMessage(["type":"enter_game_queue", "user_id": WebSocketManager.shared.userID!, "time_control": "15|10"])
+        } else {
+            WebSocketManager.shared.addMessage(["type":"leave_game_queue", "user_id": WebSocketManager.shared.userID!, "time_control": "15|10"])
+        }
     }
+    
     func enteredGameQueue() {
         DispatchQueue.main.async { [weak self] in
-                self?.startTimer()
-            }
+            print("joined")
+            self?.inQueue = true
+            self?.startTimer()
+        }
     }
+    
+    func leftGameQueue() {
+        DispatchQueue.main.async { [weak self] in
+            print("left");
+            self?.inQueue = false;
+            self?.timer?.invalidate();
+            self?.timer = nil;
+            self?.secondsElapsed = 0;
+            self?.enter_queue.setTitle("Enter Queue", for: .normal)
+            self?.enter_queue.setTitleColor(.black, for: .normal)
+        }
+    }
+    
     func matchFound() {
         WebSocketManager.shared.addMessage(["type":"join_game", "game_id": WebSocketManager.shared.gameID!, "user_id": WebSocketManager.shared.userID!])
     }
@@ -71,13 +92,13 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         }
         
     }
+    
     func receiveGameHistory(_ response:[GameHistory]) {
         gameHistoryData = response;
         
         DispatchQueue.main.async {
             self.game_history.reloadData()
         }
-        
     }
     
 

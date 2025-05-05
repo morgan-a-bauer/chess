@@ -149,8 +149,9 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         moveHistory.append(move)
 //        WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
         counter += 1;
-         
-        sceneDelegate?.updateViewableMoveHistory(moveHistory)
+        DispatchQueue.main.async {
+            self.sceneDelegate?.updateViewableMoveHistory(self.moveHistory)
+        }
     }
     
     
@@ -221,7 +222,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
               let inMate: Bool = false
                
               let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-                  moveHistory.append(move)
+              moveHistory.append(move)
               
               // Maybe include a current time as to deal with discontinuous delays in move send and receive
               WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
