@@ -18,27 +18,6 @@ Games.init(
             type: DataTypes.BOOLEAN,
             defaultValue: true
         },
-        white_player_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: Users,
-                key: 'id',
-            },
-            onDelete: 'CASCADE',
-        },
-        black_player_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: Users,
-                key: 'id',
-            },
-            onDelete: 'CASCADE',
-        },
-        result: {
-            type: DataTypes.TEXT
-        }
     },
     {
         sequelize,
