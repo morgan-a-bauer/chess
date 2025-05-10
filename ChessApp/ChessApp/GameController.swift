@@ -10,25 +10,25 @@ import SpriteKit
 import Foundation
 import ObjectiveC
 
-class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITableViewDelegate, UITableViewDataSource {
+class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameSceneDelegate, UITableViewDelegate, UITableViewDataSource {
+    
 
     @IBOutlet weak var gameView: SKView!
     @IBOutlet weak var mainTableView: UITableView!
-
     @IBOutlet weak var altTableView: UITableView!
+    
+    // Player Labels
     @IBOutlet weak var opponentImage: UIImageView!
     @IBOutlet weak var opponentLabel: UILabel!
+    @IBOutlet weak var opponentTimerLabel: UILabel!
     
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var userLabel: UILabel!
+    @IBOutlet weak var userTimerLabel: UILabel!
 
     var previousButton: UIButton?
     var move_history: MoveHistory = MoveHistory();
     
-    
-    //TIMER stuff
-    @IBOutlet weak var whitePlayerTimerLabel: UILabel!
-    @IBOutlet weak var blackPlayerTimerLabel: UILabel!
        
     var gameScene: GameScene?
     var players: [Player] = []
@@ -38,8 +38,13 @@ class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        WebSocketManager.shared.gameDelegate = self;
+        
+        
         opponentLabel.text = WebSocketManager.shared.opponentUsername
         userLabel.text = WebSocketManager.shared.username
+        
+        // ————————— Move History Initialization —————————
         mainTableView.delegate = self
         mainTableView.dataSource = self
         mainTableView.rowHeight = 30;
@@ -48,19 +53,17 @@ class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITable
         altTableView.rowHeight = 30;
         
         
-        // Create a SpriteKit view
+        
+        // ————————— Create and Link Board —————————
         self.view.addSubview(gameView)
         // Create a scene and set it to the view
         let scene = GameScene(size: gameView.bounds.size)
-        self.gameScene = scene  // NEW TIMER CODE: Store reference to the scene
-        
+        self.gameScene = scene
         // Delegate for sending data from the SKScene to parent ViewController
         scene.sceneDelegate = self
-        scene.viewControllerDelegate = self  // NEW TIMER CODE: Set up delegate for move completion
-        
+        scene.viewControllerDelegate = self
         gameView.presentScene(scene)
         // collisionCounter.text = contentKey
-        // puzzleDelate?.puzzleToGameData(contentKey) // Replace with BoardToSceneDelegate
         
         // Optional: enable debugging info
         gameView.showsFPS = false
@@ -74,23 +77,27 @@ class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITable
         
         players = [whitePlayer, blackPlayer]
         scene.players = players
-        
-        // Update time every timer fire
-        whitePlayer.onTimerUpdate = { [weak self] seconds in
-            DispatchQueue.main.async {
-                self?.whitePlayerTimerLabel.text = "White: \(self?.formatTime(seconds) ?? "\(seconds)")"
+        if WebSocketManager.shared.inGame {
+            // Update time every timer fire
+            whitePlayer.onTimerUpdate = { [weak self] seconds in
+                DispatchQueue.main.async {
+                    self?.opponentTimerLabel.text = "\(self?.formatTime(seconds) ?? "\(seconds)")"
+                }
             }
-        }
-
-        blackPlayer.onTimerUpdate = { [weak self] seconds in
-            DispatchQueue.main.async {
-                self?.blackPlayerTimerLabel.text = "Black: \(self?.formatTime(seconds) ?? "\(seconds)")"
+            
+            blackPlayer.onTimerUpdate = { [weak self] seconds in
+                DispatchQueue.main.async {
+                    self?.userTimerLabel.text = "\(self?.formatTime(seconds) ?? "\(seconds)")"
+                }
             }
+            opponentTimerLabel.text = (formatTime(5400))
+            userTimerLabel.text = (formatTime(5400))
         }
-        
         // Create timer boxes with chosen time. This is currently hard set to 5400, but it will be a choice later.
-        whitePlayerTimerLabel.text = "White: \(formatTime(5400))"
-        blackPlayerTimerLabel.text = "Black: \(formatTime(5400))"
+        
+//        WRITE A FUNCTION TO CONVERT STRING 90:00 -> SECONDS
+        
+        
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -116,7 +123,7 @@ class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITable
             //            print("main",data)
             
             cell.turnLabel.text = "Turn: " + String(indexPath.row+1)
-            cell.moveLabel.text = data.asShortAlgebraicNotation()
+            cell.moveLabel.text = data.asLongAlgebraicNotation()
             return cell
         }
         else {
@@ -128,7 +135,7 @@ class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITable
                 let data = move_history.moves[indexPath.row*2+1]
                 //            print("main",data)
                 
-                cell.moveLabel.text = data.asShortAlgebraicNotation()
+                cell.moveLabel.text = data.asLongAlgebraicNotation()
             } else {
                 cell.moveLabel.text = ""
             }
@@ -158,5 +165,104 @@ class GameController: UIViewController, GameDelegate, GameSceneDelegate, UITable
             let index = IndexPath(row: self.altTableView.numberOfRows(inSection: 0) - 1, section: 0)
             self.altTableView.scrollToRow(at: index, at: .bottom, animated: true)
         }
+    }
+    
+    func loadOldGame(_ CodedMoveHistory: [String], _ user: UserHistory, _ opponent: UserHistory){
+        
+        userTimerLabel.text = user.time_left
+        opponentTimerLabel.text = opponent.time_left
+        
+        
+        
+        self.move_history = decodeMoveHistory(CodedMoveHistory);
+        mainTableView.reloadData()
+        altTableView.reloadData()
+    }
+    
+    
+    func handleGameEnded() {
+        players[0].timer?.invalidate();
+        players[0].timer = nil;
+        players[1].timer?.invalidate();
+        players[1].timer = nil;
+        
+        WebSocketManager.shared.isWhite = false;
+        WebSocketManager.shared.inGame = false;
+        WebSocketManager.shared.gameID = nil;
+        WebSocketManager.shared.opponentConnectedToGame = false;
+        WebSocketManager.shared.userConnectedToGame = false;
+        WebSocketManager.shared.opponentIcon = "";
+        WebSocketManager.shared.opponentUsername = "Jeremy";
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "gameToMain", sender: self)
+        }
+    }
+
+    // Testing Code
+    @IBAction func leaveGame(_ sender: Any) {
+//        var result: String = (WebSocketManager.shared.isWhite ? "0-1" : "1-0")
+        if WebSocketManager.shared.inGame {
+            var result: String = "lost"
+            WebSocketManager.shared.addMessage([
+                "type": "end_game",
+                "game_id": WebSocketManager.shared.gameID!,
+                "termination": "quit",
+                "result": result,
+                "user_time": userTimerLabel.text!,
+                "opponent_time":opponentTimerLabel.text!,
+                "moves": move_history.export(),
+                "move_count": move_history.moves.count
+            ])
+        } else {
+            handleGameEnded()
+        }
+        
+    }
+    
+    @IBAction func loseGame(_ sender: Any) {
+//        var result: String = (WebSocketManager.shared.isWhite ? "0-1" : "1-0")
+        var result: String = "lost"
+
+        WebSocketManager.shared.addMessage([
+            "type": "end_game",
+            "game_id": WebSocketManager.shared.gameID!,
+            "termination": "checkmate",
+            "result": result,
+            "user_time": userTimerLabel.text!,
+            "opponent_time":opponentTimerLabel.text!,
+            "moves": move_history.export(),
+            "move_count": move_history.moves.count
+        ])
+    }
+    
+    @IBAction func drawGame(_ sender: Any) {
+        var result: String = "draw"
+        
+        WebSocketManager.shared.addMessage([
+            "type": "end_game",
+            "game_id": WebSocketManager.shared.gameID!,
+            "termination": "checkmate",
+            "result": result,
+            "user_time": userTimerLabel.text!,
+            "opponent_time":opponentTimerLabel.text!,
+            "moves": move_history.export(),
+            "move_count": move_history.moves.count
+        ])
+    }
+    
+    @IBAction func winGame(_ sender: Any) {
+//        var result: String = (WebSocketManager.shared.isWhite ? "1-0" : "0-1")
+        var result: String = "won"
+        
+        WebSocketManager.shared.addMessage([
+            "type": "end_game",
+            "game_id": WebSocketManager.shared.gameID!,
+            "termination": "checkmate",
+            "result": result,
+            "user_time": userTimerLabel.text!,
+            "opponent_time":opponentTimerLabel.text!,
+            "moves": move_history.export(),
+            "move_count": move_history.moves.count
+        ])
     }
 }

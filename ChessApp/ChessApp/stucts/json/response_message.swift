@@ -35,7 +35,7 @@ enum ResponseSubType: String, Codable {
 
 //
 struct MoveData: Codable {
-    let move: Int;
+    let move: String;
 }
 struct GameData: Codable {
     let game_id: Int;

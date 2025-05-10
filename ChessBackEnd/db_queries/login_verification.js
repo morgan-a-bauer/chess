@@ -1,6 +1,5 @@
 import { Op } from 'sequelize'
-import {Users} from '../db_models/model_init.js'
-import Milestones from '../db_models/milestones.js';
+import {Users, Milestones} from '../db_models/model_init.js'
 
 export default async function verifyLogin(username, password) {
     try {

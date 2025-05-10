@@ -58,7 +58,7 @@ extension WebSocketManager {
     func handleMoveReceived(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the move received case
         do {
-            let data = message.dataInt!
+            let data = message.data!
             print(data)
             print("successful receive", data)
             boardDelegate?.opponentMove(data);
@@ -113,6 +113,10 @@ extension WebSocketManager {
     func handleGameEnded(_ message: ResponseMessage) -> HandlerResponse {
         // Handle the game ended case
         let result: HandlerResponse = HandlerResponse(listenForMessage: true, hasData: false, successful: true);
+        if message.type == .success {
+            gameDelegate?.handleGameEnded()
+            
+        }
         return result;
     }
 

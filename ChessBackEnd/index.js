@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws';
 import {Sequelize, DataTypes, Model, sequelize, Op} from './db_models/sql_init.js';
-import {Users, Games, GameParticipants, Moves} from "./db_models/model_init.js"
+import {Users, Games, GameParticipants, Milestones} from "./db_models/model_init.js"
 import GameQueue from './helpers.js/game_queue.js';
 import verifyLogin from './db_queries/login_verification.js'
 import select_username_by_id from './db_queries/select_username_by_id.js';
@@ -13,45 +13,40 @@ const clients = new Map();
 
 async function queue_listener_handler() {
     while (true) {
-        var match_valid = false
-        const {player1, player2} = await queue.listen();
-        console.log(player1, player2)
+        var match_valid = false;
+
+        const {player1, player2, timeControl} = await queue.listen();
+
         if (clients.get(player1)?.readyState === WebSocket.OPEN) {
-            match_valid = true;
-        }
-        else {
-            console.log("match fucked due to websocket failure")
-            clients.delete(player1);
-            match_valid = false;
-        }
-        if (match_valid) {
             if (clients.get(player2)?.readyState === WebSocket.OPEN) {
                 match_valid = true;
-            }
-            else {
-                console.log("match fucked due to websocket failure")
+
+                console.log("match good so far")
+                // Database game creation
+                const game = await Games.create({'time_control': timeControl});
+                const game_participant1 = await GameParticipants.create({"game_id": game.dataValues.id, "user_id": player1, "is_white": true});
+                const game_participant2 = await GameParticipants.create({"game_id": game.dataValues.id, "user_id": player2, "is_white": false});
+                // Communication to clients
+                const username1 = await select_username_by_id(player1);
+                const username2 = await select_username_by_id(player2);
+                clients.get(player1).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username2}", "game_id": ${game.dataValues.id}, "is_white": ${true}}`}));
+                clients.get(player2).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username1}", "game_id": ${game.dataValues.id}, "is_white": ${false}}`}));
+                console.log("match success")
+
+            } else {
+                console.log("match fucked due to websocket failure, p2")
                 queue.add(player1)
                 clients.delete(player2);
                 match_valid = false;
             }
-        } else {
-            queue.add(player2)
-        }
-        if (match_valid) {
-            console.log("match good so far")
-            // Database game creation
-            const game = await Games.create({});
-            const game_participant1 = await GameParticipants.create({"game_id": game.dataValues.id, "user_id": player1, "is_white": true});
-            const game_participant2 = await GameParticipants.create({"game_id": game.dataValues.id, "user_id": player2, "is_white": false});
-            // Communication to clients
-            const username1 = await select_username_by_id(player1);
-            const username2 = await select_username_by_id(player2);
-            clients.get(player1).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username2}", "game_id": ${game.dataValues.id}, "is_white": ${true}}`}));
-            clients.get(player2).send(JSON.stringify({"type": "success", "sub_type":"match_made", "data":`{"username": "${username1}", "game_id": ${game.dataValues.id}, "is_white": ${false}}`}));
-            console.log("match success")
         }
         else {
-            ws.send(JSON.stringify({"type":"error", "sub_type":"queue_failed", "message": "Trying To Requeue You"}));
+            console.log(clients.get(player1)?.readyState)
+            console.log("match fucked due to websocket failure, p1")
+            clients.delete(player1);
+            queue.add(player2)
+            match_valid = false;
+            
         }
     }
 };
@@ -90,8 +85,8 @@ async function queue_listener_handler() {
                                 /*
                                 {"type":"add_move", "game_id": 1, "turn": 1, "move":11033}
                                 */
-                               if (game.is_active) {
-                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "dataInt":parsedData.move}));
+                               if (game.termination == 'active') {
+                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "data":parsedData.move}));
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"move_sent", "message": "Move Sent Successfully"}));
                                     // moves needs to take a move as an integer not text...
                                     // await Moves.create({"game_id": game.id, "turn": parsedData.turn, "move": parsedData.move});
@@ -129,7 +124,7 @@ async function queue_listener_handler() {
                             case "end_game": {
                                 // find game where id == game_id set is_active false
                                 /* 
-                                {"type":"end_game", "game_id": 1, "result": "win"}
+                                {"type":"end_game", "game_id": 1, "termination": "checkmate", "result": "won", "user_time": "55:00", "opponent_time":"29:00", "moves": "", "move_count": 0}
                                 
                                 SQL Query for checking if code works:
                                 SELECT U.*, P.* FROM users U INNER JOIN game_participants P ON U.id = P.user_id WHERE P.game_id = 1;
@@ -138,27 +133,45 @@ async function queue_listener_handler() {
                                 game = await Games.findOne({
                                     where: { id: parsedData.game_id }
                                   });
-                                if (game.is_active) {
-                                    game.is_active = false;
+
+                                if (game.termination == 'active') {
+                                    game.termination = parsedData.termination;
                                     switch (parsedData.result) {
-                                        case "win": {
+
+                                        case "won": {
                                             user.won_game = true;
-                                            opponent.won_game = false;
-                                            break;
+                                            opponent.won_game = false
+                                            game.result = user.is_white ? "1-0" : "0-1"
+                                            break; 
                                         }
-                                        case "lose": {
+
+                                        case "lost": {
                                             user.won_game = false;
                                             opponent.won_game = true;
+                                            game.result = user.is_white ? "0-1" : "1-0"
                                             break;
                                         }
+
                                         case "draw": {
+                                            user.won_game = false;
+                                            opponent.won_game = false;
+                                            game.result = "1/2-1/2"
                                             break;
                                         }
                                     };
+
+                                    user.time_left = parsedData.user_time
+                                    opponent.time_left = parsedData.opponent_time
+                                    game.moves = parsedData.moves
+                                    game.move_count = parsedData.move_count
+
                                     await game.save()
                                     await user.save()
                                     await opponent.save()
+
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"game_ended", "message": "Game Result Recorded"}));
+                                    clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"game_ended", "message": "Game Result Recorded"}));
+
                                 } else {
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"game_ended", "message": "Game Result Already Recorded"}));
                                 }
@@ -236,7 +249,7 @@ async function queue_listener_handler() {
                                         // `{'user_id':${login.user_id}, 'icon':${login.icon}, 'milestones':${login.milestones}}`
                                         is_authenticated = true;
                                         user_id = login.user_id;
-                                        clients.set(login, ws);
+                                        clients.set(user_id, ws);
                                         // Check to see if user is still in a game.
                                         // Maybe keep connection alive for some amount of time before killing it? and load them back into game upon reconnect?
                                         break;
@@ -245,14 +258,14 @@ async function queue_listener_handler() {
                                 break;
                             }
                             case "create_account": {
-                                try{
+                                try {
                                     /* 
                                     {"type":"create_account", "username":"jackcameback","email":"jackson@butler.net", "first_name":"jackson", "last_name":"butler", "password":"foobar"}
                                     */ 
                                     
                                     await Users.create({ username: parsedData["username"], email: parsedData["email"], first_name: parsedData["first_name"], last_name: parsedData["last_name"], elo: parsedData["elo"],password: parsedData["password"] });
                                     ws.send(JSON.stringify({"type":"success", "sub_type":"created_user", "message": "User created successfully"}))
-                                }catch {
+                                } catch {
                                     ws.send(JSON.stringify({"type":"error", "sub_type":"invalid_user", "message": "Username/Email is already in use"}))
                                 }
                                 break;
@@ -271,6 +284,7 @@ async function queue_listener_handler() {
 
         ws.on('close', () => {
             console.log("connection closed to user:", user_id)
+            clients.delete(user_id);
             if (in_queue) {
                 console.log(queue.queue[time_control].length)
                 queue.leave(user_id, time_control)
@@ -293,7 +307,6 @@ console.log('All models were synchronized successfully.');
 check out refrence for foreign keys
 https://sequelize.org/docs/v6/core-concepts/model-basics/
 */
-
 try {
     sequelize.authenticate()
     .then(
@@ -303,6 +316,5 @@ try {
 }
 
 // app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
 
 const wss = new WebSocketServer({port: process.env.PORT || 8080});

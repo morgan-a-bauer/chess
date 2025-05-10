@@ -44,27 +44,25 @@ class GameQueue {
     };
 
     find_match(timeControl) {
-        console.log(timeControl,":",this.queue[timeControl].length)
+        // console.log(timeControl,":",this.queue[timeControl].length)
         if (this.queue[timeControl].length >= 2) {
             const player1 = this.queue[timeControl].shift();
             const player2 = this.queue[timeControl].shift();
-            return {player1, player2};
+            return {player1, player2, timeControl};
         } else {
             return null
         }
     };
 
     async listen() {
-        
         while (true) {
-            this.timeControls.forEach(timeControl => {
-                const users = this.find_match(timeControl)
+            for (const timeControl of this.timeControls) {
+                const users = this.find_match(timeControl);
                 if (users !== null) {
-                    console.log(users)
-                    return users
+                    return users;
                 }
-            });
-            await delay(5000)
+            }
+            await delay(5000);
         }
     };
 
