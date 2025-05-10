@@ -20,13 +20,14 @@ class WebSocketManager: NSObject, ObservableObject {
     weak var createAccountDelegate: CreateAccountDelegate?;
     weak var homeDelegate: HomeDelegate?;
     weak var boardDelegate: BoardDelegate?;
+    weak var gameDelegate: GameDelegate?;
 
     
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession: URLSession = URLSession(configuration: .default)
     //"ws://localhost:10000"
     //wss://chessbackend-iwcv.onrender.com
-    private let url = URL(string: "ws://localhost:10000")!
+    private let url = URL(string: "wss://chessbackend-iwcv.onrender.com")!
     private var connectionState: WebSocketState = .disconnected
     @Published private var messageQueue: [String] = []
     var handlers: [String: Handler] = [:]
@@ -37,7 +38,7 @@ class WebSocketManager: NSObject, ObservableObject {
     var opponentConnectedToGame: Bool = false;
     var userConnectedToGame: Bool = false;
     var opponentUsername: String = "Jeremy";
-    var opponentIcon: String? = "🕺🏻"; // Needs to change later
+    var opponentIcon: String? = ""; // Needs to change later
     
     var inGame: Bool = false;
     var gameID: Int? = nil;

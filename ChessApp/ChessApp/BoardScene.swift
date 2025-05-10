@@ -14,7 +14,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
     
     
     weak var viewControllerDelegate: GameSceneDelegate?; // Delegate property for boardscene -> VC
-    weak var sceneDelegate: GameDelegate?;
+    weak var sceneDelegate: BoardToGameDelegate?;
     
     
     // Testing Variable
@@ -131,21 +131,20 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         }
     }
     
-    func opponentMove(_ move: Int) {
+    func opponentMove(_ move: String) {
         DispatchQueue.main.async {
             self.performCompleteMove()
         }
-        // Testing Code for move history
-        let start = move/1000;
-        let end = move - start*1000
-        let startCell: Cell = Cell(cell: start)
-        let targetCell: Cell = Cell(cell: end)
-        let pieceMoved: Bishop = Bishop(cellId: 5)
-        let pieceCaptured: BasePiece? = nil
-        let inCheck: Bool = false
-        let inMate: Bool = false
-        print("start:",start,"end:",end)
-        let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+        let move: Move = decodeMove(from: move)
+//        // Testing Code for move history
+//        let start = move/1000;
+//        let end = move - start*1000
+//        let pieceMoved: Bishop = Bishop(cellId: 5)
+//        let pieceCaptured: BasePiece = EmptyPiece(cellId: 5)
+//        let inCheck: Bool = false
+//        let inMate: Bool = false
+//        print("start:",start,"end:",end)
+//        let move: Move = Move(startCell: start, targetCell: end, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured , inCheck: inCheck, inMate: inMate)
         moveHistory.append(move)
 //        WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
         counter += 1;
@@ -217,15 +216,15 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
               let startCell: Cell = Cell(cell: 5)
               let targetCell: Cell = Cell(cell: counter)
               let pieceMoved: Bishop = Bishop(cellId: 5)
-              let pieceCaptured: BasePiece? = nil
+              let pieceCaptured: BasePiece = EmptyPiece(cellId: 5)
               let inCheck: Bool = false
               let inMate: Bool = false
                
-              let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+              let move: Move = Move(startCell: 5, targetCell: counter, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
               moveHistory.append(move)
               
               // Maybe include a current time as to deal with discontinuous delays in move send and receive
-              WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
+              WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
               counter += 1;
                
               sceneDelegate?.updateViewableMoveHistory(moveHistory)

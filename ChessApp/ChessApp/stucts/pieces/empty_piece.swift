@@ -17,6 +17,6 @@ struct EmptyPiece: BasePiece {
     }
 
     func charRepresentation() -> String {
-        return ""
+        return "_"
     }
 }

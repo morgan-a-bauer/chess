@@ -25,24 +25,24 @@ class LoginViewController: UIViewController, LoginDelegate{
     }
     func didReceiveLoginSuccess() {
         WebSocketManager.shared.username = username_field.text ?? "jackcameback";
-            DispatchQueue.main.async {
-                self.performSegue(withIdentifier: "goToHomeScreen", sender: self)
-            }
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "goToHomeScreen", sender: self)
         }
+    }
     
     func didReceiveLoginFailure(error: String) {
-            DispatchQueue.main.async {
-                let alert = UIAlertController(title: "Login Failed", message: error, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-            }
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Login Failed", message: error, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
+    }
     
     @IBAction func jacksonLogin(_ sender: Any) {
-        WebSocketManager.shared.addMessage(["type":"auth", "username": "jackcameback", "password": "foobar"])
+        WebSocketManager.shared.addMessage(["type":"auth", "username": "jcbutler", "password": "foobar"])
     }
     @IBAction func morganLogin(_ sender: Any) {
-        WebSocketManager.shared.addMessage(["type":"auth", "username": "mbauer", "password": "foobar"])
+        WebSocketManager.shared.addMessage(["type":"auth", "username": "mabauer", "password": "foobar"])
     }
 }
 

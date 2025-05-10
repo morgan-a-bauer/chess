@@ -7,5 +7,5 @@
 
 
 protocol BoardDelegate: AnyObject {
-    func opponentMove(_ move: Int)
+    func opponentMove(_ move: String)
 }
