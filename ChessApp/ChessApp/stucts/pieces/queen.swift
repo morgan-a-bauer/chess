@@ -2,11 +2,15 @@
 //  queen.swift
 //  ChessApp
 //
-//  Created by Jackson Butler on 2/3/25.
+//  Created by Morgan Bauer on 2/3/25.
 //
+import SpriteKit
 
 struct Queen: BasePiece {
     var cellId: Int
+    var color = ""
+    var icon = ""
+    var node = SKSpriteNode()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true

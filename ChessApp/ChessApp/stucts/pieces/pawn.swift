@@ -2,12 +2,15 @@
 //  pawn.swift
 //  ChessApp
 //
-//  Created by Jackson Butler on 2/3/25.
+//  Created by Morgan Bauer on 2/3/25.
 //
+import SpriteKit
 
 struct Pawn: BasePiece {
     var cellId: Int
-    var hasMoved = false
+    var color = ""
+    var icon = ""
+    var node = SKSpriteNode()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
@@ -15,9 +18,6 @@ struct Pawn: BasePiece {
 
     func getMoves() -> Array<Int> {
         var moves = [10]
-        if self.hasMoved == false {
-            moves.append(20)
-        }
         return moves
     }
 

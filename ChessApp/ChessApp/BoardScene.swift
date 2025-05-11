@@ -21,7 +21,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
     let targetCell: Int = 11
     var counter: Int = 0
     
-    var touchedNode: SKShapeNode? = nil
+    var touchedNode: SKSpriteNode? = nil
     var originalLocation: CGPoint? = nil
     var moveHistory: MoveHistory = MoveHistory()
 
@@ -59,9 +59,148 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 if colour {square.fillColor = .white} else {square.fillColor = .brown}
                 
                 square.position = CGPoint(x: squarePosX, y: squarePosY)
-                square.zPosition = 1
+                square.zPosition = 0
                 square.name = "\(String(describing: cellStrValue))\(row+1)"
                 
+                if (row == 0) {
+                    if (column == 0) || (column == 7) {
+                        var rook = Rook(cellId: column)
+                        rook.color = "white"
+                        rook.icon = "wR"
+                        rook.node = SKSpriteNode(imageNamed: rook.icon)
+                        rook.node.setScale(0.55)
+                        rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        rook.node.name = "wR\(row + 1)"
+                        rook.node.zPosition = 1
+                        addChild(rook.node)
+                    }
+                    if (column == 1) || (column == 6) {
+                        var knight = Knight(cellId: column)
+                        knight.color = "white"
+                        knight.icon = "wN"
+                        knight.node = SKSpriteNode(imageNamed: knight.icon)
+                        knight.node.setScale(0.55)
+                        knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        knight.node.name = "wN\(row + 1)"
+                        knight.node.zPosition = 1
+                        addChild(knight.node)
+                    }
+                    if (column == 2) || (column == 5) {
+                        var bishop = Bishop(cellId: column)
+                        bishop.color = "white"
+                        bishop.icon = "wB"
+                        bishop.node = SKSpriteNode(imageNamed: bishop.icon)
+                        bishop.node.setScale(0.55)
+                        bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        bishop.node.name = "wB\(row + 1)"
+                        bishop.node.zPosition = 1
+                        addChild(bishop.node)
+                    }
+                    if (column == 3) {
+                        var queen = Queen(cellId: column)
+                        queen.color = "white"
+                        queen.icon = "wQ"
+                        queen.node = SKSpriteNode(imageNamed: queen.icon)
+                        queen.node.setScale(0.55)
+                        queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        queen.node.name = "wQ\(row + 1)"
+                        queen.node.zPosition = 1
+                        addChild(queen.node)
+                    }
+                    if (column == 4) {
+                        var king = King(cellId: column)
+                        king.color = "white"
+                        king.icon = "wK"
+                        king.node = SKSpriteNode(imageNamed: king.icon)
+                        king.node.setScale(0.55)
+                        king.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        king.node.name = "wK\(row + 1)"
+                        king.node.zPosition = 1
+                        addChild(king.node)
+                    }
+                }
+
+                else if (row == 1) {
+                    var pawn = Pawn(cellId: column)
+                    pawn.color = "white"
+                    pawn.icon = "wP"
+                    pawn.node = SKSpriteNode(imageNamed: pawn.icon)
+                    pawn.node.setScale(0.55)
+                    pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                    pawn.node.name = "wP\(row + 1)"
+                    pawn.node.zPosition = 1
+                    addChild(pawn.node)
+                }
+                
+                else if (row == 6) {
+                    var pawn = Pawn(cellId: column)
+                    pawn.color = "black"
+                    pawn.icon = "bP"
+                    pawn.node = SKSpriteNode(imageNamed: pawn.icon)
+                    pawn.node.setScale(0.55)
+                    pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                    pawn.node.name = "bP\(row + 1)"
+                    pawn.node.zPosition = 1
+                    addChild(pawn.node)
+                }
+                
+                else if (row == 7) {
+                    if (column == 0) || (column == 7) {
+                        var rook = Rook(cellId: column)
+                        rook.color = "black"
+                        rook.icon = "bR"
+                        rook.node = SKSpriteNode(imageNamed: rook.icon)
+                        rook.node.setScale(0.55)
+                        rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        rook.node.name = "bR\(row + 1)"
+                        rook.node.zPosition = 1
+                        addChild(rook.node)
+                    }
+                    if (column == 1) || (column == 6) {
+                        var knight = Knight(cellId: column)
+                        knight.color = "black"
+                        knight.icon = "bN"
+                        knight.node = SKSpriteNode(imageNamed: knight.icon)
+                        knight.node.setScale(0.55)
+                        knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        knight.node.name = "bN\(row + 1)"
+                        knight.node.zPosition = 1
+                        addChild(knight.node)
+                    }
+                    if (column == 2) || (column == 5) {
+                        var bishop = Bishop(cellId: column)
+                        bishop.color = "black"
+                        bishop.icon = "bB"
+                        bishop.node = SKSpriteNode(imageNamed: bishop.icon)
+                        bishop.node.setScale(0.55)
+                        bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        bishop.node.name = "bB\(row + 1)"
+                        bishop.node.zPosition = 1
+                        addChild(bishop.node)
+                    }
+                    if (column == 3) {
+                        var queen = Queen(cellId: column)
+                        queen.color = "black"
+                        queen.icon = "bQ"
+                        queen.node = SKSpriteNode(imageNamed: queen.icon)
+                        queen.node.setScale(0.55)
+                        queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        queen.node.name = "bQ\(row + 1)"
+                        queen.node.zPosition = 1
+                        addChild(queen.node)
+                    }
+                    if (column == 4) {
+                        var king = King(cellId: column)
+                        king.color = "black"
+                        king.icon = "bK"
+                        king.node = SKSpriteNode(imageNamed: king.icon)
+                        king.node.setScale(0.55)
+                        king.node.position = CGPoint(x: squarePosX, y: squarePosY)
+                        king.node.name = "bK\(row + 1)"
+                        king.node.zPosition = 1
+                        addChild(king.node)
+                    }
+                }
                 
                 // !! Places SKShapeNode into SKScene
                 addChild(square)
@@ -163,7 +302,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         let touchLocation = touch.location(in: self)
         
         // Currently can pick up any drawn node, board cells included
-        if let node = self.atPoint(touchLocation) as? SKShapeNode {
+        if let node = self.atPoint(touchLocation) as? SKSpriteNode {
             
             touchedNode = node
             originalLocation = node.position
