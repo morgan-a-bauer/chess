@@ -305,11 +305,26 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
 //        let move: Move = Move(startCell: start, targetCell: end, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured , inCheck: inCheck, inMate: inMate)
         moveHistory.append(move)
 //        WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
+        let piece = nodeMap[String(move.startCell)]
+        let squareWidth = self.size.width/8
+        let squareHeight = self.size.height/8
+        // Touch move
+        // let x = touchLocation.x.rounded()
+        // let y = touchLocation.y.rounded()
+        let targetX = Int(move.targetCell % 10)
+        let targetY = Int(move.targetCell / 10)
+        let x = (squareWidth * CGFloat(targetX)) + (squareWidth/2)
+        let y = (squareHeight * CGFloat(targetY)) + (squareHeight/2)
+        if let spritePiece = piece as? SKSpriteNode {
+            spritePiece.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
+            nodeMap.move(piece: spritePiece, to: move.targetCell)
+            nodeToPiece[spritePiece]!.cellId = move.targetCell
+            print("INTHIS")
+        }
         counter += 1;
         DispatchQueue.main.async {
             self.sceneDelegate?.updateViewableMoveHistory(self.moveHistory)
         }
-        var x = 5
     }
 
     // Called if something is touched within scene
@@ -385,10 +400,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                   print("Valid moves: \(moves)")
                   
                   if moves.contains(target) {
-                      touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
-                      nodeMap.move(piece: touchedNode!, to: target)
-                      nodeToPiece[touchedNode]!.cellId = target
-                      performCompleteMove()
                       // Testing Code for move history
                       let startCell: Cell = Cell(cell: 5)
                       let targetCell: Cell = Cell(cell: counter)
@@ -399,7 +410,10 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                       
                       let move: Move = Move(startCell: Int(touchedNode?.name ?? "")!, targetCell: target, pieceMoved: nodeToPiece[touchedNode]!, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
                       moveHistory.append(move)
-                      
+                      touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
+                      nodeMap.move(piece: touchedNode!, to: target)
+                      nodeToPiece[touchedNode]!.cellId = target
+                      performCompleteMove()
                       // Maybe include a current time as to deal with discontinuous delays in move send and receive
                       WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
                       counter += 1;
