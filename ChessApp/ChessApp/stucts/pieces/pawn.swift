@@ -17,13 +17,12 @@ struct Pawn: BasePiece {
     }
 
     func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
-        let direction = (color == "w") ? 1 : -1
+        let direction = 1
         var moves: [Int] = []
         if nodeMap[String(cellId + 10 * direction)] == nil {
             moves.append(cellId + 10 * direction)
         }
-        if (color == "w" && cellId >= 10 && cellId <= 17) ||
-            (color == "b" && cellId >= 60 && cellId <= 67) {
+        if (cellId >= 10 && cellId <= 17) {
             if nodeMap[String(cellId + 20 * direction)] == nil {
                 moves.append(cellId + 20 * direction)
             }

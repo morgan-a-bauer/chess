@@ -106,6 +106,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     func receiveGameHistory(_ response:[GameHistory]) {
         historyReceived = true;
         gameHistoryData = response;
+        gameHistoryData = Array(gameHistoryData.reversed())
         
         DispatchQueue.main.async {
             self.game_history.reloadData()

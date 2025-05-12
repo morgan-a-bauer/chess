@@ -6,8 +6,8 @@
 //
 
 struct Move {
-    let startCell: Int;
-    let targetCell: Int;
+    var startCell: Int;
+    var targetCell: Int;
     let pieceMoved: BasePiece;
     let pieceCaptured: BasePiece?;
     let inCheck: Bool;
