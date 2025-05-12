@@ -1,3 +1,5 @@
+// Written by: Jackson Butler
+
 import {Sequelize, DataTypes, Model, Op} from 'sequelize';
 import dotenv from 'dotenv';
 dotenv.config()

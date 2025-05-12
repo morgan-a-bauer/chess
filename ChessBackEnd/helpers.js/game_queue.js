@@ -1,3 +1,4 @@
+// Written by: Jackson Butler
 import delay from "./delay.js";
 
 class GameQueue {

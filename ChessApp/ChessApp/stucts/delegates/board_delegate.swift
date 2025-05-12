@@ -8,4 +8,5 @@
 
 protocol BoardDelegate: AnyObject {
     func opponentMove(_ move: String)
+    func setupScene()
 }
