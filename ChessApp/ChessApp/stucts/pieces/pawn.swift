@@ -41,6 +41,6 @@ struct Pawn: BasePiece {
     }
 
     func charRepresentation() -> String {
-        return ""
+        return "p"
     }
 }

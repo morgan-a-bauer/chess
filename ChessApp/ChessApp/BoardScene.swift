@@ -408,13 +408,14 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                       let inCheck: Bool = false
                       let inMate: Bool = false
                       
-                      let move: Move = Move(startCell: Int(touchedNode?.name ?? "")!, targetCell: target, pieceMoved: nodeToPiece[touchedNode]!, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+                      let move: Move = Move(startCell: Int(touchedNode?.name ?? "")!, targetCell: target, pieceMoved: nodeToPiece[touchedNode]!, inCheck: inCheck, inMate: inMate)
                       moveHistory.append(move)
                       touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
                       nodeMap.move(piece: touchedNode!, to: target)
                       nodeToPiece[touchedNode]!.cellId = target
                       performCompleteMove()
                       // Maybe include a current time as to deal with discontinuous delays in move send and receive
+                      print(move.asLongAlgebraicNotation())
                       WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
                       counter += 1;
                       
