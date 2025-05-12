@@ -19,6 +19,7 @@ protocol GameSceneDelegate: AnyObject { //BS response certification to VC
 
 class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITableViewDataSource{
     
+    var historyReceived = false;
     var inQueue: Bool = false;
     var timer: Timer?;
     var secondsElapsed = 0;
@@ -29,7 +30,9 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     @IBOutlet weak var game_history: UITableView!
     @IBOutlet weak var enter_queue: UIButton!
     @IBOutlet weak var skView: SKView!
-  
+    @IBOutlet weak var elo_button: UIButton!
+    @IBOutlet weak var profile_button: UIButton!
+    
     var gameHistoryData: [GameHistory] = [GameHistory()];
     
     override func viewDidLoad() {
@@ -46,6 +49,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         
         enter_queue.setTitleColor(.gray, for: .highlighted)
         // Do any additional setup after loading the view.
+        profile_button.setTitle(WebSocketManager.shared.username, for: .normal) 
  
 
     }
@@ -87,6 +91,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         // bug where this is sometimes not called, I think the response is getting eated by the opponent joined and by the time the next receive message occurs it is already missed...
         if (WebSocketManager.shared.userConnectedToGame &&  WebSocketManager.shared.opponentConnectedToGame){
             DispatchQueue.main.async { [weak self] in
+                WebSocketManager.shared.inGame = true;
                 self?.inQueue = false;
                 self?.timer?.invalidate();
                 self?.timer = nil;
@@ -99,6 +104,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     }
     
     func receiveGameHistory(_ response:[GameHistory]) {
+        historyReceived = true;
         gameHistoryData = response;
         
         DispatchQueue.main.async {
@@ -111,6 +117,11 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard historyReceived else {
+            // Return an empty/default cell if data hasn't been received yet
+            return UITableViewCell()
+        }
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContainerTableViewCell
 
         // Pass data to each cell and embed a new child view controller

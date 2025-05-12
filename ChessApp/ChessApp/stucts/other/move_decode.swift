@@ -42,7 +42,6 @@ func decodeMove(from lan: String) -> Move {
 
     pieceChar = chars[0]
     var i = 1
-    startCellStr.append(pieceChar)
 
     while i < chars.count {
         let c = chars[i]
