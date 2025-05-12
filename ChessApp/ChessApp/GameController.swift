@@ -202,12 +202,11 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     @IBAction func leaveGame(_ sender: Any) {
 //        var result: String = (WebSocketManager.shared.isWhite ? "0-1" : "1-0")
         if WebSocketManager.shared.inGame {
-            var result: String = "lost"
             WebSocketManager.shared.addMessage([
                 "type": "end_game",
                 "game_id": WebSocketManager.shared.gameID!,
                 "termination": "quit",
-                "result": result,
+                "result": "lost",
                 "user_time": userTimerLabel.text!,
                 "opponent_time":opponentTimerLabel.text!,
                 "moves": move_history.export(),
@@ -221,13 +220,12 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     
     @IBAction func loseGame(_ sender: Any) {
 //        var result: String = (WebSocketManager.shared.isWhite ? "0-1" : "1-0")
-        var result: String = "lost"
 
         WebSocketManager.shared.addMessage([
             "type": "end_game",
             "game_id": WebSocketManager.shared.gameID!,
             "termination": "checkmate",
-            "result": result,
+            "result": "lost",
             "user_time": userTimerLabel.text!,
             "opponent_time":opponentTimerLabel.text!,
             "moves": move_history.export(),
@@ -236,13 +234,12 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     }
     
     @IBAction func drawGame(_ sender: Any) {
-        var result: String = "draw"
         
         WebSocketManager.shared.addMessage([
             "type": "end_game",
             "game_id": WebSocketManager.shared.gameID!,
             "termination": "checkmate",
-            "result": result,
+            "result": "draw",
             "user_time": userTimerLabel.text!,
             "opponent_time":opponentTimerLabel.text!,
             "moves": move_history.export(),
@@ -252,13 +249,12 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     
     @IBAction func winGame(_ sender: Any) {
 //        var result: String = (WebSocketManager.shared.isWhite ? "1-0" : "0-1")
-        var result: String = "won"
         
         WebSocketManager.shared.addMessage([
             "type": "end_game",
             "game_id": WebSocketManager.shared.gameID!,
             "termination": "checkmate",
-            "result": result,
+            "result": "won",
             "user_time": userTimerLabel.text!,
             "opponent_time":opponentTimerLabel.text!,
             "moves": move_history.export(),
