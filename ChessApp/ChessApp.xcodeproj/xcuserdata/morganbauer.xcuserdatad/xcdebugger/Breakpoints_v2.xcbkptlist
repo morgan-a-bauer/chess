@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B570BB9E-3AA9-4D59-8F8A-59E9A1604003"
-            shouldBeEnabled = "Yes"
+            uuid = "01605213-B177-4DDB-B508-4C10A67CA515"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ChessApp/BoardScene.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
-            landmarkName = "touchesEnded(_:with:)"
+            startingLineNumber = "312"
+            endingLineNumber = "312"
+            landmarkName = "opponentMove(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

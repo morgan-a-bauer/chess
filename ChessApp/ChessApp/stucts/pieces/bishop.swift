@@ -18,10 +18,16 @@ struct Bishop: BasePiece {
 
     func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
         var moves: [Int] = []
+        
+        // Values to add to current position for possible moves
         let incs = [9, -9, 11, -11]
         for inc in incs{
             var potentialMove = cellId + inc
+            
+            // Stop if out of bounds of the board
             while potentialMove <= 77 && potentialMove >= 0 && (potentialMove % 10) != 8 && (potentialMove % 10) != 9 {
+                
+                // Valid move if space is free or contains an opponent's piece
                 if nodeMap[String(potentialMove)] == nil {
                     moves.append(potentialMove)
                 }
@@ -29,6 +35,8 @@ struct Bishop: BasePiece {
                     if nodeToPiece[node]?.color != color {
                         moves.append(potentialMove)
                     }
+                    
+                    // stop once a piece is reached
                     break
                 }
                 potentialMove += inc

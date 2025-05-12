@@ -35,7 +35,7 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     //end moved new timer stuff
     //    weak var puzzleDelate: PuzzleToGameDelegate?
 //    var contentKey = ""
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         WebSocketManager.shared.gameDelegate = self;

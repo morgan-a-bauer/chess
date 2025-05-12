@@ -64,6 +64,10 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 square.name = "\(String(describing: cellStrValue))\(row+1)"
                 
                 let pos = row * 10 + column
+                // MB debug
+                // print("User: \(WebSocketManager.shared.username)")
+                // print("white: \(WebSocketManager.shared.isWhite)")
+                //if WebSocketManager.shared.isWhite {
                 if (row == 0) {
                     if (column == 0) || (column == 7) {
                         var rook = Rook(cellId: pos)
@@ -126,7 +130,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                         addChild(king.node)
                     }
                 }
-
+                
                 else if (row == 1) {
                     var pawn = Pawn(cellId: pos)
                     pawn.color = "w"
@@ -215,6 +219,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                         addChild(king.node)
                     }
                 }
+                //}
                 
                 // !! Places SKShapeNode into SKScene
                 addChild(square)
@@ -304,6 +309,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         DispatchQueue.main.async {
             self.sceneDelegate?.updateViewableMoveHistory(self.moveHistory)
         }
+        var x = 5
     }
 
     // Called if something is touched within scene
@@ -340,8 +346,11 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         let y = touchLocation.y.rounded()
         
         // Make touched node track mouse
-        if touchedNode != nil {
-            touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
+        let touchedNodeColor = nodeToPiece[touchedNode]!.color
+        if (touchedNode != nil) {
+            if (WebSocketManager.shared.isWhite && touchedNodeColor == "w") || (!WebSocketManager.shared.isWhite && touchedNodeColor == "b"){
+                    touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
+            }
         }
     }
     
