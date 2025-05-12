@@ -28,51 +28,93 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
     // use and treat it as hashMap
 
     // Kind of "Main"
+    // Inside GameScene class in BoardScene.swift
+
     override func didMove(to view: SKView) {
-        // Build chess board
-        // Piece seems to need to be added within this scope to "view"
-        
-        var colour: Bool
-        let squareWidth = self.size.width/8
-        let squareHeight = self.size.height/8
-        
-        // Basic board draw
-        // Rows
+        // If your CustomSKScene has its own didMove, and it needs to be called,
+        // you would call it here. For example:
+        // super.didMove(to: view)
+
+        // 1. BUILD THE CHESS BOARD
+        // -------------------------------------------------------------
+        var colour: Bool // Variable to alternate square colors
+        let squareWidth = self.size.width / 8 // Calculate the width of each square
+        let squareHeight = self.size.height / 8 // Calculate the height of each square
+
+        // Iterate through rows (ranks)
         for row in 0..<Int(8) {
-            let squarePosY = (squareHeight * CGFloat(row)) + (squareHeight/2)
-            if (row%2 != 0) {colour = true} else {colour = false}
-            
-            // Columns
+            // Calculate the Y position for the center of the squares in the current row
+            let squarePosY = (squareHeight * CGFloat(row)) + (squareHeight / 2)
+            // Determine the starting color for the row
+            if (row % 2 != 0) { colour = true } else { colour = false }
+
+            // Iterate through columns (files)
             for column in 0..<Int(8) {
-                let squarePosX = (squareWidth * CGFloat(column)) + (squareWidth/2)
-                
-                // Attributes of square
-                
+                // Calculate the X position for the center of the square in the current column
+                let squarePosX = (squareWidth * CGFloat(column)) + (squareWidth / 2)
+
+                // Create the SKShapeNode for the square
                 let square = SKShapeNode(rectOf: CGSize(width: squareWidth, height: squareHeight))
+                
+                // Original logic for cellStrValue from your uploaded file
                 let cellStrValue:UnicodeScalar = UnicodeScalar(column+97)!
                 
-                if colour {square.fillColor = .white} else {square.fillColor = .brown}
-                
+                // Set the square's fill color based on the alternating pattern
+                if colour {
+                    square.fillColor = .white // Light square
+                } else {
+                    square.fillColor = .brown  // Dark square (or your chosen dark color)
+                }
+
+                // Set the square's position
                 square.position = CGPoint(x: squarePosX, y: squarePosY)
+                // Set zPosition to ensure squares are behind pieces (if pieces have higher zPosition)
                 square.zPosition = 1
+                
+                // Original square naming logic from your uploaded file - UNCHANGED
                 square.name = "\(String(describing: cellStrValue))\(row+1)"
                 
-                
-                // !! Places SKShapeNode into SKScene
+                // Add the square to the scene
                 addChild(square)
-                
-                // House Keeping
+
+                // Flip the color for the next square in the row
                 colour = !colour
-                
-                var myDatabase = [["Nate","Goucher"],["John", "Hilliard"]]
-                var p1 = Player(color:"white",playerName:myDatabase[0][0], turn:true)
-                var p2 = Player(color:"black",playerName:myDatabase[1][0])
-                var players = [p1,p2]
             }
         }
+        // -------------------------------------------------------------
+        // END OF BOARD DRAWING LOGIC
+        // -------------------------------------------------------------
 
-        
+        // 2. INITIALIZE PLAYERS (Moved OUTSIDE the board drawing loops)
+        // This block now runs only ONCE after all squares are drawn.
+        // --------------------------------------------------------------------
+        var myDatabase = [["Nate","Goucher"],["John", "Hilliard"]]
+        var p1 = Player(color:"white",playerName:myDatabase[0][0], turn:true)
+        var p2 = Player(color:"black",playerName:myDatabase[1][0])
+        // Assign to the GameScene's 'players' property (self.players)
+        self.players = [p1,p2]
+        // --------------------------------------------------------------------
+        // END OF PLAYER INITIALIZATION
+        // --------------------------------------------------------------------
+                
+        // 3. TEST FEN GENERATION (Moved OUTSIDE the board drawing loops)
+        // This block also now runs only ONCE after players are initialized.
+        // --------------------------------------------------------------------
+        setupTestBoardState() // Populate `testLogicalBoard` and FEN state variables
+
+        let generatedFen = generateFEN() // Call your FEN generation function
+
+        // Print the result to the console.
+        print("------------------------------------------------------")
+        print("FEN GENERATION TEST:") // Removed "(Loop Iteration)"
+        print("Generated FEN for test state: \(generatedFen)")
+        print("Expected FEN (e.g., for 1.e4 e5): rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2")
+        print("------------------------------------------------------")
+        // --------------------------------------------------------------------
+        // END OF FEN GENERATION TEST
+        // --------------------------------------------------------------------
     }
+
 
     func getCurrentPlayer() -> Player? {
         for player in players {
@@ -233,6 +275,146 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate {
     override func update(_ currentTime: TimeInterval) {
         }
     
-    
+    // 5/6 added code
+
+    // Add this private property to hold our hardcoded board state for testing
+    private var testLogicalBoard: [String: (fenChar: Character, pieceType: BasePiece.Type?, isWhite: Bool)] = [:]
+
+    // Keep the game state properties we added earlier. We'll set them for our test.
+    var canWhiteCastleKingSide: Bool = true
+    var canWhiteCastleQueenSide: Bool = true
+    var canBlackCastleKingSide: Bool = true
+    var canBlackCastleQueenSide: Bool = true
+    var enPassantTargetSquare: String? = nil
+    var halfMoveClock: Int = 0
+    var fullMoveNumber: Int = 2 // After "1. e4 e5", it's start of move 2
+    var activePlayerColor: String = "w" // White's turn
+
+    // You can call this in didMove(to view: SKView) for setup during testing
+    func setupTestBoardState() {
+        // Clear any previous state
+        testLogicalBoard.removeAll()
+
+        // Standard starting pieces (condensed for brevity, only pieces relevant to 1.e4 e5 are shown)
+        // White pieces
+        testLogicalBoard["e2"] = (fenChar: "P", pieceType: Pawn.self, isWhite: true) // Original position of e-pawn
+        // ... other white pieces like King, Queen, Rooks for castling ...
+        testLogicalBoard["e1"] = (fenChar: "K", pieceType: King.self, isWhite: true)
+        testLogicalBoard["a1"] = (fenChar: "R", pieceType: Rook.self, isWhite: true)
+        testLogicalBoard["h1"] = (fenChar: "R", pieceType: Rook.self, isWhite: true)
+        // ... other white pawns ...
+        for file in ["a", "b", "c", "d", "f", "g", "h"] {
+            testLogicalBoard["\(file)2"] = (fenChar: "P", pieceType: Pawn.self, isWhite: true)
+        }
+         testLogicalBoard["b1"] = (fenChar: "N", pieceType: Knight.self, isWhite: true)
+         testLogicalBoard["g1"] = (fenChar: "N", pieceType: Knight.self, isWhite: true)
+         testLogicalBoard["c1"] = (fenChar: "B", pieceType: Bishop.self, isWhite: true)
+         testLogicalBoard["f1"] = (fenChar: "B", pieceType: Bishop.self, isWhite: true)
+         testLogicalBoard["d1"] = (fenChar: "Q", pieceType: Queen.self, isWhite: true)
+
+
+        // Black pieces
+        testLogicalBoard["e7"] = (fenChar: "p", pieceType: Pawn.self, isWhite: false) // Original position of e-pawn
+        // ... other black pieces ...
+        testLogicalBoard["e8"] = (fenChar: "k", pieceType: King.self, isWhite: false)
+        testLogicalBoard["a8"] = (fenChar: "r", pieceType: Rook.self, isWhite: false)
+        testLogicalBoard["h8"] = (fenChar: "r", pieceType: Rook.self, isWhite: false)
+        for file in ["a", "b", "c", "d", "f", "g", "h"] {
+            testLogicalBoard["\(file)7"] = (fenChar: "p", pieceType: Pawn.self, isWhite: false)
+        }
+        testLogicalBoard["b8"] = (fenChar: "n", pieceType: Knight.self, isWhite: false)
+        testLogicalBoard["g8"] = (fenChar: "n", pieceType: Knight.self, isWhite: false)
+        testLogicalBoard["c8"] = (fenChar: "b", pieceType: Bishop.self, isWhite: false)
+        testLogicalBoard["f8"] = (fenChar: "b", pieceType: Bishop.self, isWhite: false)
+        testLogicalBoard["d8"] = (fenChar: "q", pieceType: Queen.self, isWhite: false)
+
+
+        // --- Simulate the board after "1. e4 e5" ---
+        // White moves e2-e4
+        testLogicalBoard["e2"] = nil // e2 is now empty
+        testLogicalBoard["e4"] = (fenChar: "P", pieceType: Pawn.self, isWhite: true) // White Pawn on e4
+
+        // Black moves e7-e5
+        testLogicalBoard["e7"] = nil // e7 is now empty
+        testLogicalBoard["e5"] = (fenChar: "p", pieceType: Pawn.self, isWhite: false) // Black Pawn on e5
+
+        // Set FEN state variables for this specific board state (after 1. e4 e5)
+        activePlayerColor = "w" // White's turn next
+        canWhiteCastleKingSide = true // Assuming King and h1 Rook haven't moved
+        canWhiteCastleQueenSide = true // Assuming King and a1 Rook haven't moved
+        canBlackCastleKingSide = true // Assuming King and h8 Rook haven't moved
+        canBlackCastleQueenSide = true // Assuming King and a8 Rook haven't moved
+        enPassantTargetSquare = nil // No en passant target after e5 (unless previous move was e.g. d5 creating e.p. on e6)
+                                    // For simplicity, let's assume no immediate en passant.
+        halfMoveClock = 0 // Reset on pawn moves
+        fullMoveNumber = 2 // This will be the start of White's 2nd move.
+    }
+
+    // Modify getPieceInfo to use our testLogicalBoard
+    // This function returns the FEN character directly for simplicity in this test setup.
+    func getPieceFENChar(at squareNotation: String) -> Character? {
+        if let pieceData = testLogicalBoard[squareNotation] {
+            return pieceData.fenChar
+        }
+        return nil
+    }
+
+    func generateFEN() -> String {
+        var fen = ""
+        var emptyCount = 0
+
+        // 1. Piece Placement
+        for rank in (1...8).reversed() { // Iterate ranks 8 down to 1
+            for fileCharValue in UnicodeScalar("a").value...UnicodeScalar("h").value { // Iterate files 'a' to 'h'
+                let fileChar = String(UnicodeScalar(fileCharValue)!)
+                let squareNotation = fileChar + String(rank)
+
+                if let pieceFenChar = getPieceFENChar(at: squareNotation) {
+                    // Piece exists
+                    if emptyCount > 0 {
+                        fen += String(emptyCount)
+                        emptyCount = 0
+                    }
+                    fen += String(pieceFenChar)
+                } else {
+                    // Square is empty
+                    emptyCount += 1
+                }
+            } // End files loop
+
+            // After each rank, append remaining empty count if any
+            if emptyCount > 0 {
+                fen += String(emptyCount)
+                emptyCount = 0
+            }
+
+            // Add rank separator "/"
+            if rank > 1 {
+                fen += "/"
+            }
+        } // End ranks loop
+
+        // 2. Active Color
+        fen += " " + activePlayerColor // Use the hardcoded activePlayerColor
+
+        // 3. Castling Availability
+        var castlingString = ""
+        if canWhiteCastleKingSide { castlingString += "K" }
+        if canWhiteCastleQueenSide { castlingString += "Q" }
+        if canBlackCastleKingSide { castlingString += "k" }
+        if canBlackCastleQueenSide { castlingString += "q" }
+        fen += " " + (castlingString.isEmpty ? "-" : castlingString)
+
+        // 4. En Passant Target Square
+        fen += " " + (enPassantTargetSquare ?? "-")
+
+        // 5. Halfmove Clock
+        fen += " " + String(halfMoveClock)
+
+        // 6. Fullmove Number
+        fen += " " + String(fullMoveNumber)
+
+        return fen
+    }
     
 }
