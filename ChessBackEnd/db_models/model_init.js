@@ -22,6 +22,10 @@ Users.init(
             unqie: true,
             allowNull: false,
         },
+        password: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
         first_name: {
             type: DataTypes.TEXT,
             allowNull: false,
@@ -30,9 +34,14 @@ Users.init(
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        password: {
-            type: DataTypes.TEXT,
+        elo : {
+            type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 600,
+        },
+        icon : {
+            type: Sequelize.BLOB('long'),
+            allowNull: true,
         },
     },
     {
@@ -41,7 +50,6 @@ Users.init(
         tableName: 'users',
     }
 )
-
 
 class Games extends Model {
     /* can add methods to this */
@@ -55,10 +63,36 @@ Games.init(
             allowNull: false,
             primaryKey: true,
         },
-        is_active: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true
+        result: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: '0-0', // 0-0, 1-0, 0-1, 1/2-1/2
         },
+        termination: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: 'active',
+        },
+        is_rated: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
+        },
+        time_control: {
+            type: DataTypes.TEXT, // 30|5
+            allowNull: false,
+            defaultVale: "15|10"
+        },
+        moves: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: '',
+        },
+        move_count: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: 0,
+        }
     },
     {
         sequelize,
@@ -99,7 +133,12 @@ GameParticipants.init(
         },
         won_game: {
             type: DataTypes.BOOLEAN,
-        }
+        },
+        time_left: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "00:00"
+        },
     },
     {
         sequelize,
@@ -108,11 +147,11 @@ GameParticipants.init(
     }
 )
 
-class Moves extends Model {
+class Milestones extends Model {
     /* can add methods to this */
 }
 
-Moves.init(
+Milestones.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -120,34 +159,34 @@ Moves.init(
             allowNull: false,
             primaryKey: true,
         },
-        game_id : {
+        user_id : {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: Games,
+                model: Users,
                 key: 'id',
             },
             onDelete: 'CASCADE',
         },
-        turn: {
-            type: DataTypes.INTEGER,
+        title: {
+            type: DataTypes.TEXT,
             allowNull: false,
         },
-        move: {
-            type: DataTypes.TEXT,
+        is_complete: {
+            type: DataTypes.BOOLEAN,
             allowNull: false,
         }
     },
     {
         sequelize,
         timestamps: false,
-        tableName: 'moves',
+        tableName: 'milestones',
     }
 )
 
-
 // Users and GameParticipants
 Users.hasMany(GameParticipants, { foreignKey: "user_id" });
+Users.hasMany(Milestones, {foreignKey: "user_id"})
 GameParticipants.belongsTo(Users, { foreignKey: "user_id" });
 
 // Users and Games (many-to-many via GameParticipants)
@@ -158,8 +197,9 @@ GameParticipants.belongsTo(Users, { foreignKey: "user_id" });
 Games.hasMany(GameParticipants, { foreignKey: "game_id" });
 GameParticipants.belongsTo(Games, { foreignKey: "game_id" });
 
-// Games and Moves (one-to-many)
-Games.hasMany(Moves, { foreignKey: "game_id" });
-Moves.belongsTo(Games, { foreignKey: "game_id" });
+await sequelize.sync({ alter: true });
 
-export {Users, Games, GameParticipants, Moves}
+// Games and Moves (one-to-many)
+// Games.hasMany(Moves, { foreignKey: "game_id" });
+
+export {Users, Games, GameParticipants, Milestones}

@@ -6,12 +6,7 @@
 //
 
 struct MoveHistory {
-    let gameId: Int
     var moves: [Move] = []
-    
-    init(gameId: Int) {
-        self.gameId = gameId
-    }
     
     mutating func append(_ move: Move) {
         self.moves.append(move)
@@ -19,6 +14,14 @@ struct MoveHistory {
     
     func getLast() -> Move? {
         return self.moves.last
+    }
+    
+    func export() -> String {
+        var exportString: String = ""
+        for move in self.moves {
+            exportString += move.asLongAlgebraicNotation() + " "
+        }
+        return exportString
     }
     // When in button form and clicked change board to be at this point in history...
 }

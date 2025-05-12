@@ -17,7 +17,9 @@ class CustomSKScene: SKScene {
         guard let name = node.name else{
             fatalError("Nodes muust have a unique name.")
         }
-        nodeMap[name] = node
+        if node.zPosition == 1 {
+            nodeMap[name] = node
+        }
         super.addChild(node)
     }
     

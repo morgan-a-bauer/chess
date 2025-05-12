@@ -27,7 +27,7 @@ class Player {
     var playerName : String
     var moveCount: Int = 0
     var turn : Bool
-    var timeRemaining: Int = 4500 // 90 minutes in seconds
+    var timeRemaining: Int = 5400 // 90 minutes in seconds
     var onTimerUpdate: ((Int) -> Void)?
     
     init(color: String, isHuman : Bool = true, playerName : String, turn : Bool = false) {

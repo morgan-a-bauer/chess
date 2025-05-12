@@ -46,8 +46,8 @@ struct NodeMap<Key: Hashable, Value: SKNode> {
     // HashMap key change on piece move
     mutating func move(piece node: SKNode, to: Int) {
         // Maybe extend node's functionality to inherit a piece type/ have piece types which inherit from SKNode
-        
         self[node.name as! Key] = nil
         self[String(to) as! Key] = node
+        node.name = String(to)
     }
 }

@@ -19,10 +19,12 @@ protocol GameSceneDelegate: AnyObject { //BS response certification to VC
 
 class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITableViewDataSource{
     
+    var inQueue: Bool = false;
     var timer: Timer?;
     var secondsElapsed = 0;
-    var gameScene: GameScene?
+    var gameScene: GameScene?;
     weak var gameSceneActionDelegate: GameSceneActionsDelegate? // vc -> bs
+    weak var gameControllerDelegate: GameDelegate?;
     
     @IBOutlet weak var game_history: UITableView!
     @IBOutlet weak var enter_queue: UIButton!
@@ -42,6 +44,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         game_history.rowHeight = 80;
         WebSocketManager.shared.addMessage(["type":"get_game_history", "user_id": WebSocketManager.shared.userID!])
         
+        enter_queue.setTitleColor(.gray, for: .highlighted)
         // Do any additional setup after loading the view.
  
 
@@ -49,14 +52,33 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     
     
     @IBAction func enterGameQueue(_ sender: Any) {
-        enter_queue.setTitleColor(.gray, for: .highlighted)
-        WebSocketManager.shared.addMessage(["type":"enter_game_queue", "user_id": WebSocketManager.shared.userID!])
+        if !inQueue {
+            WebSocketManager.shared.addMessage(["type":"enter_game_queue", "user_id": WebSocketManager.shared.userID!, "time_control": "15|10"])
+        } else {
+            WebSocketManager.shared.addMessage(["type":"leave_game_queue", "user_id": WebSocketManager.shared.userID!, "time_control": "15|10"])
+        }
     }
+    
     func enteredGameQueue() {
         DispatchQueue.main.async { [weak self] in
-                self?.startTimer()
-            }
+            print("joined")
+            self?.inQueue = true
+            self?.startTimer()
+        }
     }
+    
+    func leftGameQueue() {
+        DispatchQueue.main.async { [weak self] in
+            print("left");
+            self?.inQueue = false;
+            self?.timer?.invalidate();
+            self?.timer = nil;
+            self?.secondsElapsed = 0;
+            self?.enter_queue.setTitle("Enter Queue", for: .normal)
+            self?.enter_queue.setTitleColor(.black, for: .normal)
+        }
+    }
+    
     func matchFound() {
         WebSocketManager.shared.addMessage(["type":"join_game", "game_id": WebSocketManager.shared.gameID!, "user_id": WebSocketManager.shared.userID!])
     }
@@ -64,23 +86,26 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     func joinedGame() {
         // bug where this is sometimes not called, I think the response is getting eated by the opponent joined and by the time the next receive message occurs it is already missed...
         if (WebSocketManager.shared.userConnectedToGame &&  WebSocketManager.shared.opponentConnectedToGame){
-            timer?.invalidate() //Makes the timer stop ticking
-            DispatchQueue.main.async {
-                self.performSegue(withIdentifier: "goToGameBoard", sender: self)
+            DispatchQueue.main.async { [weak self] in
+                self?.inQueue = false;
+                self?.timer?.invalidate();
+                self?.timer = nil;
+                self?.secondsElapsed = 0;
+                self?.enter_queue.setTitle("Enter Queue", for: .normal)
+                self?.enter_queue.setTitleColor(.black, for: .normal)
+                self?.performSegue(withIdentifier: "goToGameBoard", sender: self)
             }
         }
-        
     }
+    
     func receiveGameHistory(_ response:[GameHistory]) {
         gameHistoryData = response;
         
         DispatchQueue.main.async {
             self.game_history.reloadData()
         }
-        
     }
     
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return gameHistoryData.count
         }
@@ -95,10 +120,31 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         cell.userOutcomeLabel.text = data.user.outcome;
         cell.opponentLabel.text = data.opponent.username;
         cell.opponentOutcomeLabel.text = data.opponent.outcome;
-        cell.movesLabel.text = String(data.moves);
+        cell.movesLabel.text = String(data.game.moves.split(separator: " ").count);
 
         return cell
         }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedGame = gameHistoryData[indexPath.row]
+        print("User tapped game: \(selectedGame.user.username) vs \(selectedGame.opponent.username)")
+        
+        WebSocketManager.shared.isWhite = selectedGame.user.is_white;
+        WebSocketManager.shared.inGame = false;
+        WebSocketManager.shared.gameID = nil;
+        WebSocketManager.shared.opponentConnectedToGame = false;
+        WebSocketManager.shared.userConnectedToGame = true;
+        WebSocketManager.shared.opponentIcon = "";
+        WebSocketManager.shared.opponentUsername = selectedGame.opponent.username;
+        
+        
+        performSegue(withIdentifier: "goToGameBoard", sender: self)
+        gameControllerDelegate?.loadOldGame(selectedGame.game.moves.split(separator: " ").map(String.init), selectedGame.user, selectedGame.opponent)
+        // Example: push a detail view controller or perform segue
+        // performSegue(withIdentifier: "goToGameDetail", sender: selectedGame)
+    }
+    
+    
     
     @objc func startTimer() {
         self.enter_queue.setTitle("In Queue: \(self.secondsElapsed)s", for: .normal)
@@ -110,10 +156,9 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
 
         }
     @objc func updateTime() {
-        print(secondsElapsed)
+//        print(secondsElapsed)
             secondsElapsed += 1
             updateButtonTitle()
-        
         }
 
     func updateButtonTitle() {
@@ -121,4 +166,11 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
             self.enter_queue.setTitle("In Queue: \(self.secondsElapsed)s", for: .normal)
         }
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToGameBoard",
+           let gameVC = segue.destination as? GameController {
+            self.gameControllerDelegate = gameVC  // store ref so you can call delegate methods
+        }
+    }
 }
+

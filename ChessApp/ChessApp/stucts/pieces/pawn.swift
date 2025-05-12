@@ -2,21 +2,40 @@
 //  pawn.swift
 //  ChessApp
 //
-//  Created by Jackson Butler on 2/3/25.
+//  Created by Morgan Bauer on 2/3/25.
 //
+import SpriteKit
 
 struct Pawn: BasePiece {
     var cellId: Int
-    var hasMoved = false
+    var color = ""
+    var icon = ""
+    var node = SKSpriteNode()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
 
-    func getMoves() -> Array<Int> {
-        var moves = [10]
-        if self.hasMoved == false {
-            moves.append(20)
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
+        let direction = (color == "w") ? 1 : -1
+        var moves: [Int] = []
+        if nodeMap[String(cellId + 10 * direction)] == nil {
+            moves.append(cellId + 10 * direction)
+        }
+        if (color == "w" && cellId >= 10 && cellId <= 17) ||
+            (color == "b" && cellId >= 60 && cellId <= 67) {
+            if nodeMap[String(cellId + 20 * direction)] == nil {
+                moves.append(cellId + 20 * direction)
+            }
+        }
+        for offset in [9, 11] {
+            let targetId = cellId + direction * offset
+            if let piece = nodeMap[String(targetId)], let name = piece.name {
+                print("to capture: \(name)")
+                if name.prefix(1) != color {
+                    moves.append(targetId)
+                }
+            }
         }
         return moves
     }

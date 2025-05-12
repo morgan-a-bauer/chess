@@ -2,21 +2,39 @@
 //  queen.swift
 //  ChessApp
 //
-//  Created by Jackson Butler on 2/3/25.
+//  Created by Morgan Bauer on 2/3/25.
 //
+import SpriteKit
 
 struct Queen: BasePiece {
     var cellId: Int
+    var color = ""
+    var icon = ""
+    var node = SKSpriteNode()
+    var nodeMap = NodeMap<String, SKNode>()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
 
-    func getMoves() -> Array<Int> {
-        var moves = [-77, -70, -66, -63, -60, -55, -54, -50, -45, -44, -40, -36,
-                     -33, -30, -27, -22, -20, -18, -11, -10, -9, -7, -6, -5, -4,
-                     -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 18, 20, 22, 27,
-                     30, 33, 36, 40, 44, 45, 50, 54, 55, 60, 63, 66, 70, 77]
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
+        var moves: [Int] = []
+        let incs = [1, -1, 9, -9, 10, -10, 11, -11]
+        for inc in incs{
+            var potentialMove = cellId + inc
+            while potentialMove <= 77 && potentialMove >= 0 && (potentialMove % 10) != 8 && (potentialMove % 10) != 9 {
+                if nodeMap[String(potentialMove)] == nil {
+                    moves.append(potentialMove)
+                }
+                else if let node = nodeMap[String(potentialMove)] as? SKSpriteNode {
+                    if nodeToPiece[node]?.color != color {
+                        moves.append(potentialMove)
+                    }
+                    break
+                }
+                potentialMove += inc
+            }
+        }
 
         return moves
     }
