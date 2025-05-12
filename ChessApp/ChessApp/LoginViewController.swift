@@ -14,10 +14,12 @@ class LoginViewController: UIViewController, LoginDelegate{
     @IBOutlet weak var password_field: UITextField!
     @IBOutlet weak var login_button: UIButton!
     
+    @IBOutlet weak var back_button: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         WebSocketManager.shared.loginDelegate = self;
+        back_button.setImage(UIImage(systemName: "chevron.backward.circle.fill"), for: .normal)
     }
     @IBAction func login_attempt(_ sender: Any) {
         WebSocketManager.shared.addMessage(["type":"auth", "username": username_field.text ?? "none", "password": password_field.text ?? "none"])

@@ -16,11 +16,12 @@ class CreateAccountViewController: UIViewController, CreateAccountDelegate{
     @IBOutlet weak var password_field: UITextField!
     @IBOutlet weak var confirm_password_field: UITextField!
     @IBOutlet weak var create_account_button: UIButton!
-    
+    @IBOutlet weak var back_button: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         WebSocketManager.shared.createAccountDelegate = self;
+        back_button.setImage(UIImage(systemName: "chevron.backward.circle.fill"), for: .normal)
     }
     @IBAction func create_account_attempt(_ sender: Any) {
         WebSocketManager.shared.addMessage(["type":"create_account", "username": username_field.text ?? "none",
@@ -30,7 +31,7 @@ class CreateAccountViewController: UIViewController, CreateAccountDelegate{
             "last_name": last_name_field.text ?? "none",
             "password": password_field.text ?? "none",])
     }
-    
+
     func didReceiveCreateAccount() {
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "goToLoginScreen", sender: self)
