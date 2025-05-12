@@ -168,6 +168,9 @@
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="♕"/>
+                                <connections>
+                                    <action selector="reset_board:" destination="nlx-qS-jnd" eventType="touchUpInside" id="LSA-g2-0HP"/>
+                                </connections>
                             </button>
                             <skView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yxu-ei-b2G">
                                 <rect key="frame" x="16" y="132" width="361" height="361"/>
@@ -344,6 +347,7 @@
                         <outlet property="opponentImage" destination="2kh-Pd-H0Q" id="kVZ-m7-e73"/>
                         <outlet property="opponentLabel" destination="Lmv-Qh-DJm" id="hVo-Ce-SG4"/>
                         <outlet property="opponentTimerLabel" destination="zvK-Xo-dwa" id="MvP-4k-WiA"/>
+                        <outlet property="reset_board_current_state" destination="RMi-O3-ZB0" id="XT0-MT-36W"/>
                         <outlet property="userImage" destination="fQB-ng-BrL" id="Wh4-rA-Q88"/>
                         <outlet property="userLabel" destination="3Hw-m5-B9Q" id="JTP-To-dhH"/>
                         <outlet property="userTimerLabel" destination="JWW-Bw-RER" id="TQK-Pu-Fe2"/>
@@ -623,7 +627,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="nf9-EL-xs5"/>
         <segue reference="dSc-Qf-xte"/>
         <segue reference="fdU-G2-UF6"/>
         <segue reference="7NL-ca-wji"/>

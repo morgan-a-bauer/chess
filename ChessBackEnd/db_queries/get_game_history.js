@@ -1,3 +1,5 @@
+// Written by: Jackson Butler
+
 import { Op, fn, col } from "sequelize";
 import {Users, Games, GameParticipants} from "../db_models/model_init.js";
 

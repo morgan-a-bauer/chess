@@ -26,6 +26,7 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     @IBOutlet weak var userLabel: UILabel!
     @IBOutlet weak var userTimerLabel: UILabel!
 
+    @IBOutlet weak var reset_board_current_state: UIButton!
     var previousButton: UIButton?
     var move_history: MoveHistory = MoveHistory();
     
@@ -143,6 +144,28 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
             return cell
         }
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        WebSocketManager.shared.inGame = false
+        
+        let moveIndex: Int
+        if tableView == self.mainTableView {
+            moveIndex = indexPath.row * 2
+        } else {
+            moveIndex = indexPath.row * 2 + 1
+        }
+
+        let clampedIndex = min(moveIndex, move_history.moves.count - 1)
+        
+        let slicedMoveHistory = Array(move_history.moves[0...clampedIndex])
+        
+        WebSocketManager.shared.boardDelegate?.setupScene()
+        for move in slicedMoveHistory{
+            WebSocketManager.shared.boardDelegate?.opponentMove(move.asLongAlgebraicNotation())
+        }
+        WebSocketManager.shared.inGame = true
+    }
+
     
     func formatTime(_ seconds: Int) -> String {
             let minutes = seconds / 60
@@ -173,12 +196,23 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
         opponentTimerLabel.text = opponent.time_left
         
         
-        
         self.move_history = decodeMoveHistory(CodedMoveHistory);
+        for move in move_history.moves{
+            WebSocketManager.shared.boardDelegate?.opponentMove(move.asLongAlgebraicNotation())
+        }
+        
         mainTableView.reloadData()
         altTableView.reloadData()
     }
     
+    @IBAction func reset_board(_ sender: Any) {
+        WebSocketManager.shared.inGame = false
+        WebSocketManager.shared.boardDelegate?.setupScene()
+        for move in move_history.moves{
+            WebSocketManager.shared.boardDelegate?.opponentMove(move.asLongAlgebraicNotation())
+        }
+        WebSocketManager.shared.inGame = true
+    }
     
     func handleGameEnded() {
         players[0].timer?.invalidate();

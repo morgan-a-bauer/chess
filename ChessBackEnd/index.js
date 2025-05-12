@@ -1,3 +1,6 @@
+// Wriitten by: Jackson Butler
+// Description: This is the main entry point for the server. It handles all websocket connections and communication with the database.
+// It also handles the game queue and matchmaking for players. The server uses Sequelize to interact with a PostgreSQL database.
 import { WebSocketServer } from 'ws';
 import {Sequelize, DataTypes, Model, sequelize, Op} from './db_models/sql_init.js';
 import {Users, Games, GameParticipants, Milestones} from "./db_models/model_init.js"

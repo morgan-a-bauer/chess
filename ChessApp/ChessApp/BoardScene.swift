@@ -16,7 +16,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
     weak var viewControllerDelegate: GameSceneDelegate?; // Delegate property for boardscene -> VC
     weak var sceneDelegate: BoardToGameDelegate?;
     
-    
     // Testing Variable
     let targetCell: Int = 11
     var counter: Int = 0
@@ -31,12 +30,9 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
     var turn: Int = 1
     // nodeMap is an implied data type check ./structs/other for more info
     // use and treat it as hashMap
-
-    // Kind of "Main"
-    override func didMove(to view: SKView) {
-        WebSocketManager.shared.boardDelegate = self;
-        // Build chess board
-        // Piece seems to need to be added within this scope to "view"
+    
+    func setupScene() {
+        self.removeAllChildren()
         
         var colour: Bool
         let squareWidth = self.size.width/8
@@ -228,7 +224,14 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 colour = !colour
             }
         }
+    }
 
+    // Kind of "Main"
+    override func didMove(to view: SKView) {
+        WebSocketManager.shared.boardDelegate = self;
+        // Build chess board
+        // Piece seems to need to be added within this scope to "view"
+        setupScene()
         
     }
 
@@ -290,21 +293,15 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
     }
     
     func opponentMove(_ move: String) {
-        DispatchQueue.main.async {
-            self.performCompleteMove()
+        if WebSocketManager.shared.inGame {
+            DispatchQueue.main.async {
+                self.performCompleteMove()
+            }
         }
+        
         let move: Move = decodeMove(from: move)
-//        // Testing Code for move history
-//        let start = move/1000;
-//        let end = move - start*1000
-//        let pieceMoved: Bishop = Bishop(cellId: 5)
-//        let pieceCaptured: BasePiece = EmptyPiece(cellId: 5)
-//        let inCheck: Bool = false
-//        let inMate: Bool = false
-//        print("start:",start,"end:",end)
-//        let move: Move = Move(startCell: start, targetCell: end, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured , inCheck: inCheck, inMate: inMate)
-        moveHistory.append(move)
-//        WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.startCell.cell*1000+move.targetCell.cell])
+        
+        
         let piece = nodeMap[String(move.startCell)]
         let squareWidth = self.size.width/8
         let squareHeight = self.size.height/8
@@ -322,8 +319,11 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
             print("INTHIS")
         }
         counter += 1;
-        DispatchQueue.main.async {
-            self.sceneDelegate?.updateViewableMoveHistory(self.moveHistory)
+        if WebSocketManager.shared.inGame {
+            DispatchQueue.main.async {
+                self.moveHistory.append(move)
+                self.sceneDelegate?.updateViewableMoveHistory(self.moveHistory)
+            }
         }
     }
 
@@ -390,7 +390,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         print("X: \(x) Y: \(y)")
         
         // Some form of the below pieceNode lock to cell idea will be required at final implementation
-          if  touchedNode != nil {
+          if touchedNode != nil {
               
               guard let indexNode = touchedNode else { return }
               if let piece = nodeToPiece[indexNode] {
@@ -400,11 +400,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                   print("Valid moves: \(moves)")
                   
                   if moves.contains(target) {
-                      // Testing Code for move history
-                      let startCell: Cell = Cell(cell: 5)
-                      let targetCell: Cell = Cell(cell: counter)
-                      let pieceMoved: Bishop = Bishop(cellId: 5)
-                      let pieceCaptured: BasePiece = EmptyPiece(cellId: 5)
                       let inCheck: Bool = false
                       let inMate: Bool = false
                       
@@ -413,13 +408,16 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                       touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
                       nodeMap.move(piece: touchedNode!, to: target)
                       nodeToPiece[touchedNode]!.cellId = target
-                      performCompleteMove()
+                      
                       // Maybe include a current time as to deal with discontinuous delays in move send and receive
                       print(move.asLongAlgebraicNotation())
-                      WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
-                      counter += 1;
+                      if WebSocketManager.shared.inGame {
+                          performCompleteMove()
+                          WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
+                          sceneDelegate?.updateViewableMoveHistory(moveHistory)
+                      }
                       
-                      sceneDelegate?.updateViewableMoveHistory(moveHistory)
+                      
                       
                       // Just Spitballing on ideas for checking valid moves, I'll stop this and leave it up to you.
                       //if (nodeMap.move(piece: touchedNode, to: 11)) == false {

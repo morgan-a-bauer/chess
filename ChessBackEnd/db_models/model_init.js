@@ -1,3 +1,4 @@
+// Written by: Jackson Butler
 import {Sequelize, DataTypes, Model, sequelize} from './sql_init.js';
 
 class Users extends Model {

@@ -1,3 +1,4 @@
+// Written by: Jackson Butler
 import { Op } from 'sequelize'
 import {Users, Milestones} from '../db_models/model_init.js'
 
