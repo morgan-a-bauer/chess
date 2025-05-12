@@ -15,6 +15,6 @@ protocol BasePiece {
     var node: SKSpriteNode { get set};
 
     func moveIsValid(_ destination: Cell) -> Bool
-    func getMoves() -> Array<Int>
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int>
     func charRepresentation() -> String
 }

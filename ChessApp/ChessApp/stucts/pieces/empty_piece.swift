@@ -16,7 +16,7 @@ struct EmptyPiece: BasePiece {
         return true
     }
 
-    func getMoves() -> Array<Int> {
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
         return [0]
     }
 
