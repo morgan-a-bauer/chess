@@ -55,19 +55,11 @@ extension WebSocketManager {
         return HandlerResponse();
     }
     
-    func handleMoveReceived(_ message: ResponseMessage) -> HandlerResponse {
+    func handleMoveReceived(_ message: ResponseMessage) -> HandlerResponse{
         // Handle the move received case
-        do {
-            let data = message.data!
-            print(data)
-            print("successful receive", data)
-            boardDelegate?.opponentMove(data);
-            let result: HandlerResponse = HandlerResponse(listenForMessage: false, isMove: true, hasData: true, data: data, successful: true);
-            return result;
-        } catch {
-            print("ruh roh \(error)")
-        }
-        let result: HandlerResponse = HandlerResponse(successful: false);
+        let data = message.data!
+        boardDelegate?.opponentMove(data);
+        let result: HandlerResponse = HandlerResponse(listenForMessage: true, hasData: true, successful: true);
         return result;
     }
 
@@ -139,7 +131,7 @@ extension WebSocketManager {
             userMilestones = data.milestones;
             loginDelegate?.didReceiveLoginSuccess()
             let result: HandlerResponse = HandlerResponse(successful: true);
-            print("successfuly decoded login message", jsonData, data)
+            print("successfuly decoded login message", jsonData!, data)
             return result;
         } catch {
             print("ruh roh \(error)")

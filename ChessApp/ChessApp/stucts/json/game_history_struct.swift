@@ -16,7 +16,6 @@ struct UserHistory: Codable {
         self.outcome = outcome
         self.is_white = is_white
         self.time_left = time_left
-        
     }
 }
 
@@ -34,7 +33,6 @@ struct GameHistoryData: Codable {
         self.result = result
         self.is_rated = is_rated
     }
-    
 }
 
 struct GameHistory: Codable {
@@ -48,6 +46,3 @@ struct GameHistory: Codable {
         self.game = game
     }
 }
-
-
-//username: String="Doctor", userOutcome: String="lose", opponent: String="Cyber Controller", opponentOutcome: String="win", moves: Int=12
