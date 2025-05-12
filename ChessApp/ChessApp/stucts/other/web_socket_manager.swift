@@ -23,7 +23,7 @@ class WebSocketManager: NSObject, ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession: URLSession = URLSession(configuration: .default)
     //"ws://localhost:10000"
-    //
+    //wss://chessbackend-iwcv.onrender.com
     private let url = URL(string: "wss://chessbackend-iwcv.onrender.com")!
     private var connectionState: WebSocketState = .disconnected
     @Published private var messageQueue: [String] = []
