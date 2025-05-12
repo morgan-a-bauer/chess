@@ -74,16 +74,14 @@ async function queue_listener_handler() {
                 const parsedData = JSON.parse(data);
                 console.log('Recevied', parsedData);
                 (async () =>{
-                    // Might need to check what create does and substitute it out...
                     // All ws.send should use the same formating that swift client sends to this server, parsable json.
                     console.log("authed?:", is_authenticated)
-                    if (is_authenticated) {
-                        // This is not the droid you are looking for
+                    if (is_authenticated) { // This is not the droid you are looking for
 
                         switch (parsedData.type) {
                             case "add_move": {
                                 /*
-                                {"type":"add_move", "game_id": 1, "turn": 1, "move":11033}
+                                {"type":"add_move", "game_id": 1, "turn": 1, "move":"B2B24"}
                                 */
                                if (game.termination == 'active') {
                                     clients.get(opponent.user_id).send(JSON.stringify({"type":"success", "sub_type":"move_received", "data":parsedData.move}));
