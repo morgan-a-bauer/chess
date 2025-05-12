@@ -63,7 +63,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 square.zPosition = 0
                 square.name = "\(String(describing: cellStrValue))\(row+1)"
                 
-                var pos = row * 10 + column * 1
+                let pos = row * 10 + column
                 if (row == 0) {
                     if (column == 0) || (column == 7) {
                         var rook = Rook(cellId: pos)
@@ -72,66 +72,56 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                         rook.node = SKSpriteNode(imageNamed: rook.icon)
                         rook.node.setScale(0.55)
                         rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        rook.node.name = "wR\(row + 1)"
+                        rook.node.name = "\(pos)"
                         rook.node.zPosition = 1
-                        rook.nodeMap = nodeMap
-                        nodeMap[String(rook.cellId)] = rook.node
                         nodeToPiece[rook.node] = rook
                         addChild(rook.node)
                     }
-                    if (column == 1) || (column == 6) {
+                    else if (column == 1) || (column == 6) {
                         var knight = Knight(cellId: pos)
                         knight.color = "w"
                         knight.icon = "wN"
                         knight.node = SKSpriteNode(imageNamed: knight.icon)
                         knight.node.setScale(0.55)
                         knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        knight.node.name = "wN\(row + 1)"
+                        knight.node.name = "\(pos)"
                         knight.node.zPosition = 1
-                        knight.nodeMap = nodeMap
-                        nodeMap[String(knight.cellId)] = knight.node
                         nodeToPiece[knight.node] = knight
                         addChild(knight.node)
                     }
-                    if (column == 2) || (column == 5) {
+                    else if (column == 2) || (column == 5) {
                         var bishop = Bishop(cellId: pos)
                         bishop.color = "w"
                         bishop.icon = "wB"
                         bishop.node = SKSpriteNode(imageNamed: bishop.icon)
                         bishop.node.setScale(0.55)
                         bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        bishop.node.name = "wB\(row + 1)"
+                        bishop.node.name = "\(pos)"
                         bishop.node.zPosition = 1
-                        bishop.nodeMap = nodeMap
-                        nodeMap[String(bishop.cellId)] = bishop.node
                         nodeToPiece[bishop.node] = bishop
                         addChild(bishop.node)
                     }
-                    if (column == 3) {
+                    else if (column == 3) {
                         var queen = Queen(cellId: pos)
                         queen.color = "w"
                         queen.icon = "wQ"
                         queen.node = SKSpriteNode(imageNamed: queen.icon)
                         queen.node.setScale(0.55)
                         queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        queen.node.name = "wQ\(row + 1)"
+                        queen.node.name = "\(pos)"
                         queen.node.zPosition = 1
-                        queen.nodeMap = nodeMap
-                        nodeMap[String(queen.cellId)] = queen.node
                         nodeToPiece[queen.node] = queen
                         addChild(queen.node)
                     }
-                    if (column == 4) {
+                    else if (column == 4) {
                         var king = King(cellId: pos)
                         king.color = "w"
                         king.icon = "wK"
                         king.node = SKSpriteNode(imageNamed: king.icon)
                         king.node.setScale(0.55)
                         king.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        king.node.name = "wK\(row + 1)"
+                        king.node.name = "\(pos)"
                         king.node.zPosition = 1
-                        king.nodeMap = nodeMap
-                        nodeMap[String(king.cellId)] = king.node
                         nodeToPiece[king.node] = king
                         addChild(king.node)
                     }
@@ -144,10 +134,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     pawn.node = SKSpriteNode(imageNamed: pawn.icon)
                     pawn.node.setScale(0.55)
                     pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                    pawn.node.name = "wP\(row + 1)"
+                    pawn.node.name = "\(pos)"
                     pawn.node.zPosition = 1
-                    pawn.nodeMap = nodeMap
-                    nodeMap[String(pawn.cellId)] = pawn.node
                     nodeToPiece[pawn.node] = pawn
                     addChild(pawn.node)
                 }
@@ -159,10 +147,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     pawn.node = SKSpriteNode(imageNamed: pawn.icon)
                     pawn.node.setScale(0.55)
                     pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                    pawn.node.name = "bP\(row + 1)"
+                    pawn.node.name = "\(pos)"
                     pawn.node.zPosition = 1
-                    pawn.nodeMap = nodeMap
-                    nodeMap[String(pawn.cellId)] = pawn.node
                     nodeToPiece[pawn.node] = pawn
                     addChild(pawn.node)
                 }
@@ -175,66 +161,56 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                         rook.node = SKSpriteNode(imageNamed: rook.icon)
                         rook.node.setScale(0.55)
                         rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        rook.node.name = "bR\(row + 1)"
+                        rook.node.name = "\(pos)"
                         rook.node.zPosition = 1
-                        rook.nodeMap = nodeMap
-                        nodeMap[String(rook.cellId)] = rook.node
                         nodeToPiece[rook.node] = rook
                         addChild(rook.node)
                     }
-                    if (column == 1) || (column == 6) {
+                    else if (column == 1) || (column == 6) {
                         var knight = Knight(cellId: pos)
                         knight.color = "b"
                         knight.icon = "bN"
                         knight.node = SKSpriteNode(imageNamed: knight.icon)
                         knight.node.setScale(0.55)
                         knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        knight.node.name = "bN\(row + 1)"
+                        knight.node.name = "\(pos)"
                         knight.node.zPosition = 1
-                        knight.nodeMap = nodeMap
-                        nodeMap[String(knight.cellId)] = knight.node
                         nodeToPiece[knight.node] = knight
                         addChild(knight.node)
                     }
-                    if (column == 2) || (column == 5) {
+                    else if (column == 2) || (column == 5) {
                         var bishop = Bishop(cellId: pos)
                         bishop.color = "b"
                         bishop.icon = "bB"
                         bishop.node = SKSpriteNode(imageNamed: bishop.icon)
                         bishop.node.setScale(0.55)
                         bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        bishop.node.name = "bB\(row + 1)"
+                        bishop.node.name = "\(pos)"
                         bishop.node.zPosition = 1
-                        bishop.nodeMap = nodeMap
-                        nodeMap[String(bishop.cellId)] = bishop.node
                         nodeToPiece[bishop.node] = bishop
                         addChild(bishop.node)
                     }
-                    if (column == 3) {
+                    else if (column == 3) {
                         var queen = Queen(cellId: pos)
                         queen.color = "b"
                         queen.icon = "bQ"
                         queen.node = SKSpriteNode(imageNamed: queen.icon)
                         queen.node.setScale(0.55)
                         queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        queen.node.name = "bQ\(row + 1)"
+                        queen.node.name = "\(pos)"
                         queen.node.zPosition = 1
-                        queen.nodeMap = nodeMap
-                        nodeMap[String(queen.cellId)] = queen.node
                         nodeToPiece[queen.node] = queen
                         addChild(queen.node)
                     }
-                    if (column == 4) {
+                    else if (column == 4) {
                         var king = King(cellId: pos)
                         king.color = "b"
                         king.icon = "bK"
                         king.node = SKSpriteNode(imageNamed: king.icon)
                         king.node.setScale(0.55)
                         king.node.position = CGPoint(x: squarePosX, y: squarePosY)
-                        king.node.name = "bK\(row + 1)"
+                        king.node.name = "\(pos)"
                         king.node.zPosition = 1
-                        king.nodeMap = nodeMap
-                        nodeMap[String(king.cellId)] = king.node
                         nodeToPiece[king.node] = king
                         addChild(king.node)
                     }
@@ -329,9 +305,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
             self.sceneDelegate?.updateViewableMoveHistory(self.moveHistory)
         }
     }
-    
-    
-    // Get valid moves
 
     // Called if something is touched within scene
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -345,13 +318,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
             touchedNode = node
             originalLocation = node.position
 
-            guard let indexNode = touchedNode else { return }
-            if let piece = nodeToPiece[indexNode] {
-                var moves = piece.getMoves()
-                // MB debug
-                print("Original location: \(piece.cellId)")
-                print("Valid moves: \(moves)")
-            }
         }
         // Testing square naming
         if getNode(named: targetCell) == touchedNode {
@@ -390,43 +356,71 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         // Touch move
         // let x = touchLocation.x.rounded()
         // let y = touchLocation.y.rounded()
-        var x_square = floor(touchLocation.x / squareWidth)
-        var y_square = floor(touchLocation.y / squareHeight)
+        let x_square = floor(touchLocation.x / squareWidth)
+        let y_square = floor(touchLocation.y / squareHeight)
         let x = (squareWidth * CGFloat(x_square)) + (squareWidth/2)
         let y = (squareHeight * CGFloat(y_square)) + (squareHeight/2)
+        let target = Int(y_square * 10 + x_square)
         //MB debug
         print("X square: \(x_square) Y square: \(y_square)")
         print("X: \(x) Y: \(y)")
         
         // Some form of the below pieceNode lock to cell idea will be required at final implementation
           if  touchedNode != nil {
-              touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
               
-              performCompleteMove()
-              // Testing Code for move history
-              let startCell: Cell = Cell(cell: 5)
-              let targetCell: Cell = Cell(cell: counter)
-              let pieceMoved: Bishop = Bishop(cellId: 5)
-              let pieceCaptured: BasePiece = EmptyPiece(cellId: 5)
-              let inCheck: Bool = false
-              let inMate: Bool = false
-               
-              let move: Move = Move(startCell: 5, targetCell: counter, pieceMoved: pieceMoved, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
-              moveHistory.append(move)
-              
-              // Maybe include a current time as to deal with discontinuous delays in move send and receive
-              WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
-              counter += 1;
-               
-              sceneDelegate?.updateViewableMoveHistory(moveHistory)
-              
-              // Just Spitballing on ideas for checking valid moves, I'll stop this and leave it up to you.
-              //if (nodeMap.move(piece: touchedNode, to: 11)) == false {
-                  // if move invalid?
-                  // Have a not so funky fresh time?
-              //}
-              
-            
+              guard let indexNode = touchedNode else { return }
+              if let piece = nodeToPiece[indexNode] {
+                  var moves = piece.getMoves(nodeMap: nodeMap, nodeToPiece: nodeToPiece)
+                  // MB debug
+                  print("Original location: \(piece.cellId)")
+                  print("Valid moves: \(moves)")
+                  
+                  if moves.contains(target) {
+                      touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
+                      nodeMap.move(piece: touchedNode!, to: target)
+                      nodeToPiece[touchedNode]!.cellId = target
+                      performCompleteMove()
+                      // Testing Code for move history
+                      let startCell: Cell = Cell(cell: 5)
+                      let targetCell: Cell = Cell(cell: counter)
+                      let pieceMoved: Bishop = Bishop(cellId: 5)
+                      let pieceCaptured: BasePiece = EmptyPiece(cellId: 5)
+                      let inCheck: Bool = false
+                      let inMate: Bool = false
+                      
+                      let move: Move = Move(startCell: Int(touchedNode?.name ?? "")!, targetCell: target, pieceMoved: nodeToPiece[touchedNode]!, pieceCaptured: pieceCaptured, inCheck: inCheck, inMate: inMate)
+                      moveHistory.append(move)
+                      
+                      // Maybe include a current time as to deal with discontinuous delays in move send and receive
+                      WebSocketManager.shared.addMessage(["type":"add_move", "game_id":WebSocketManager.shared.gameID!, "turn": turn, "move":move.asLongAlgebraicNotation()])
+                      counter += 1;
+                      
+                      sceneDelegate?.updateViewableMoveHistory(moveHistory)
+                      
+                      // Just Spitballing on ideas for checking valid moves, I'll stop this and leave it up to you.
+                      //if (nodeMap.move(piece: touchedNode, to: 11)) == false {
+                      // if move invalid?
+                      // Have a not so funky fresh time?
+                      //}
+                  }
+                  else {
+                      guard let name = touchedNode?.name,
+                            let cellId = Int(name) else {
+                          print("❌ Invalid node name")
+                          return
+                      }
+                      let column = cellId % 10
+                      let row = cellId / 10
+
+                      let origX = CGFloat(column) * squareWidth + (squareWidth / 2)
+                      let origY = CGFloat(row) * squareHeight + (squareHeight / 2)
+
+                      print("Cell ID: \(cellId)")
+                      print("origX: \(origX), origY: \(origY)")
+
+                      touchedNode?.run(SKAction.move(to: CGPoint(x: origX, y: origY), duration: 0.005))
+                  }
+              }
           }
         
         // An idea of how to lock piece to a board cell center

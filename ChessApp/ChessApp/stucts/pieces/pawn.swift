@@ -11,22 +11,21 @@ struct Pawn: BasePiece {
     var color = ""
     var icon = ""
     var node = SKSpriteNode()
-    var nodeMap = NodeMap<String, SKNode>()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
 
-    func getMoves() -> Array<Int> {
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
         let direction = (color == "w") ? 1 : -1
         var moves: [Int] = []
-        if nodeMap[String(cellId + 10)] == nil {
-            moves.append(cellId + 10)
+        if nodeMap[String(cellId + 10 * direction)] == nil {
+            moves.append(cellId + 10 * direction)
         }
         if (color == "w" && cellId >= 10 && cellId <= 17) ||
             (color == "b" && cellId >= 60 && cellId <= 67) {
-            if nodeMap[String(cellId + 20)] == nil {
-                moves.append(cellId + 20)
+            if nodeMap[String(cellId + 20 * direction)] == nil {
+                moves.append(cellId + 20 * direction)
             }
         }
         for offset in [9, 11] {

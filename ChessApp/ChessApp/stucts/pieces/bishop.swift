@@ -11,16 +11,29 @@ struct Bishop: BasePiece {
     var color = ""
     var icon = ""
     var node = SKSpriteNode()
-    var nodeMap = NodeMap<String, SKNode>()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
 
-    func getMoves() -> Array<Int> {
-        let moves = [-77, -66, -63, -55, -54, -45, -44, -36, -33, -27, -22, -18,
-                     -11, -9, 9, 11, 18, 22, 27, 33, 36, 44, 45, 54, 55, 63, 66,
-                      77]
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
+        var moves: [Int] = []
+        let incs = [9, -9, 11, -11]
+        for inc in incs{
+            var potentialMove = cellId + inc
+            while potentialMove <= 77 && potentialMove >= 0 && (potentialMove % 10) != 8 && (potentialMove % 10) != 9 {
+                if nodeMap[String(potentialMove)] == nil {
+                    moves.append(potentialMove)
+                }
+                else if let node = nodeMap[String(potentialMove)] as? SKSpriteNode {
+                    if nodeToPiece[node]?.color != color {
+                        moves.append(potentialMove)
+                    }
+                    break
+                }
+                potentialMove += inc
+            }
+        }
 
         return moves
     }
