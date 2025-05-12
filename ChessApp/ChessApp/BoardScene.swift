@@ -67,61 +67,71 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 if (row == 0) {
                     if (column == 0) || (column == 7) {
                         var rook = Rook(cellId: pos)
-                        rook.color = "white"
+                        rook.color = "w"
                         rook.icon = "wR"
                         rook.node = SKSpriteNode(imageNamed: rook.icon)
                         rook.node.setScale(0.55)
                         rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         rook.node.name = "wR\(row + 1)"
                         rook.node.zPosition = 1
+                        rook.nodeMap = nodeMap
+                        nodeMap[String(rook.cellId)] = rook.node
                         nodeToPiece[rook.node] = rook
                         addChild(rook.node)
                     }
                     if (column == 1) || (column == 6) {
                         var knight = Knight(cellId: pos)
-                        knight.color = "white"
+                        knight.color = "w"
                         knight.icon = "wN"
                         knight.node = SKSpriteNode(imageNamed: knight.icon)
                         knight.node.setScale(0.55)
                         knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         knight.node.name = "wN\(row + 1)"
                         knight.node.zPosition = 1
+                        knight.nodeMap = nodeMap
+                        nodeMap[String(knight.cellId)] = knight.node
                         nodeToPiece[knight.node] = knight
                         addChild(knight.node)
                     }
                     if (column == 2) || (column == 5) {
                         var bishop = Bishop(cellId: pos)
-                        bishop.color = "white"
+                        bishop.color = "w"
                         bishop.icon = "wB"
                         bishop.node = SKSpriteNode(imageNamed: bishop.icon)
                         bishop.node.setScale(0.55)
                         bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         bishop.node.name = "wB\(row + 1)"
                         bishop.node.zPosition = 1
+                        bishop.nodeMap = nodeMap
+                        nodeMap[String(bishop.cellId)] = bishop.node
                         nodeToPiece[bishop.node] = bishop
                         addChild(bishop.node)
                     }
                     if (column == 3) {
                         var queen = Queen(cellId: pos)
-                        queen.color = "white"
+                        queen.color = "w"
                         queen.icon = "wQ"
                         queen.node = SKSpriteNode(imageNamed: queen.icon)
                         queen.node.setScale(0.55)
                         queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         queen.node.name = "wQ\(row + 1)"
                         queen.node.zPosition = 1
+                        queen.nodeMap = nodeMap
+                        nodeMap[String(queen.cellId)] = queen.node
                         nodeToPiece[queen.node] = queen
                         addChild(queen.node)
                     }
                     if (column == 4) {
                         var king = King(cellId: pos)
-                        king.color = "white"
+                        king.color = "w"
                         king.icon = "wK"
                         king.node = SKSpriteNode(imageNamed: king.icon)
                         king.node.setScale(0.55)
                         king.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         king.node.name = "wK\(row + 1)"
                         king.node.zPosition = 1
+                        king.nodeMap = nodeMap
+                        nodeMap[String(king.cellId)] = king.node
                         nodeToPiece[king.node] = king
                         addChild(king.node)
                     }
@@ -129,26 +139,30 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
 
                 else if (row == 1) {
                     var pawn = Pawn(cellId: pos)
-                    pawn.color = "white"
+                    pawn.color = "w"
                     pawn.icon = "wP"
                     pawn.node = SKSpriteNode(imageNamed: pawn.icon)
                     pawn.node.setScale(0.55)
                     pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
                     pawn.node.name = "wP\(row + 1)"
                     pawn.node.zPosition = 1
+                    pawn.nodeMap = nodeMap
+                    nodeMap[String(pawn.cellId)] = pawn.node
                     nodeToPiece[pawn.node] = pawn
                     addChild(pawn.node)
                 }
                 
                 else if (row == 6) {
                     var pawn = Pawn(cellId: pos)
-                    pawn.color = "black"
+                    pawn.color = "b"
                     pawn.icon = "bP"
                     pawn.node = SKSpriteNode(imageNamed: pawn.icon)
                     pawn.node.setScale(0.55)
                     pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
                     pawn.node.name = "bP\(row + 1)"
                     pawn.node.zPosition = 1
+                    pawn.nodeMap = nodeMap
+                    nodeMap[String(pawn.cellId)] = pawn.node
                     nodeToPiece[pawn.node] = pawn
                     addChild(pawn.node)
                 }
@@ -156,61 +170,71 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 else if (row == 7) {
                     if (column == 0) || (column == 7) {
                         var rook = Rook(cellId: pos)
-                        rook.color = "black"
+                        rook.color = "b"
                         rook.icon = "bR"
                         rook.node = SKSpriteNode(imageNamed: rook.icon)
                         rook.node.setScale(0.55)
                         rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         rook.node.name = "bR\(row + 1)"
                         rook.node.zPosition = 1
+                        rook.nodeMap = nodeMap
+                        nodeMap[String(rook.cellId)] = rook.node
                         nodeToPiece[rook.node] = rook
                         addChild(rook.node)
                     }
                     if (column == 1) || (column == 6) {
                         var knight = Knight(cellId: pos)
-                        knight.color = "black"
+                        knight.color = "b"
                         knight.icon = "bN"
                         knight.node = SKSpriteNode(imageNamed: knight.icon)
                         knight.node.setScale(0.55)
                         knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         knight.node.name = "bN\(row + 1)"
                         knight.node.zPosition = 1
+                        knight.nodeMap = nodeMap
+                        nodeMap[String(knight.cellId)] = knight.node
                         nodeToPiece[knight.node] = knight
                         addChild(knight.node)
                     }
                     if (column == 2) || (column == 5) {
                         var bishop = Bishop(cellId: pos)
-                        bishop.color = "black"
+                        bishop.color = "b"
                         bishop.icon = "bB"
                         bishop.node = SKSpriteNode(imageNamed: bishop.icon)
                         bishop.node.setScale(0.55)
                         bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         bishop.node.name = "bB\(row + 1)"
                         bishop.node.zPosition = 1
+                        bishop.nodeMap = nodeMap
+                        nodeMap[String(bishop.cellId)] = bishop.node
                         nodeToPiece[bishop.node] = bishop
                         addChild(bishop.node)
                     }
                     if (column == 3) {
                         var queen = Queen(cellId: pos)
-                        queen.color = "black"
+                        queen.color = "b"
                         queen.icon = "bQ"
                         queen.node = SKSpriteNode(imageNamed: queen.icon)
                         queen.node.setScale(0.55)
                         queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         queen.node.name = "bQ\(row + 1)"
                         queen.node.zPosition = 1
+                        queen.nodeMap = nodeMap
+                        nodeMap[String(queen.cellId)] = queen.node
                         nodeToPiece[queen.node] = queen
                         addChild(queen.node)
                     }
                     if (column == 4) {
                         var king = King(cellId: pos)
-                        king.color = "black"
+                        king.color = "b"
                         king.icon = "bK"
                         king.node = SKSpriteNode(imageNamed: king.icon)
                         king.node.setScale(0.55)
                         king.node.position = CGPoint(x: squarePosX, y: squarePosY)
                         king.node.name = "bK\(row + 1)"
                         king.node.zPosition = 1
+                        king.nodeMap = nodeMap
+                        nodeMap[String(king.cellId)] = king.node
                         nodeToPiece[king.node] = king
                         addChild(king.node)
                     }

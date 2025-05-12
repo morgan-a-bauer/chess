@@ -11,6 +11,7 @@ struct Rook: BasePiece {
     var color = ""
     var icon = ""
     var node = SKSpriteNode()
+    var nodeMap = NodeMap<String, SKNode>()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
