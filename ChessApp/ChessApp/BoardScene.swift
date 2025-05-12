@@ -67,8 +67,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 if (row == 0) {
                     if (column == 0) || (column == 7) {
                         var rook = Rook(cellId: pos)
-                        rook.color = "w"
-                        rook.icon = "wR"
+                        rook.color = WebSocketManager.shared.isWhite ? "w" : "b"
+                        rook.icon =  WebSocketManager.shared.isWhite ? "wR" : "bR"
                         rook.node = SKSpriteNode(imageNamed: rook.icon)
                         rook.node.setScale(0.55)
                         rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -79,8 +79,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 1) || (column == 6) {
                         var knight = Knight(cellId: pos)
-                        knight.color = "w"
-                        knight.icon = "wN"
+                        knight.color = WebSocketManager.shared.isWhite ? "w" : "b"
+                        knight.icon = WebSocketManager.shared.isWhite ? "wN" : "bN"
                         knight.node = SKSpriteNode(imageNamed: knight.icon)
                         knight.node.setScale(0.55)
                         knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -91,8 +91,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 2) || (column == 5) {
                         var bishop = Bishop(cellId: pos)
-                        bishop.color = "w"
-                        bishop.icon = "wB"
+                        bishop.color = WebSocketManager.shared.isWhite ? "w" : "b"
+                        bishop.icon = WebSocketManager.shared.isWhite ? "wB" : "bB"
                         bishop.node = SKSpriteNode(imageNamed: bishop.icon)
                         bishop.node.setScale(0.55)
                         bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -103,8 +103,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 3) {
                         var queen = Queen(cellId: pos)
-                        queen.color = "w"
-                        queen.icon = "wQ"
+                        queen.color = WebSocketManager.shared.isWhite ? "w" : "b"
+                        queen.icon = WebSocketManager.shared.isWhite ? "wQ" : "bQ"
                         queen.node = SKSpriteNode(imageNamed: queen.icon)
                         queen.node.setScale(0.55)
                         queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -115,8 +115,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 4) {
                         var king = King(cellId: pos)
-                        king.color = "w"
-                        king.icon = "wK"
+                        king.color = WebSocketManager.shared.isWhite ? "w" : "b"
+                        king.icon = WebSocketManager.shared.isWhite ? "wK" : "bK"
                         king.node = SKSpriteNode(imageNamed: king.icon)
                         king.node.setScale(0.55)
                         king.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -129,8 +129,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 
                 else if (row == 1) {
                     var pawn = Pawn(cellId: pos)
-                    pawn.color = "w"
-                    pawn.icon = "wP"
+                    pawn.color = WebSocketManager.shared.isWhite ? "w" : "b"
+                    pawn.icon = WebSocketManager.shared.isWhite ? "wP" : "bP"
                     pawn.node = SKSpriteNode(imageNamed: pawn.icon)
                     pawn.node.setScale(0.55)
                     pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -142,8 +142,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 
                 else if (row == 6) {
                     var pawn = Pawn(cellId: pos)
-                    pawn.color = "b"
-                    pawn.icon = "bP"
+                    pawn.color =  WebSocketManager.shared.isWhite ? "b" : "w"
+                    pawn.icon =  WebSocketManager.shared.isWhite ? "bP" : "wP"
                     pawn.node = SKSpriteNode(imageNamed: pawn.icon)
                     pawn.node.setScale(0.55)
                     pawn.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -156,8 +156,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                 else if (row == 7) {
                     if (column == 0) || (column == 7) {
                         var rook = Rook(cellId: pos)
-                        rook.color = "b"
-                        rook.icon = "bR"
+                        rook.color =  WebSocketManager.shared.isWhite ? "b" : "w"
+                        rook.icon =  WebSocketManager.shared.isWhite ? "bR" : "wR"
                         rook.node = SKSpriteNode(imageNamed: rook.icon)
                         rook.node.setScale(0.55)
                         rook.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -168,8 +168,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 1) || (column == 6) {
                         var knight = Knight(cellId: pos)
-                        knight.color = "b"
-                        knight.icon = "bN"
+                        knight.color =  WebSocketManager.shared.isWhite ? "b" : "w"
+                        knight.icon =  WebSocketManager.shared.isWhite ? "bN" : "wN"
                         knight.node = SKSpriteNode(imageNamed: knight.icon)
                         knight.node.setScale(0.55)
                         knight.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -180,8 +180,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 2) || (column == 5) {
                         var bishop = Bishop(cellId: pos)
-                        bishop.color = "b"
-                        bishop.icon = "bB"
+                        bishop.color =  WebSocketManager.shared.isWhite ? "b" : "w"
+                        bishop.icon =  WebSocketManager.shared.isWhite ? "bB" : "wB"
                         bishop.node = SKSpriteNode(imageNamed: bishop.icon)
                         bishop.node.setScale(0.55)
                         bishop.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -192,8 +192,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 3) {
                         var queen = Queen(cellId: pos)
-                        queen.color = "b"
-                        queen.icon = "bQ"
+                        queen.color =  WebSocketManager.shared.isWhite ? "b" : "w"
+                        queen.icon =  WebSocketManager.shared.isWhite ? "bQ" : "wQ"
                         queen.node = SKSpriteNode(imageNamed: queen.icon)
                         queen.node.setScale(0.55)
                         queen.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -204,8 +204,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                     }
                     else if (column == 4) {
                         var king = King(cellId: pos)
-                        king.color = "b"
-                        king.icon = "bK"
+                        king.color = WebSocketManager.shared.isWhite ? "b" : "w"
+                        king.icon = WebSocketManager.shared.isWhite ? "bK" : "wK"
                         king.node = SKSpriteNode(imageNamed: king.icon)
                         king.node.setScale(0.55)
                         king.node.position = CGPoint(x: squarePosX, y: squarePosY)
@@ -292,6 +292,13 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         }
     }
     
+    func flipCell(_ cell: Int) -> Int {
+        let row = cell / 10
+        let col = cell % 10
+        let flippedRow = 7 - row
+        return flippedRow * 10 + col
+    }
+    
     func opponentMove(_ move: String) {
         if WebSocketManager.shared.inGame {
             DispatchQueue.main.async {
@@ -300,24 +307,32 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         }
         
         let move: Move = decodeMove(from: move)
+        var startCell = move.startCell
+        var targetCell = move.targetCell
+        if WebSocketManager.shared.isWhite == false {
+            startCell = flipCell(move.startCell)
+            targetCell = flipCell(move.targetCell)
+        }
         
         
-        let piece = nodeMap[String(move.startCell)]
+        
+        let piece = nodeMap[String(startCell)]
         let squareWidth = self.size.width/8
         let squareHeight = self.size.height/8
         // Touch move
         // let x = touchLocation.x.rounded()
         // let y = touchLocation.y.rounded()
-        let targetX = Int(move.targetCell % 10)
-        let targetY = Int(move.targetCell / 10)
+        let targetX = Int(targetCell % 10)
+        let targetY = Int(targetCell / 10)
         let x = (squareWidth * CGFloat(targetX)) + (squareWidth/2)
         let y = (squareHeight * CGFloat(targetY)) + (squareHeight/2)
         if let spritePiece = piece as? SKSpriteNode {
             spritePiece.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
-            nodeMap.move(piece: spritePiece, to: move.targetCell)
-            nodeToPiece[spritePiece]!.cellId = move.targetCell
+            nodeMap.move(piece: spritePiece, to: targetCell)
+            nodeToPiece[spritePiece]!.cellId = targetCell
             print("INTHIS")
         }
+        
         counter += 1;
         if WebSocketManager.shared.inGame {
             DispatchQueue.main.async {
@@ -336,9 +351,9 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         // Currently can pick up any drawn node, board cells included
         if let node = self.atPoint(touchLocation) as? SKSpriteNode {
             
-            touchedNode = node
-            originalLocation = node.position
-
+            touchedNode = ((WebSocketManager.shared.isWhite && nodeToPiece[node]!.color == "w") || (WebSocketManager.shared.isWhite == false && nodeToPiece[node]!.color == "b") ) ? node : nil
+            originalLocation = ((WebSocketManager.shared.isWhite && nodeToPiece[node]!.color == "w") || (WebSocketManager.shared.isWhite == false && nodeToPiece[node]!.color == "b") ) ? node.position : nil
+                
         }
         // Testing square naming
         if getNode(named: targetCell) == touchedNode {
@@ -361,11 +376,8 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
         let y = touchLocation.y.rounded()
         
         // Make touched node track mouse
-        let touchedNodeColor = nodeToPiece[touchedNode]!.color
         if (touchedNode != nil) {
-            if (WebSocketManager.shared.isWhite && touchedNodeColor == "w") || (!WebSocketManager.shared.isWhite && touchedNodeColor == "b"){
-                    touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
-            }
+            touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
         }
     }
     
@@ -394,7 +406,7 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
               
               guard let indexNode = touchedNode else { return }
               if let piece = nodeToPiece[indexNode] {
-                  var moves = piece.getMoves(nodeMap: nodeMap, nodeToPiece: nodeToPiece)
+                  let moves = piece.getMoves(nodeMap: nodeMap, nodeToPiece: nodeToPiece)
                   // MB debug
                   print("Original location: \(piece.cellId)")
                   print("Valid moves: \(moves)")
@@ -402,8 +414,15 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                   if moves.contains(target) {
                       let inCheck: Bool = false
                       let inMate: Bool = false
+                      var startCell = Int(touchedNode?.name ?? "")!
+                      var targetCell = target
+                      if WebSocketManager.shared.isWhite == false {
+                          startCell = flipCell(startCell)
+                          targetCell = flipCell(targetCell)
+                      }
                       
-                      let move: Move = Move(startCell: Int(touchedNode?.name ?? "")!, targetCell: target, pieceMoved: nodeToPiece[touchedNode]!, inCheck: inCheck, inMate: inMate)
+                      let move: Move = Move(startCell: startCell, targetCell: targetCell, pieceMoved: nodeToPiece[touchedNode]!, inCheck: inCheck, inMate: inMate)
+                      
                       moveHistory.append(move)
                       touchedNode?.run(SKAction.move(to: CGPoint(x: x, y: y), duration: 0.005))
                       nodeMap.move(piece: touchedNode!, to: target)
@@ -418,12 +437,6 @@ class GameScene: CustomSKScene, GameSceneActionsDelegate, BoardDelegate {
                       }
                       
                       
-                      
-                      // Just Spitballing on ideas for checking valid moves, I'll stop this and leave it up to you.
-                      //if (nodeMap.move(piece: touchedNode, to: 11)) == false {
-                      // if move invalid?
-                      // Have a not so funky fresh time?
-                      //}
                   }
                   else {
                       guard let name = touchedNode?.name,

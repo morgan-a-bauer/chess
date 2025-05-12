@@ -29,7 +29,7 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     @IBOutlet weak var reset_board_current_state: UIButton!
     var previousButton: UIButton?
     var move_history: MoveHistory = MoveHistory();
-    
+    var wasInGame: Bool = false;
        
     var gameScene: GameScene?
     var players: [Player] = []
@@ -40,7 +40,7 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
     override func viewDidLoad() {
         super.viewDidLoad()
         WebSocketManager.shared.gameDelegate = self;
-        
+        wasInGame = WebSocketManager.shared.inGame
         
         opponentLabel.text = WebSocketManager.shared.opponentUsername
         userLabel.text = WebSocketManager.shared.username
@@ -163,7 +163,8 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
         for move in slicedMoveHistory{
             WebSocketManager.shared.boardDelegate?.opponentMove(move.asLongAlgebraicNotation())
         }
-        WebSocketManager.shared.inGame = true
+        
+        WebSocketManager.shared.inGame = wasInGame
     }
 
     
@@ -211,7 +212,7 @@ class GameController: UIViewController, GameDelegate, BoardToGameDelegate, GameS
         for move in move_history.moves{
             WebSocketManager.shared.boardDelegate?.opponentMove(move.asLongAlgebraicNotation())
         }
-        WebSocketManager.shared.inGame = true
+        WebSocketManager.shared.inGame = wasInGame
     }
     
     func handleGameEnded() {
