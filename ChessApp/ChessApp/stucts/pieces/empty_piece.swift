@@ -11,13 +11,12 @@ struct EmptyPiece: BasePiece {
     var color = ""
     var icon = ""
     var node = SKSpriteNode()
-    var nodeMap = NodeMap<String, SKNode>()
 
     func moveIsValid(_ destination: Cell) -> Bool {
         return true
     }
 
-    func getMoves() -> Array<Int> {
+    func getMoves(nodeMap: NodeMap<String, SKNode>, nodeToPiece: [SKSpriteNode?: BasePiece]) -> Array<Int> {
         return [0]
     }
 
