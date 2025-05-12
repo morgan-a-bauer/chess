@@ -19,6 +19,7 @@ protocol GameSceneDelegate: AnyObject { //BS response certification to VC
 
 class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITableViewDataSource{
     
+    var historyReceived = false;
     var inQueue: Bool = false;
     var timer: Timer?;
     var secondsElapsed = 0;
@@ -99,6 +100,7 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
     }
     
     func receiveGameHistory(_ response:[GameHistory]) {
+        historyReceived = true;
         gameHistoryData = response;
         
         DispatchQueue.main.async {
@@ -111,6 +113,11 @@ class ViewController: UIViewController, HomeDelegate, UITableViewDelegate, UITab
         }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard historyReceived else {
+            // Return an empty/default cell if data hasn't been received yet
+            return UITableViewCell()
+        }
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ContainerTableViewCell
 
         // Pass data to each cell and embed a new child view controller
